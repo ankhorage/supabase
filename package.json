@@ -1,0 +1,68 @@
+{
+  "name": "@ankhorage/supabase",
+  "version": "0.0.0",
+  "description": "Supabase platform service adapter for provider-neutral Ankhorage infrastructure.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ankhorage/supabase.git"
+  },
+  "homepage": "https://github.com/ankhorage/supabase#readme",
+  "bugs": {
+    "url": "https://github.com/ankhorage/supabase/issues"
+  },
+  "keywords": [
+    "ankhorage",
+    "infrastructure",
+    "supabase",
+    "service",
+    "adapter"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "package.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf dist tsconfig.tsbuildinfo && bun x tsc -p tsconfig.build.json",
+    "typecheck": "bun x tsc --noEmit -p tsconfig.json",
+    "check-types": "bun run typecheck",
+    "test": "bun test src",
+    "docs": "paradox && ankhorage-prettier --write README.md paradox",
+    "prepack": "bun run build",
+    "lint": "ankhorage-eslint . --max-warnings=0",
+    "lint:fix": "ankhorage-eslint . --fix --max-warnings=0",
+    "format": "ankhorage-prettier --write .",
+    "format:check": "ankhorage-prettier --check .",
+    "knip:check": "ankhorage-knip",
+    "changeset": "ankhorage-changeset",
+    "changeset:status": "ankhorage-changeset status --since=origin/main",
+    "version-packages": "ankhorage-changeset version"
+  },
+  "dependencies": {
+    "@ankhorage/contracts": "^15.0.0"
+  },
+  "devDependencies": {
+    "@ankhorage/devtools": "^1.14.6",
+    "@ankhorage/paradox": "^0.1.24",
+    "@types/bun": "^1.4.1",
+    "@types/node": "^26.4.1",
+    "typescript": "~6.0.3"
+  },
+  "packageManager": "bun@1.4.2"
+}
