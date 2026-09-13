@@ -1,0 +1,16 @@
+graph TD
+  package__ankhorage_supabase["@ankhorage/supabase"]
+  entrypoint_src_index_ts["src/index.ts"]
+  package__ankhorage_supabase --> entrypoint_src_index_ts
+  module_examples_basic_usage_index_ts["examples/basic-usage/index.ts"]
+  package__ankhorage_supabase -.-> module_examples_basic_usage_index_ts
+  module_examples_basic_usage_index_ts --> module_dist_index_d_ts
+  module_src_constants_infra_ts["src/constants/infra.ts"]
+  package__ankhorage_supabase -.-> module_src_constants_infra_ts
+  module_src_features_platform_infrastructure_composition_createInfraAdapter_ts["src/features/platform-infrastructure/composition/createInfraAdapter.ts"]
+  package__ankhorage_supabase -.-> module_src_features_platform_infrastructure_composition_createInfraAdapter_ts
+  module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --> module_src_constants_infra_ts
+  module_src_index_ts["src/index.ts"]
+  module_src_infraAdapter_test_ts["src/infraAdapter.test.ts"]
+  package__ankhorage_supabase -.-> module_src_infraAdapter_test_ts
+  module_src_infraAdapter_test_ts --> module_src_index_ts

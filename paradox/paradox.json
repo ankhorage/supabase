@@ -1,0 +1,289 @@
+{
+  "packageName": "@ankhorage/supabase",
+  "packageId": "@ankhorage/supabase",
+  "description": "Supabase platform service adapter for provider-neutral Ankhorage infrastructure.",
+  "collaborators": null,
+  "donation": null,
+  "badges": [
+    {
+      "id": "license",
+      "label": "license",
+      "value": "MIT",
+      "color": "2563eb"
+    },
+    {
+      "id": "npm",
+      "label": "npm",
+      "value": "v0.0.0",
+      "color": "cb3837"
+    },
+    {
+      "id": "runtime",
+      "label": "runtime",
+      "value": "bun",
+      "color": "f59e0b"
+    },
+    {
+      "id": "typescript",
+      "label": "typescript",
+      "value": "strict",
+      "color": "2563eb"
+    },
+    {
+      "id": "eslint",
+      "label": "eslint",
+      "value": "checked",
+      "color": "0a7f3f"
+    },
+    {
+      "id": "prettier",
+      "label": "prettier",
+      "value": "checked",
+      "color": "0a7f3f"
+    },
+    {
+      "id": "build",
+      "label": "build",
+      "value": "checked",
+      "color": "0a7f3f"
+    },
+    {
+      "id": "tests",
+      "label": "tests",
+      "value": "checked",
+      "color": "0a7f3f"
+    },
+    {
+      "id": "docs",
+      "label": "docs",
+      "value": "paradox",
+      "color": "0f766e"
+    }
+  ],
+  "usage": null,
+  "readmeUsageDescription": null,
+  "readmeUsage": [],
+  "readmeCli": null,
+  "readmeConfig": null,
+  "config": null,
+  "entrypoints": ["src/index.ts"],
+  "modules": [
+    {
+      "path": "examples/basic-usage/index.ts",
+      "isEntrypoint": false,
+      "dependencies": ["dist/index.d.ts"],
+      "exports": []
+    },
+    {
+      "path": "src/constants/infra.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": ["infraAdapterDescriptor"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/constants/infra.ts"],
+      "exports": ["createInfraAdapter"]
+    },
+    {
+      "path": "src/index.ts",
+      "isEntrypoint": true,
+      "dependencies": [],
+      "exports": ["createInfraAdapter", "infraAdapterDescriptor"]
+    },
+    {
+      "path": "src/infraAdapter.test.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/index.ts"],
+      "exports": []
+    }
+  ],
+  "exports": [
+    {
+      "name": "createInfraAdapter",
+      "description": "Create the canonical Supabase platform adapter entrypoint.\n\nThe foundation exposes the released Contracts boundary and fails lifecycle calls explicitly\nuntil the provider implementation phase supplies its external adapters.",
+      "isReadme": true,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "line": 13,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [
+        {
+          "label": "() => InfraServiceAdapter",
+          "parameters": [],
+          "returnType": "InfraServiceAdapter",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
+      "name": "infraAdapterDescriptor",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "value",
+      "modulePath": "src/constants/infra.ts",
+      "sourceLocation": {
+        "filePath": "src/constants/infra.ts",
+        "line": 5,
+        "column": 14
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [],
+      "structuredRows": []
+    }
+  ],
+  "components": [],
+  "sourceFunctions": [
+    {
+      "name": "createInfraAdapter",
+      "description": "Create the canonical Supabase platform adapter entrypoint.\n\nThe foundation exposes the released Contracts boundary and fails lifecycle calls explicitly\nuntil the provider implementation phase supplies its external adapters.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "line": 13,
+        "column": 1
+      }
+    },
+    {
+      "name": "notImplementedAsync",
+      "description": "Reject lifecycle execution until this package's provider phase is implemented.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "line": 26,
+        "column": 1
+      }
+    }
+  ],
+  "sequenceScenarios": [
+    {
+      "kind": "export",
+      "name": "createInfraAdapter",
+      "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+      "symbolName": "createInfraAdapter",
+      "description": "Create the canonical Supabase platform adapter entrypoint.\n\nThe foundation exposes the released Contracts boundary and fails lifecycle calls explicitly\nuntil the provider implementation phase supplies its external adapters.",
+      "isReadme": true
+    }
+  ],
+  "graphs": {
+    "imports": [
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/constants/infra.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/infraAdapter.test.ts",
+        "toPath": "src/index.ts",
+        "sourcePath": "src/infraAdapter.test.ts"
+      },
+      {
+        "fromPath": "examples/basic-usage/index.ts",
+        "toPath": "dist/index.d.ts",
+        "sourcePath": "examples/basic-usage/index.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/constants/infra.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      }
+    ],
+    "calls": [
+      {
+        "fromSymbol": "src/infraAdapter.test.ts",
+        "toSymbol": "describe",
+        "callExpression": "describe",
+        "sourcePath": "src/infraAdapter.test.ts"
+      },
+      {
+        "fromSymbol": "src/infraAdapter.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/infraAdapter.test.ts"
+      },
+      {
+        "fromSymbol": "src/infraAdapter.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/infraAdapter.test.ts"
+      },
+      {
+        "fromSymbol": "src/infraAdapter.test.ts",
+        "toSymbol": "isInfraAdapterDescriptor",
+        "callExpression": "isInfraAdapterDescriptor",
+        "sourcePath": "src/infraAdapter.test.ts"
+      },
+      {
+        "fromSymbol": "src/infraAdapter.test.ts",
+        "toSymbol": "createInfraAdapter",
+        "callExpression": "createInfraAdapter",
+        "sourcePath": "src/infraAdapter.test.ts"
+      },
+      {
+        "fromSymbol": "examples/basic-usage/index.ts",
+        "toSymbol": "createInfraAdapter",
+        "callExpression": "createInfraAdapter",
+        "sourcePath": "examples/basic-usage/index.ts"
+      },
+      {
+        "fromSymbol": "validateAsync",
+        "toSymbol": "notImplementedAsync",
+        "callExpression": "notImplementedAsync",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "planAsync",
+        "toSymbol": "notImplementedAsync",
+        "callExpression": "notImplementedAsync",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "desiredWorkloadsAsync",
+        "toSymbol": "notImplementedAsync",
+        "callExpression": "notImplementedAsync",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "reconcileAsync",
+        "toSymbol": "notImplementedAsync",
+        "callExpression": "notImplementedAsync",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "statusAsync",
+        "toSymbol": "notImplementedAsync",
+        "callExpression": "notImplementedAsync",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "destroyAsync",
+        "toSymbol": "notImplementedAsync",
+        "callExpression": "notImplementedAsync",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      }
+    ],
+    "typeReferences": [
+      {
+        "fromSymbol": "createInfraAdapter",
+        "toType": "InfraServiceAdapter",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      }
+    ],
+    "componentComposition": []
+  }
+}
