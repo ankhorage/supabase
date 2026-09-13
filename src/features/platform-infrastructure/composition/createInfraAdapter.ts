@@ -1,38 +1,40 @@
-import type { InfraResult, InfraServiceAdapter } from '@ankhorage/contracts/infra';
+import type { InfraServiceAdapter } from '@ankhorage/contracts/infra';
 
 import { infraAdapterDescriptor } from '../../../constants/infra';
+import type { SupabaseAdapterOptions } from '../../../types/supabase';
+import { createFetchSupabaseControlPlane } from '../adapters/outbound/createFetchSupabaseControlPlane';
+import { createSupabaseWorkloads } from '../application/createSupabaseWorkloads';
+import { destroySupabaseAsync } from '../application/destroySupabaseAsync';
+import { getSupabaseStatusAsync } from '../application/getSupabaseStatusAsync';
+import { planSupabase } from '../application/planSupabase';
+import { reconcileSupabaseAsync } from '../application/reconcileSupabaseAsync';
+import { resolveSupabaseDesiredState } from '../application/resolveSupabaseDesiredState';
+import { validateSupabaseAsync } from '../application/validateSupabaseAsync';
 
 /***
- * Create the canonical Supabase platform adapter entrypoint.
+ * Create the canonical runtime-neutral Supabase platform adapter.
  *
- * The foundation exposes the released Contracts boundary and fails lifecycle calls explicitly
- * until the provider implementation phase supplies its external adapters.
+ * The provider contributes portable workloads and reconciles Supabase-owned API resources after
+ * the selected runtime is ready. Resolved bootstrap secrets never cross the execution boundary.
  *
  * @readme
  */
-export function createInfraAdapter(): InfraServiceAdapter {
+export function createInfraAdapter(options: SupabaseAdapterOptions = {}): InfraServiceAdapter {
+  const controlPlane = options.controlPlane ?? createFetchSupabaseControlPlane();
   return {
     descriptor: infraAdapterDescriptor,
-    validateAsync: () => notImplementedAsync(),
-    planAsync: () => notImplementedAsync(),
-    desiredWorkloadsAsync: () => notImplementedAsync(),
-    reconcileAsync: () => notImplementedAsync(),
-    statusAsync: () => notImplementedAsync(),
-    destroyAsync: () => notImplementedAsync(),
+    validateAsync: (context) => validateSupabaseAsync(context),
+    planAsync: (context) => Promise.resolve(planSupabase(context)),
+    desiredWorkloadsAsync: (context) => {
+      const desired = resolveSupabaseDesiredState(context);
+      return Promise.resolve(
+        desired.ok
+          ? { ok: true, value: createSupabaseWorkloads(context), diagnostics: [] }
+          : desired,
+      );
+    },
+    reconcileAsync: (context) => reconcileSupabaseAsync(controlPlane, context),
+    statusAsync: (context) => getSupabaseStatusAsync(controlPlane, context),
+    destroyAsync: (context, request) => destroySupabaseAsync(controlPlane, context, request),
   };
-}
-
-/*** Reject lifecycle execution until this package's provider phase is implemented. */
-function notImplementedAsync<T>(): Promise<InfraResult<T>> {
-  return Promise.resolve({
-    ok: false,
-    diagnostics: [
-      {
-        severity: 'error',
-        code: 'supabase_adapter_not_implemented',
-        message:
-          'The Supabase platform adapter foundation is installed, but its lifecycle is not implemented yet.',
-      },
-    ],
-  });
 }

@@ -1,22 +1,61 @@
 [
   {
+    "name": "createFetchSupabaseControlPlane",
+    "description": "Create a sanitized HTTP adapter for self-hosted Supabase health and bucket lifecycle.",
+    "isReadme": false,
+    "examples": [],
+    "kind": "function",
+    "modulePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+    "sourceLocation": {
+      "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+      "line": 12,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["SupabaseControlPlane"],
+    "signatures": [
+      {
+        "label": "(options?: FetchSupabaseControlPlaneOptions) => SupabaseControlPlane",
+        "parameters": [
+          {
+            "name": "options",
+            "type": "FetchSupabaseControlPlaneOptions",
+            "required": false,
+            "description": null
+          }
+        ],
+        "returnType": "SupabaseControlPlane",
+        "returnDescription": null
+      }
+    ],
+    "members": [],
+    "structuredRows": []
+  },
+  {
     "name": "createInfraAdapter",
-    "description": "Create the canonical Supabase platform adapter entrypoint.\n\nThe foundation exposes the released Contracts boundary and fails lifecycle calls explicitly\nuntil the provider implementation phase supplies its external adapters.",
+    "description": "Create the canonical runtime-neutral Supabase platform adapter.\n\nThe provider contributes portable workloads and reconciles Supabase-owned API resources after\nthe selected runtime is ready. Resolved bootstrap secrets never cross the execution boundary.",
     "isReadme": true,
     "examples": [],
     "kind": "function",
     "modulePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
     "sourceLocation": {
       "filePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
-      "line": 13,
+      "line": 22,
       "column": 1
     },
     "exportPaths": ["src/index.ts"],
-    "relatedSymbols": [],
+    "relatedSymbols": ["SupabaseAdapterOptions"],
     "signatures": [
       {
-        "label": "() => InfraServiceAdapter",
-        "parameters": [],
+        "label": "(options?: SupabaseAdapterOptions) => InfraServiceAdapter",
+        "parameters": [
+          {
+            "name": "options",
+            "type": "SupabaseAdapterOptions",
+            "required": false,
+            "description": null
+          }
+        ],
         "returnType": "InfraServiceAdapter",
         "returnDescription": null
       }
@@ -40,6 +79,119 @@
     "relatedSymbols": [],
     "signatures": [],
     "members": [],
+    "structuredRows": []
+  },
+  {
+    "name": "SupabaseAdapterOptions",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/supabase.ts",
+    "sourceLocation": {
+      "filePath": "src/types/supabase.ts",
+      "line": 20,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["SupabaseControlPlane"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "controlPlane",
+        "kind": "property",
+        "type": "SupabaseControlPlane | undefined",
+        "required": false,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "SupabaseControlPlane",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/supabase.ts",
+    "sourceLocation": {
+      "filePath": "src/types/supabase.ts",
+      "line": 9,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": ["SupabaseControlPlaneRequest"],
+    "signatures": [],
+    "members": [
+      {
+        "name": "createBucketAsync",
+        "kind": "method",
+        "type": "(request: SupabaseControlPlaneRequest & { readonly bucket: string; }) => Promise<InfraResult<null>>",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "deleteBucketAsync",
+        "kind": "method",
+        "type": "(request: SupabaseControlPlaneRequest & { readonly bucket: string; }) => Promise<InfraResult<null>>",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "healthAsync",
+        "kind": "method",
+        "type": "(request: SupabaseControlPlaneRequest) => Promise<InfraResult<null>>",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "listBucketsAsync",
+        "kind": "method",
+        "type": "(request: SupabaseControlPlaneRequest) => Promise<InfraResult<readonly string[]>>",
+        "required": true,
+        "description": null
+      }
+    ],
+    "structuredRows": []
+  },
+  {
+    "name": "SupabaseControlPlaneRequest",
+    "description": null,
+    "isReadme": false,
+    "examples": [],
+    "kind": "type",
+    "modulePath": "src/types/supabase.ts",
+    "sourceLocation": {
+      "filePath": "src/types/supabase.ts",
+      "line": 3,
+      "column": 1
+    },
+    "exportPaths": ["src/index.ts"],
+    "relatedSymbols": [],
+    "signatures": [],
+    "members": [
+      {
+        "name": "baseUrl",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "serviceRoleKey",
+        "kind": "property",
+        "type": "string",
+        "required": true,
+        "description": null
+      },
+      {
+        "name": "signal",
+        "kind": "property",
+        "type": "AbortSignal | undefined",
+        "required": false,
+        "description": null
+      }
+    ],
     "structuredRows": []
   }
 ]

@@ -1,0 +1,5 @@
+sequenceDiagram
+  participant participant_createFetchSupabaseControlPlane as createFetchSupabaseControlPlane
+  participant participant_createInfraAdapter as createInfraAdapter
+  participant_createInfraAdapter->>participant_createFetchSupabaseControlPlane: createFetchSupabaseControlPlane()
+  participant_createFetchSupabaseControlPlane-->>participant_createInfraAdapter: return

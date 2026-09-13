@@ -1,0 +1,256 @@
+import type {
+  InfraExecutionContext,
+  InfraWorkloadScalarValue,
+  InfraWorkloadSpec,
+  InfraWorkloadValue,
+} from '@ankhorage/contracts/infra';
+
+import {
+  SUPABASE_BOOTSTRAP_CREDENTIAL,
+  SUPABASE_DATABASE_JWT_SQL,
+  SUPABASE_DATABASE_REALTIME_SQL,
+  SUPABASE_DATABASE_ROLES_SQL,
+  SUPABASE_ENVOY_CONFIG,
+  SUPABASE_IMAGES,
+} from '../constants/supabase';
+
+/*** Project the selected Supabase platform into one ordered runtime-neutral workload graph. */
+export function createSupabaseWorkloads(
+  context: InfraExecutionContext,
+): readonly InfraWorkloadSpec[] {
+  const baseUrl = context.desired.networking?.publicBaseUrl ?? '';
+  return [
+    createDatabaseWorkload(context),
+    createAuthWorkload(baseUrl),
+    createRestWorkload(),
+    createRealtimeWorkload(),
+    createStorageWorkload(context, baseUrl),
+    createGatewayWorkload(),
+  ];
+}
+
+/*** Create the persistent Postgres 17 workload and first-boot configuration. */
+function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSpec {
+  const prod =
+    context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod';
+  return {
+    id: 'supabase-db',
+    artifact: { kind: 'image', image: SUPABASE_IMAGES.database },
+    command: ['postgres'],
+    args: ['-c', 'config_file=/etc/postgresql/postgresql.conf', '-c', 'log_min_messages=fatal'],
+    ports: [{ name: 'postgres', port: 5432 }],
+    environment: {
+      POSTGRES_USER: literal('postgres'),
+      POSTGRES_DB: literal('postgres'),
+      POSTGRES_HOST: literal('/var/run/postgresql'),
+      POSTGRES_PORT: literal('5432'),
+      PGPORT: literal('5432'),
+      PGDATABASE: literal('postgres'),
+      POSTGRES_PASSWORD: credential('postgresPassword'),
+      PGPASSWORD: credential('postgresPassword'),
+      JWT_SECRET: credential('jwtSecret'),
+      JWT_EXP: literal('3600'),
+    },
+    files: [
+      {
+        path: '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql',
+        content: literal(SUPABASE_DATABASE_ROLES_SQL),
+      },
+      {
+        path: '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql',
+        content: literal(SUPABASE_DATABASE_JWT_SQL),
+      },
+      {
+        path: '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
+        content: literal(SUPABASE_DATABASE_REALTIME_SQL),
+      },
+    ],
+    health: { kind: 'command', command: ['pg_isready', '-U', 'postgres', '-h', 'localhost'] },
+    persistence: [
+      {
+        id: 'data',
+        mountPath: '/var/lib/postgresql/data',
+        sizeGiB: prod ? 20 : 5,
+        retention: 'retain',
+      },
+    ],
+    exposure: 'internal',
+    replicas: 1,
+  };
+}
+
+/*** Create the GoTrue authentication workload using the current external Auth URL shape. */
+function createAuthWorkload(baseUrl: string): InfraWorkloadSpec {
+  return {
+    id: 'supabase-auth',
+    artifact: { kind: 'image', image: SUPABASE_IMAGES.auth },
+    ports: [{ name: 'http', port: 9999 }],
+    environment: {
+      GOTRUE_API_HOST: literal('0.0.0.0'),
+      GOTRUE_API_PORT: literal('9999'),
+      API_EXTERNAL_URL: literal(`${baseUrl}/auth/v1`),
+      GOTRUE_SITE_URL: literal(baseUrl),
+      GOTRUE_URI_ALLOW_LIST: literal(''),
+      GOTRUE_DB_DRIVER: literal('postgres'),
+      GOTRUE_DB_DATABASE_URL: databaseUrl('supabase_auth_admin', 'auth'),
+      GOTRUE_JWT_ADMIN_ROLES: literal('service_role'),
+      GOTRUE_JWT_AUD: literal('authenticated'),
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: literal('authenticated'),
+      GOTRUE_JWT_EXP: literal('3600'),
+      GOTRUE_JWT_SECRET: credential('jwtSecret'),
+      GOTRUE_JWT_ISSUER: literal(`${baseUrl}/auth/v1`),
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: literal('true'),
+      GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: literal('false'),
+      GOTRUE_MAILER_AUTOCONFIRM: literal('false'),
+      GOTRUE_EXTERNAL_PHONE_ENABLED: literal('false'),
+    },
+    health: { kind: 'http', port: 9999, path: '/health' },
+    exposure: 'internal',
+    replicas: 1,
+    dependsOn: ['supabase-db'],
+  };
+}
+
+/*** Create the PostgREST Data API workload. */
+function createRestWorkload(): InfraWorkloadSpec {
+  return {
+    id: 'supabase-rest',
+    artifact: { kind: 'image', image: SUPABASE_IMAGES.rest },
+    command: ['postgrest'],
+    ports: [{ name: 'http', port: 3000 }],
+    environment: {
+      PGRST_DB_URI: databaseUrl('authenticator'),
+      PGRST_DB_SCHEMAS: literal('public,storage,graphql_public'),
+      PGRST_DB_MAX_ROWS: literal('1000'),
+      PGRST_DB_EXTRA_SEARCH_PATH: literal('public'),
+      PGRST_DB_ANON_ROLE: literal('anon'),
+      PGRST_ADMIN_SERVER_PORT: literal('3001'),
+      PGRST_ADMIN_SERVER_HOST: literal('localhost'),
+      PGRST_JWT_SECRET: credential('jwtSecret'),
+      PGRST_DB_USE_LEGACY_GUCS: literal('false'),
+      PGRST_APP_SETTINGS_JWT_SECRET: credential('jwtSecret'),
+      PGRST_APP_SETTINGS_JWT_EXP: literal('3600'),
+    },
+    health: { kind: 'command', command: ['postgrest', '--ready'] },
+    exposure: 'internal',
+    replicas: 1,
+    dependsOn: ['supabase-db'],
+  };
+}
+
+/*** Create the Realtime workload without runtime-specific networking assumptions. */
+function createRealtimeWorkload(): InfraWorkloadSpec {
+  return {
+    id: 'supabase-realtime',
+    artifact: { kind: 'image', image: SUPABASE_IMAGES.realtime },
+    ports: [{ name: 'http', port: 4000 }],
+    environment: {
+      PORT: literal('4000'),
+      DB_HOST: literal('supabase-db'),
+      DB_PORT: literal('5432'),
+      DB_USER: literal('supabase_admin'),
+      DB_PASSWORD: credential('postgresPassword'),
+      DB_NAME: literal('postgres'),
+      DB_AFTER_CONNECT_QUERY: literal('SET search_path TO _realtime'),
+      DB_ENC_KEY: credential('realtimeDatabaseEncryptionKey'),
+      API_JWT_SECRET: credential('jwtSecret'),
+      SECRET_KEY_BASE: credential('realtimeSecretKeyBase'),
+      METRICS_JWT_SECRET: credential('jwtSecret'),
+      ERL_AFLAGS: literal('-proto_dist inet_tcp'),
+      DNS_NODES: literal("''"),
+      RLIMIT_NOFILE: literal('10000'),
+      APP_NAME: literal('realtime'),
+      SEED_SELF_HOST: literal('true'),
+      RUN_JANITOR: literal('true'),
+      DISABLE_HEALTHCHECK_LOGGING: literal('true'),
+    },
+    health: { kind: 'tcp', port: 4000 },
+    exposure: 'internal',
+    replicas: 1,
+    dependsOn: ['supabase-db'],
+  };
+}
+
+/*** Create file-backed Supabase Storage with image transformation disabled. */
+function createStorageWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
+  const prod =
+    context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod';
+  return {
+    id: 'supabase-storage',
+    artifact: { kind: 'image', image: SUPABASE_IMAGES.storage },
+    ports: [{ name: 'http', port: 5000 }],
+    environment: {
+      ANON_KEY: credential('anonKey'),
+      SERVICE_KEY: credential('serviceRoleKey'),
+      POSTGREST_URL: literal('http://supabase-rest:3000'),
+      AUTH_JWT_SECRET: credential('jwtSecret'),
+      DATABASE_URL: databaseUrl('supabase_storage_admin', 'storage'),
+      STORAGE_PUBLIC_URL: literal(baseUrl),
+      REQUEST_ALLOW_X_FORWARDED_PATH: literal('true'),
+      FILE_SIZE_LIMIT: literal('52428800'),
+      STORAGE_BACKEND: literal('file'),
+      GLOBAL_S3_BUCKET: literal('stub'),
+      FILE_STORAGE_BACKEND_PATH: literal('/var/lib/storage'),
+      TENANT_ID: literal(context.projectId),
+      REGION: literal(context.environment),
+      ENABLE_IMAGE_TRANSFORMATION: literal('false'),
+    },
+    health: { kind: 'http', port: 5000, path: '/status' },
+    persistence: [
+      {
+        id: 'data',
+        mountPath: '/var/lib/storage',
+        sizeGiB: prod ? 20 : 5,
+        retention: 'retain',
+      },
+    ],
+    exposure: 'internal',
+    replicas: 1,
+    dependsOn: ['supabase-db', 'supabase-rest'],
+  };
+}
+
+/*** Create the current Envoy gateway with portable service-DNS routes. */
+function createGatewayWorkload(): InfraWorkloadSpec {
+  return {
+    id: 'supabase-gateway',
+    artifact: { kind: 'image', image: SUPABASE_IMAGES.gateway },
+    command: ['envoy'],
+    args: ['-c', '/etc/envoy/envoy.yaml'],
+    ports: [{ name: 'http', port: 8000 }],
+    files: [
+      {
+        path: '/etc/envoy/envoy.yaml',
+        content: literal(SUPABASE_ENVOY_CONFIG),
+      },
+    ],
+    health: { kind: 'tcp', port: 8000 },
+    exposure: 'public',
+    replicas: 1,
+    dependsOn: ['supabase-auth', 'supabase-rest', 'supabase-realtime', 'supabase-storage'],
+  };
+}
+
+/*** Create one literal workload value. */
+function literal(value: string): InfraWorkloadScalarValue {
+  return { kind: 'literal', value };
+}
+
+/*** Create one execution-only control-plane credential field reference. */
+function credential(key: string): InfraWorkloadScalarValue {
+  return { kind: 'credential', reference: SUPABASE_BOOTSTRAP_CREDENTIAL, key };
+}
+
+/*** Create one password-bearing Postgres URL materialized only by the selected runtime. */
+function databaseUrl(user: string, searchPath?: string): InfraWorkloadValue {
+  return {
+    kind: 'template',
+    segments: [
+      literal(`postgres://${user}:`),
+      credential('postgresPassword'),
+      literal(
+        `@supabase-db:5432/postgres${searchPath === undefined ? '' : `?search_path=${searchPath}&sslmode=disable`}`,
+      ),
+    ],
+  };
+}
