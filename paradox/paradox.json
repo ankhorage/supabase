@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.0.0",
+      "value": "v0.1.0",
       "color": "cb3837"
     },
     {
@@ -81,43 +81,211 @@
       "exports": ["infraAdapterDescriptor"]
     },
     {
+      "path": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types/supabase.ts"],
+      "exports": ["createFetchSupabaseControlPlane"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/features/platform-infrastructure/constants/supabase.ts"],
+      "exports": ["createSupabaseWorkloads"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "src/types/supabase.ts"
+      ],
+      "exports": ["destroySupabaseAsync"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "src/types/supabase.ts"
+      ],
+      "exports": ["getSupabaseStatusAsync"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/application/planSupabase.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      ],
+      "exports": ["planSupabase"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "src/types/supabase.ts"
+      ],
+      "exports": ["reconcileSupabaseAsync"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/platform-infrastructure/constants/supabase.ts",
+        "src/types/supabase.ts"
+      ],
+      "exports": ["resolveSupabaseBootstrapCredentialsAsync"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/types/supabase.ts"],
+      "exports": ["resolveSupabaseDesiredState"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      ],
+      "exports": ["validateSupabaseAsync"]
+    },
+    {
       "path": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
       "isEntrypoint": false,
-      "dependencies": ["src/constants/infra.ts"],
+      "dependencies": [
+        "src/constants/infra.ts",
+        "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts",
+        "src/features/platform-infrastructure/application/planSupabase.ts",
+        "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts",
+        "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "src/features/platform-infrastructure/application/validateSupabaseAsync.ts",
+        "src/types/supabase.ts"
+      ],
       "exports": ["createInfraAdapter"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/constants/supabase.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "SUPABASE_BOOTSTRAP_CREDENTIAL",
+        "SUPABASE_DATABASE_JWT_SQL",
+        "SUPABASE_DATABASE_REALTIME_SQL",
+        "SUPABASE_DATABASE_ROLES_SQL",
+        "SUPABASE_ENVOY_CONFIG",
+        "SUPABASE_IMAGES"
+      ]
     },
     {
       "path": "src/index.ts",
       "isEntrypoint": true,
       "dependencies": [],
-      "exports": ["createInfraAdapter", "infraAdapterDescriptor"]
+      "exports": [
+        "createFetchSupabaseControlPlane",
+        "createInfraAdapter",
+        "infraAdapterDescriptor",
+        "SupabaseAdapterOptions",
+        "SupabaseControlPlane",
+        "SupabaseControlPlaneRequest"
+      ]
     },
     {
       "path": "src/infraAdapter.test.ts",
       "isEntrypoint": false,
       "dependencies": ["src/index.ts"],
       "exports": []
+    },
+    {
+      "path": "src/supabaseControlPlane.test.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/index.ts"],
+      "exports": []
+    },
+    {
+      "path": "src/supabaseLifecycle.test.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/index.ts"],
+      "exports": []
+    },
+    {
+      "path": "src/types/supabase.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": [
+        "SupabaseAdapterOptions",
+        "SupabaseBootstrapCredentials",
+        "SupabaseControlPlane",
+        "SupabaseControlPlaneRequest",
+        "SupabaseDesiredState"
+      ]
     }
   ],
   "exports": [
     {
+      "name": "createFetchSupabaseControlPlane",
+      "description": "Create a sanitized HTTP adapter for self-hosted Supabase health and bucket lifecycle.",
+      "isReadme": false,
+      "examples": [],
+      "kind": "function",
+      "modulePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "line": 12,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["SupabaseControlPlane"],
+      "signatures": [
+        {
+          "label": "(options?: FetchSupabaseControlPlaneOptions) => SupabaseControlPlane",
+          "parameters": [
+            {
+              "name": "options",
+              "type": "FetchSupabaseControlPlaneOptions",
+              "required": false,
+              "description": null
+            }
+          ],
+          "returnType": "SupabaseControlPlane",
+          "returnDescription": null
+        }
+      ],
+      "members": [],
+      "structuredRows": []
+    },
+    {
       "name": "createInfraAdapter",
-      "description": "Create the canonical Supabase platform adapter entrypoint.\n\nThe foundation exposes the released Contracts boundary and fails lifecycle calls explicitly\nuntil the provider implementation phase supplies its external adapters.",
+      "description": "Create the canonical runtime-neutral Supabase platform adapter.\n\nThe provider contributes portable workloads and reconciles Supabase-owned API resources after\nthe selected runtime is ready. Resolved bootstrap secrets never cross the execution boundary.",
       "isReadme": true,
       "examples": [],
       "kind": "function",
       "modulePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
-        "line": 13,
+        "line": 22,
         "column": 1
       },
       "exportPaths": ["src/index.ts"],
-      "relatedSymbols": [],
+      "relatedSymbols": ["SupabaseAdapterOptions"],
       "signatures": [
         {
-          "label": "() => InfraServiceAdapter",
-          "parameters": [],
+          "label": "(options?: SupabaseAdapterOptions) => InfraServiceAdapter",
+          "parameters": [
+            {
+              "name": "options",
+              "type": "SupabaseAdapterOptions",
+              "required": false,
+              "description": null
+            }
+          ],
           "returnType": "InfraServiceAdapter",
           "returnDescription": null
         }
@@ -142,25 +310,570 @@
       "signatures": [],
       "members": [],
       "structuredRows": []
+    },
+    {
+      "name": "SupabaseAdapterOptions",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types/supabase.ts",
+      "sourceLocation": {
+        "filePath": "src/types/supabase.ts",
+        "line": 20,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["SupabaseControlPlane"],
+      "signatures": [],
+      "members": [
+        {
+          "name": "controlPlane",
+          "kind": "property",
+          "type": "SupabaseControlPlane | undefined",
+          "required": false,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "SupabaseControlPlane",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types/supabase.ts",
+      "sourceLocation": {
+        "filePath": "src/types/supabase.ts",
+        "line": 9,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": ["SupabaseControlPlaneRequest"],
+      "signatures": [],
+      "members": [
+        {
+          "name": "createBucketAsync",
+          "kind": "method",
+          "type": "(request: SupabaseControlPlaneRequest & { readonly bucket: string; }) => Promise<InfraResult<null>>",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "deleteBucketAsync",
+          "kind": "method",
+          "type": "(request: SupabaseControlPlaneRequest & { readonly bucket: string; }) => Promise<InfraResult<null>>",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "healthAsync",
+          "kind": "method",
+          "type": "(request: SupabaseControlPlaneRequest) => Promise<InfraResult<null>>",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "listBucketsAsync",
+          "kind": "method",
+          "type": "(request: SupabaseControlPlaneRequest) => Promise<InfraResult<readonly string[]>>",
+          "required": true,
+          "description": null
+        }
+      ],
+      "structuredRows": []
+    },
+    {
+      "name": "SupabaseControlPlaneRequest",
+      "description": null,
+      "isReadme": false,
+      "examples": [],
+      "kind": "type",
+      "modulePath": "src/types/supabase.ts",
+      "sourceLocation": {
+        "filePath": "src/types/supabase.ts",
+        "line": 3,
+        "column": 1
+      },
+      "exportPaths": ["src/index.ts"],
+      "relatedSymbols": [],
+      "signatures": [],
+      "members": [
+        {
+          "name": "baseUrl",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "serviceRoleKey",
+          "kind": "property",
+          "type": "string",
+          "required": true,
+          "description": null
+        },
+        {
+          "name": "signal",
+          "kind": "property",
+          "type": "AbortSignal | undefined",
+          "required": false,
+          "description": null
+        }
+      ],
+      "structuredRows": []
     }
   ],
   "components": [],
   "sourceFunctions": [
     {
-      "name": "createInfraAdapter",
-      "description": "Create the canonical Supabase platform adapter entrypoint.\n\nThe foundation exposes the released Contracts boundary and fails lifecycle calls explicitly\nuntil the provider implementation phase supplies its external adapters.",
+      "name": "createFetchSupabaseControlPlane",
+      "description": "Create a sanitized HTTP adapter for self-hosted Supabase health and bucket lifecycle.",
       "sourceLocation": {
-        "filePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "line": 12,
+        "column": 1
+      }
+    },
+    {
+      "name": "listBucketsAsync",
+      "description": "List storage buckets without returning privileged request metadata.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "line": 36,
+        "column": 1
+      }
+    },
+    {
+      "name": "isNamedBucket",
+      "description": "Narrow one untrusted storage response item to its public bucket name.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "line": 55,
+        "column": 1
+      }
+    },
+    {
+      "name": "requestEmptyAsync",
+      "description": "Execute one response-body-free control-plane request.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "line": 61,
+        "column": 1
+      }
+    },
+    {
+      "name": "requestAsync",
+      "description": "Execute one authenticated request and expose only the trusted Response boundary.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "line": 73,
+        "column": 1
+      }
+    },
+    {
+      "name": "requestFailure",
+      "description": "Reject a failed HTTP request without leaking response or credential detail.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "line": 98,
+        "column": 1
+      }
+    },
+    {
+      "name": "invalidResponse",
+      "description": "Reject a malformed storage response without exposing its body.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "line": 112,
+        "column": 1
+      }
+    },
+    {
+      "name": "createSupabaseWorkloads",
+      "description": "Project the selected Supabase platform into one ordered runtime-neutral workload graph.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 18,
+        "column": 1
+      }
+    },
+    {
+      "name": "createDatabaseWorkload",
+      "description": "Create the persistent Postgres 17 workload and first-boot configuration.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 33,
+        "column": 1
+      }
+    },
+    {
+      "name": "createAuthWorkload",
+      "description": "Create the GoTrue authentication workload using the current external Auth URL shape.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 83,
+        "column": 1
+      }
+    },
+    {
+      "name": "createRestWorkload",
+      "description": "Create the PostgREST Data API workload.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 115,
+        "column": 1
+      }
+    },
+    {
+      "name": "createRealtimeWorkload",
+      "description": "Create the Realtime workload without runtime-specific networking assumptions.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 142,
+        "column": 1
+      }
+    },
+    {
+      "name": "createStorageWorkload",
+      "description": "Create file-backed Supabase Storage with image transformation disabled.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 175,
+        "column": 1
+      }
+    },
+    {
+      "name": "createGatewayWorkload",
+      "description": "Create the current Envoy gateway with portable service-DNS routes.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 214,
+        "column": 1
+      }
+    },
+    {
+      "name": "literal",
+      "description": "Create one literal workload value.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 235,
+        "column": 1
+      }
+    },
+    {
+      "name": "credential",
+      "description": "Create one execution-only control-plane credential field reference.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 240,
+        "column": 1
+      }
+    },
+    {
+      "name": "databaseUrl",
+      "description": "Create one password-bearing Postgres URL materialized only by the selected runtime.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "line": 245,
+        "column": 1
+      }
+    },
+    {
+      "name": "destroySupabaseAsync",
+      "description": "Remove only explicitly confirmed persistent buckets and retain all other provider data.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "line": 14,
+        "column": 1
+      }
+    },
+    {
+      "name": "isConfirmed",
+      "description": "Require exact project and environment confirmation for every destroy.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "line": 50,
+        "column": 1
+      }
+    },
+    {
+      "name": "isSameIdentity",
+      "description": "Compare full stable resource identities before destructive work.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "line": 60,
+        "column": 1
+      }
+    },
+    {
+      "name": "unconfirmedDestroy",
+      "description": "Reject destructive work without exact confirmation.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "line": 70,
+        "column": 1
+      }
+    },
+    {
+      "name": "getSupabaseStatusAsync",
+      "description": "Read platform health and bucket presence through the provider control plane.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts",
+        "line": 12,
+        "column": 1
+      }
+    },
+    {
+      "name": "wasPreviouslyOwned",
+      "description": "Check exact prior-ledger ownership before probing a platform.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts",
+        "line": 57,
+        "column": 1
+      }
+    },
+    {
+      "name": "planSupabase",
+      "description": "Plan the logical platform and persistent bucket state without control-plane mutation.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/planSupabase.ts",
+        "line": 10,
+        "column": 1
+      }
+    },
+    {
+      "name": "wasPreviouslyOwned",
+      "description": "Check exact prior-ledger ownership for one logical resource.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/planSupabase.ts",
+        "line": 43,
+        "column": 1
+      }
+    },
+    {
+      "name": "reconcileSupabaseAsync",
+      "description": "Reconcile desired Storage buckets and return only safe platform outputs and ownership.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts",
         "line": 13,
         "column": 1
       }
     },
     {
-      "name": "notImplementedAsync",
-      "description": "Reject lifecycle execution until this package's provider phase is implemented.",
+      "name": "createOutputs",
+      "description": "Create public client configuration and non-secret bucket identifiers.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts",
+        "line": 51,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveSupabaseBootstrapCredentialsAsync",
+      "description": "Resolve and validate the execution-only Supabase bootstrap credential bundle.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "name": "readCredentials",
+      "description": "Read every required field without using dynamic access to privileged values.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "line": 25,
+        "column": 1
+      }
+    },
+    {
+      "name": "missingCredential",
+      "description": "Report one missing credential field without exposing any credential values.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "line": 59,
+        "column": 1
+      }
+    },
+    {
+      "name": "weakCredential",
+      "description": "Report one credential whose minimum length is not satisfied.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "line": 67,
+        "column": 1
+      }
+    },
+    {
+      "name": "exactLengthCredential",
+      "description": "Report one credential whose exact length is not satisfied.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "line": 75,
+        "column": 1
+      }
+    },
+    {
+      "name": "failure",
+      "description": "Create one sanitized bootstrap-credential failure.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "line": 83,
+        "column": 1
+      }
+    },
+    {
+      "name": "resolveSupabaseDesiredState",
+      "description": "Resolve the deduplicated Supabase platform, stable ownership and persistent buckets.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 10,
+        "column": 1
+      }
+    },
+    {
+      "name": "isSelected",
+      "description": "Check whether at least one Supabase-owned sibling capability is selected.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 38,
+        "column": 1
+      }
+    },
+    {
+      "name": "createPlatformOwner",
+      "description": "Create the logical owner for one deduplicated platform instance.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 47,
+        "column": 1
+      }
+    },
+    {
+      "name": "createBucketOwner",
+      "description": "Create persistent ownership for one Storage bucket.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 70,
+        "column": 1
+      }
+    },
+    {
+      "name": "isBucketName",
+      "description": "Validate one portable Supabase Storage bucket name.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 90,
+        "column": 1
+      }
+    },
+    {
+      "name": "invalidSelection",
+      "description": "Reject invocation when no Supabase-owned capability is selected.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 95,
+        "column": 1
+      }
+    },
+    {
+      "name": "missingPublicBaseUrl",
+      "description": "Require one explicit external origin for Auth and public platform outputs.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 103,
+        "column": 1
+      }
+    },
+    {
+      "name": "invalidBucketName",
+      "description": "Reject one invalid desired Storage bucket name.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 111,
+        "column": 1
+      }
+    },
+    {
+      "name": "failure",
+      "description": "Create one sanitized desired-state failure.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "line": 116,
+        "column": 1
+      }
+    },
+    {
+      "name": "validateSupabaseAsync",
+      "description": "Validate Supabase selection, public origin, buckets and bootstrap credentials without mutation.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts",
+        "line": 7,
+        "column": 1
+      }
+    },
+    {
+      "name": "createInfraAdapter",
+      "description": "Create the canonical runtime-neutral Supabase platform adapter.\n\nThe provider contributes portable workloads and reconciles Supabase-owned API resources after\nthe selected runtime is ready. Resolved bootstrap secrets never cross the execution boundary.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
-        "line": 26,
+        "line": 22,
+        "column": 1
+      }
+    },
+    {
+      "name": "requestUrl",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseControlPlane.test.ts",
+        "line": 45,
+        "column": 1
+      }
+    },
+    {
+      "name": "createContext",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseLifecycle.test.ts",
+        "line": 157,
+        "column": 1
+      }
+    },
+    {
+      "name": "createOwnedContext",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseLifecycle.test.ts",
+        "line": 176,
+        "column": 1
+      }
+    },
+    {
+      "name": "createDestroyRequest",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseLifecycle.test.ts",
+        "line": 196,
+        "column": 1
+      }
+    },
+    {
+      "name": "successCredentials",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseLifecycle.test.ts",
+        "line": 208,
+        "column": 1
+      }
+    },
+    {
+      "name": "success",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseLifecycle.test.ts",
+        "line": 219,
         "column": 1
       }
     }
@@ -168,10 +881,18 @@
   "sequenceScenarios": [
     {
       "kind": "export",
+      "name": "createFetchSupabaseControlPlane",
+      "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+      "symbolName": "createFetchSupabaseControlPlane",
+      "description": "Create a sanitized HTTP adapter for self-hosted Supabase health and bucket lifecycle.",
+      "isReadme": false
+    },
+    {
+      "kind": "export",
       "name": "createInfraAdapter",
       "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
       "symbolName": "createInfraAdapter",
-      "description": "Create the canonical Supabase platform adapter entrypoint.\n\nThe foundation exposes the released Contracts boundary and fails lifecycle calls explicitly\nuntil the provider implementation phase supplies its external adapters.",
+      "description": "Create the canonical runtime-neutral Supabase platform adapter.\n\nThe provider contributes portable workloads and reconciles Supabase-owned API resources after\nthe selected runtime is ready. Resolved bootstrap secrets never cross the execution boundary.",
       "isReadme": true
     }
   ],
@@ -184,7 +905,17 @@
       },
       {
         "fromPath": "src/index.ts",
+        "toPath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
         "toPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "sourcePath": "src/index.ts"
+      },
+      {
+        "fromPath": "src/index.ts",
+        "toPath": "src/types/supabase.ts",
         "sourcePath": "src/index.ts"
       },
       {
@@ -193,14 +924,154 @@
         "sourcePath": "src/infraAdapter.test.ts"
       },
       {
+        "fromPath": "src/supabaseControlPlane.test.ts",
+        "toPath": "src/index.ts",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromPath": "src/supabaseLifecycle.test.ts",
+        "toPath": "src/index.ts",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
         "fromPath": "examples/basic-usage/index.ts",
         "toPath": "dist/index.d.ts",
         "sourcePath": "examples/basic-usage/index.ts"
       },
       {
+        "fromPath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "toPath": "src/features/platform-infrastructure/constants/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "toPath": "src/types/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts",
+        "toPath": "src/types/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/planSupabase.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/planSupabase.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts",
+        "toPath": "src/types/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "toPath": "src/types/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "toPath": "src/features/platform-infrastructure/constants/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "toPath": "src/types/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "sourcePath": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts"
+      },
+      {
         "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
         "toPath": "src/constants/infra.ts",
         "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/types/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/features/platform-infrastructure/application/planSupabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
+        "toPath": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "toPath": "src/types/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
       }
     ],
     "calls": [
@@ -235,53 +1106,652 @@
         "sourcePath": "src/infraAdapter.test.ts"
       },
       {
+        "fromSymbol": "src/supabaseControlPlane.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseControlPlane.test.ts",
+        "toSymbol": "createFetchSupabaseControlPlane",
+        "callExpression": "createFetchSupabaseControlPlane",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "fetcher",
+        "toSymbol": "requestUrl",
+        "callExpression": "requestUrl",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseControlPlane.test.ts",
+        "toSymbol": "listBucketsAsync",
+        "callExpression": "controlPlane.listBucketsAsync",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseControlPlane.test.ts",
+        "toSymbol": "createBucketAsync",
+        "callExpression": "controlPlane.createBucketAsync",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseControlPlane.test.ts",
+        "toSymbol": "deleteBucketAsync",
+        "callExpression": "controlPlane.deleteBucketAsync",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseControlPlane.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseControlPlane.test.ts",
+        "toSymbol": "healthAsync",
+        "callExpression": "unavailable.healthAsync",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseControlPlane.test.ts",
+        "toSymbol": "listBucketsAsync",
+        "callExpression": "invalid.listBucketsAsync",
+        "sourcePath": "src/supabaseControlPlane.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseLifecycle.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseLifecycle.test.ts",
+        "toSymbol": "createInfraAdapter",
+        "callExpression": "createInfraAdapter",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseLifecycle.test.ts",
+        "toSymbol": "createContext",
+        "callExpression": "createContext",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseLifecycle.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseLifecycle.test.ts",
+        "toSymbol": "createOwnedContext",
+        "callExpression": "createOwnedContext",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseLifecycle.test.ts",
+        "toSymbol": "createDestroyRequest",
+        "callExpression": "createDestroyRequest",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "healthAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "listBucketsAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "createBucketAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "deleteBucketAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "resolveAsync",
+        "toSymbol": "successCredentials",
+        "callExpression": "successCredentials",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "resolveAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "createOwnedContext",
+        "toSymbol": "createContext",
+        "callExpression": "createContext",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "successCredentials",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
         "fromSymbol": "examples/basic-usage/index.ts",
         "toSymbol": "createInfraAdapter",
         "callExpression": "createInfraAdapter",
         "sourcePath": "examples/basic-usage/index.ts"
       },
       {
+        "fromSymbol": "createSupabaseWorkloads",
+        "toSymbol": "createDatabaseWorkload",
+        "callExpression": "createDatabaseWorkload",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createSupabaseWorkloads",
+        "toSymbol": "createAuthWorkload",
+        "callExpression": "createAuthWorkload",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createSupabaseWorkloads",
+        "toSymbol": "createRestWorkload",
+        "callExpression": "createRestWorkload",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createSupabaseWorkloads",
+        "toSymbol": "createRealtimeWorkload",
+        "callExpression": "createRealtimeWorkload",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createSupabaseWorkloads",
+        "toSymbol": "createStorageWorkload",
+        "callExpression": "createStorageWorkload",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createSupabaseWorkloads",
+        "toSymbol": "createGatewayWorkload",
+        "callExpression": "createGatewayWorkload",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createDatabaseWorkload",
+        "toSymbol": "literal",
+        "callExpression": "literal",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createDatabaseWorkload",
+        "toSymbol": "credential",
+        "callExpression": "credential",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createAuthWorkload",
+        "toSymbol": "literal",
+        "callExpression": "literal",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createAuthWorkload",
+        "toSymbol": "databaseUrl",
+        "callExpression": "databaseUrl",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createAuthWorkload",
+        "toSymbol": "credential",
+        "callExpression": "credential",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createRestWorkload",
+        "toSymbol": "databaseUrl",
+        "callExpression": "databaseUrl",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createRestWorkload",
+        "toSymbol": "literal",
+        "callExpression": "literal",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createRestWorkload",
+        "toSymbol": "credential",
+        "callExpression": "credential",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createRealtimeWorkload",
+        "toSymbol": "literal",
+        "callExpression": "literal",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createRealtimeWorkload",
+        "toSymbol": "credential",
+        "callExpression": "credential",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createStorageWorkload",
+        "toSymbol": "credential",
+        "callExpression": "credential",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createStorageWorkload",
+        "toSymbol": "literal",
+        "callExpression": "literal",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createStorageWorkload",
+        "toSymbol": "databaseUrl",
+        "callExpression": "databaseUrl",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createGatewayWorkload",
+        "toSymbol": "literal",
+        "callExpression": "literal",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "databaseUrl",
+        "toSymbol": "literal",
+        "callExpression": "literal",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "databaseUrl",
+        "toSymbol": "credential",
+        "callExpression": "credential",
+        "sourcePath": "src/features/platform-infrastructure/application/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "destroySupabaseAsync",
+        "toSymbol": "isConfirmed",
+        "callExpression": "isConfirmed",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "destroySupabaseAsync",
+        "toSymbol": "unconfirmedDestroy",
+        "callExpression": "unconfirmedDestroy",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "destroySupabaseAsync",
+        "toSymbol": "resolveSupabaseDesiredState",
+        "callExpression": "resolveSupabaseDesiredState",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts",
+        "toSymbol": "isSameIdentity",
+        "callExpression": "isSameIdentity",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "destroySupabaseAsync",
+        "toSymbol": "resolveSupabaseBootstrapCredentialsAsync",
+        "callExpression": "resolveSupabaseBootstrapCredentialsAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "destroySupabaseAsync",
+        "toSymbol": "deleteBucketAsync",
+        "callExpression": "controlPlane.deleteBucketAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/destroySupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseStatusAsync",
+        "toSymbol": "resolveSupabaseDesiredState",
+        "callExpression": "resolveSupabaseDesiredState",
+        "sourcePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseStatusAsync",
+        "toSymbol": "wasPreviouslyOwned",
+        "callExpression": "wasPreviouslyOwned",
+        "sourcePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseStatusAsync",
+        "toSymbol": "resolveSupabaseBootstrapCredentialsAsync",
+        "callExpression": "resolveSupabaseBootstrapCredentialsAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseStatusAsync",
+        "toSymbol": "healthAsync",
+        "callExpression": "controlPlane.healthAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts"
+      },
+      {
+        "fromSymbol": "getSupabaseStatusAsync",
+        "toSymbol": "listBucketsAsync",
+        "callExpression": "controlPlane.listBucketsAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/getSupabaseStatusAsync.ts"
+      },
+      {
+        "fromSymbol": "planSupabase",
+        "toSymbol": "resolveSupabaseDesiredState",
+        "callExpression": "resolveSupabaseDesiredState",
+        "sourcePath": "src/features/platform-infrastructure/application/planSupabase.ts"
+      },
+      {
+        "fromSymbol": "src/features/platform-infrastructure/application/planSupabase.ts",
+        "toSymbol": "wasPreviouslyOwned",
+        "callExpression": "wasPreviouslyOwned",
+        "sourcePath": "src/features/platform-infrastructure/application/planSupabase.ts"
+      },
+      {
+        "fromSymbol": "reconcileSupabaseAsync",
+        "toSymbol": "resolveSupabaseDesiredState",
+        "callExpression": "resolveSupabaseDesiredState",
+        "sourcePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "reconcileSupabaseAsync",
+        "toSymbol": "resolveSupabaseBootstrapCredentialsAsync",
+        "callExpression": "resolveSupabaseBootstrapCredentialsAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "reconcileSupabaseAsync",
+        "toSymbol": "listBucketsAsync",
+        "callExpression": "controlPlane.listBucketsAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "reconcileSupabaseAsync",
+        "toSymbol": "createBucketAsync",
+        "callExpression": "controlPlane.createBucketAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "reconcileSupabaseAsync",
+        "toSymbol": "createOutputs",
+        "callExpression": "createOutputs",
+        "sourcePath": "src/features/platform-infrastructure/application/reconcileSupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseBootstrapCredentialsAsync",
+        "toSymbol": "readCredentials",
+        "callExpression": "readCredentials",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseBootstrapCredentialsAsync",
+        "toSymbol": "weakCredential",
+        "callExpression": "weakCredential",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseBootstrapCredentialsAsync",
+        "toSymbol": "exactLengthCredential",
+        "callExpression": "exactLengthCredential",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromSymbol": "readCredentials",
+        "toSymbol": "missingCredential",
+        "callExpression": "missingCredential",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromSymbol": "missingCredential",
+        "toSymbol": "failure",
+        "callExpression": "failure",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromSymbol": "weakCredential",
+        "toSymbol": "failure",
+        "callExpression": "failure",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromSymbol": "exactLengthCredential",
+        "toSymbol": "failure",
+        "callExpression": "failure",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseBootstrapCredentialsAsync.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseDesiredState",
+        "toSymbol": "isSelected",
+        "callExpression": "isSelected",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseDesiredState",
+        "toSymbol": "invalidSelection",
+        "callExpression": "invalidSelection",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseDesiredState",
+        "toSymbol": "missingPublicBaseUrl",
+        "callExpression": "missingPublicBaseUrl",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "toSymbol": "isBucketName",
+        "callExpression": "isBucketName",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseDesiredState",
+        "toSymbol": "invalidBucketName",
+        "callExpression": "invalidBucketName",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "resolveSupabaseDesiredState",
+        "toSymbol": "createPlatformOwner",
+        "callExpression": "createPlatformOwner",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts",
+        "toSymbol": "createBucketOwner",
+        "callExpression": "createBucketOwner",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "invalidSelection",
+        "toSymbol": "failure",
+        "callExpression": "failure",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "missingPublicBaseUrl",
+        "toSymbol": "failure",
+        "callExpression": "failure",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "invalidBucketName",
+        "toSymbol": "failure",
+        "callExpression": "failure",
+        "sourcePath": "src/features/platform-infrastructure/application/resolveSupabaseDesiredState.ts"
+      },
+      {
+        "fromSymbol": "validateSupabaseAsync",
+        "toSymbol": "resolveSupabaseDesiredState",
+        "callExpression": "resolveSupabaseDesiredState",
+        "sourcePath": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "validateSupabaseAsync",
+        "toSymbol": "resolveSupabaseBootstrapCredentialsAsync",
+        "callExpression": "resolveSupabaseBootstrapCredentialsAsync",
+        "sourcePath": "src/features/platform-infrastructure/application/validateSupabaseAsync.ts"
+      },
+      {
+        "fromSymbol": "createInfraAdapter",
+        "toSymbol": "createFetchSupabaseControlPlane",
+        "callExpression": "createFetchSupabaseControlPlane",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
         "fromSymbol": "validateAsync",
-        "toSymbol": "notImplementedAsync",
-        "callExpression": "notImplementedAsync",
+        "toSymbol": "validateSupabaseAsync",
+        "callExpression": "validateSupabaseAsync",
         "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
       },
       {
         "fromSymbol": "planAsync",
-        "toSymbol": "notImplementedAsync",
-        "callExpression": "notImplementedAsync",
+        "toSymbol": "planSupabase",
+        "callExpression": "planSupabase",
         "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
       },
       {
         "fromSymbol": "desiredWorkloadsAsync",
-        "toSymbol": "notImplementedAsync",
-        "callExpression": "notImplementedAsync",
+        "toSymbol": "resolveSupabaseDesiredState",
+        "callExpression": "resolveSupabaseDesiredState",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "desiredWorkloadsAsync",
+        "toSymbol": "createSupabaseWorkloads",
+        "callExpression": "createSupabaseWorkloads",
         "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
       },
       {
         "fromSymbol": "reconcileAsync",
-        "toSymbol": "notImplementedAsync",
-        "callExpression": "notImplementedAsync",
+        "toSymbol": "reconcileSupabaseAsync",
+        "callExpression": "reconcileSupabaseAsync",
         "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
       },
       {
         "fromSymbol": "statusAsync",
-        "toSymbol": "notImplementedAsync",
-        "callExpression": "notImplementedAsync",
+        "toSymbol": "getSupabaseStatusAsync",
+        "callExpression": "getSupabaseStatusAsync",
         "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
       },
       {
         "fromSymbol": "destroyAsync",
-        "toSymbol": "notImplementedAsync",
-        "callExpression": "notImplementedAsync",
+        "toSymbol": "destroySupabaseAsync",
+        "callExpression": "destroySupabaseAsync",
         "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "healthAsync",
+        "toSymbol": "requestEmptyAsync",
+        "callExpression": "requestEmptyAsync",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "listBucketsAsync",
+        "toSymbol": "listBucketsAsync",
+        "callExpression": "listBucketsAsync",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "createBucketAsync",
+        "toSymbol": "requestEmptyAsync",
+        "callExpression": "requestEmptyAsync",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "deleteBucketAsync",
+        "toSymbol": "requestEmptyAsync",
+        "callExpression": "requestEmptyAsync",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "listBucketsAsync",
+        "toSymbol": "requestAsync",
+        "callExpression": "requestAsync",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "listBucketsAsync",
+        "toSymbol": "invalidResponse",
+        "callExpression": "invalidResponse",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts",
+        "toSymbol": "isNamedBucket",
+        "callExpression": "isNamedBucket",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "requestEmptyAsync",
+        "toSymbol": "requestAsync",
+        "callExpression": "requestAsync",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "requestAsync",
+        "toSymbol": "fetcher",
+        "callExpression": "fetcher",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "requestAsync",
+        "toSymbol": "requestFailure",
+        "callExpression": "requestFailure",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
       }
     ],
     "typeReferences": [
       {
+        "fromSymbol": "createFetchSupabaseControlPlane",
+        "toType": "FetchSupabaseControlPlaneOptions",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
+        "fromSymbol": "createFetchSupabaseControlPlane",
+        "toType": "SupabaseControlPlane",
+        "sourcePath": "src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"
+      },
+      {
         "fromSymbol": "createInfraAdapter",
         "toType": "InfraServiceAdapter",
         "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "createInfraAdapter",
+        "toType": "SupabaseAdapterOptions",
+        "sourcePath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts"
+      },
+      {
+        "fromSymbol": "SupabaseAdapterOptions",
+        "toType": "SupabaseControlPlane",
+        "sourcePath": "src/types/supabase.ts"
+      },
+      {
+        "fromSymbol": "SupabaseControlPlane",
+        "toType": "InfraResult",
+        "sourcePath": "src/types/supabase.ts"
+      },
+      {
+        "fromSymbol": "SupabaseControlPlane",
+        "toType": "SupabaseControlPlaneRequest",
+        "sourcePath": "src/types/supabase.ts"
+      },
+      {
+        "fromSymbol": "SupabaseControlPlaneRequest",
+        "toType": "AbortSignal",
+        "sourcePath": "src/types/supabase.ts"
       }
     ],
     "componentComposition": []

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'bun:test';
 
 import { createInfraAdapter, infraAdapterDescriptor } from './index';
 
-describe('Supabase platform adapter foundation', () => {
+describe('Supabase platform adapter', () => {
   it('exports the exact Contracts catalog descriptor', () => {
     expect(infraAdapterDescriptor).toEqual(INFRA_ADAPTER_CATALOG.supabase);
     expect(isInfraAdapterDescriptor(infraAdapterDescriptor)).toBe(true);

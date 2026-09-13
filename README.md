@@ -3,7 +3,7 @@
 
 # @ankhorage/supabase
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v0.0.0](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v0.1.0](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
 
 Supabase platform service adapter for provider-neutral Ankhorage infrastructure.
 
@@ -15,6 +15,7 @@ Supabase platform service adapter for provider-neutral Ankhorage infrastructure.
 - [Architecture overview](././paradox/diagrams/architecture-overview.mmd)
 - [Module relationships](././paradox/diagrams/module-relationships.mmd)
 - [Export graph](././paradox/diagrams/export-graph.mmd)
+- [createInfraAdapter sequence](././paradox/diagrams/sequences/create-infra-adapter.mmd)
 
 ## Public API
 
@@ -24,15 +25,16 @@ Supabase platform service adapter for provider-neutral Ankhorage infrastructure.
 <summary>createInfraAdapter</summary>
 
 ```ts
-createInfraAdapter() => InfraServiceAdapter
+createInfraAdapter(options?: SupabaseAdapterOptions) => InfraServiceAdapter
 ```
 
-Create the canonical Supabase platform adapter entrypoint.
+Create the canonical runtime-neutral Supabase platform adapter.
 
-The foundation exposes the released Contracts boundary and fails lifecycle calls explicitly
-until the provider implementation phase supplies its external adapters.
+The provider contributes portable workloads and reconciles Supabase-owned API resources after
+the selected runtime is ready. Resolved bootstrap secrets never cross the execution boundary.
 
 Module: `src/features/platform-infrastructure/composition/createInfraAdapter.ts`
-Source: `src/features/platform-infrastructure/composition/createInfraAdapter.ts:13:1`
+Source: `src/features/platform-infrastructure/composition/createInfraAdapter.ts:22:1`
+Related symbols: `SupabaseAdapterOptions`
 
 </details>
