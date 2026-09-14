@@ -1,0 +1,74 @@
+name: Prepare Infra 145 Postgres entrypoint fix
+
+on:
+  push:
+    branches:
+      - fix/infra-145-postgres-entrypoint
+    paths:
+      - '.github/workflows/tmp-infra145-postgres-entrypoint.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/infra-145-postgres-entrypoint
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Apply owner fix and regression
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          workload = Path('src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts')
+          text = workload.read_text()
+          old = "    command: ['postgres'],\n    args: ['-c', 'config_file=/etc/postgresql/postgresql.conf', '-c', 'log_min_messages=fatal'],"
+          new = "    args: [\n      'postgres',\n      '-c',\n      'config_file=/etc/postgresql/postgresql.conf',\n      '-c',\n      'log_min_messages=fatal',\n    ],"
+          if text.count(old) != 1:
+              raise SystemExit('Expected exactly one Supabase Postgres command override.')
+          workload.write_text(text.replace(old, new))
+
+          test = Path('src/supabaseLifecycle.test.ts')
+          test_text = test.read_text()
+          marker = "  expect(workloads.value.find(({ id }) => id === 'supabase-gateway')?.ports).toEqual([\n    { name: 'http', port: 8000, publishedPort: 54_321 },\n  ]);"
+          regression = "  const database = workloads.value.find(({ id }) => id === 'supabase-db');\n  expect(database?.command).toBeUndefined();\n  expect(database?.args).toEqual([\n    'postgres',\n    '-c',\n    'config_file=/etc/postgresql/postgresql.conf',\n    '-c',\n    'log_min_messages=fatal',\n  ]);\n" + marker
+          if test_text.count(marker) != 1:
+              raise SystemExit('Expected exactly one Supabase gateway workload assertion.')
+          test.write_text(test_text.replace(marker, regression))
+
+          Path('.changeset/calm-postgres-entrypoint.md').write_text("""---
+          '@ankhorage/supabase': patch
+          ---
+
+          Preserve the Supabase Postgres image entrypoint while passing the database server command as container arguments.
+          """)
+          PY
+      - name: Run focused regression
+        run: bun test src/supabaseLifecycle.test.ts
+      - name: Regenerate documentation
+        run: bun run docs
+      - name: Run required repository gates
+        run: |
+          bun run build
+          bun run check-types
+          bun run lint
+          bun run knip:check
+          bun run changeset
+          bun run format
+      - name: Remove temporary workflow and commit verified state
+        run: |
+          rm .github/workflows/tmp-infra145-postgres-entrypoint.yml
+          git diff --check
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m 'fix: preserve Supabase Postgres entrypoint'
+          git push origin HEAD:fix/infra-145-postgres-entrypoint
