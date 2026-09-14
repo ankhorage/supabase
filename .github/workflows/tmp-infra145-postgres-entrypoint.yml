@@ -76,7 +76,7 @@ jobs:
           bun run check-types
           bun run lint
           bun run knip:check
-          bun run changeset
+          bun run changeset:status
           bun run format
       - name: Remove temporary workflow and commit verified state
         run: |
