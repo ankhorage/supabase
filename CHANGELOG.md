@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.0
+
+### Minor Changes
+
+- e6ebe17: Use released runtime endpoints for local Supabase control-plane reconciliation.
+
 ## 0.3.0
 
 ### Minor Changes
