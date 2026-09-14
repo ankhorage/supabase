@@ -31,10 +31,23 @@ jobs:
           workload = Path('src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts')
           text = workload.read_text()
           old = "    command: ['postgres'],\n    args: ['-c', 'config_file=/etc/postgresql/postgresql.conf', '-c', 'log_min_messages=fatal'],"
-          new = "    args: [\n      'postgres',\n      '-c',\n      'config_file=/etc/postgresql/postgresql.conf',\n      '-c',\n      'log_min_messages=fatal',\n    ],"
+          new = "    args: SUPABASE_DATABASE_ARGUMENTS,"
           if text.count(old) != 1:
               raise SystemExit('Expected exactly one Supabase Postgres command override.')
-          workload.write_text(text.replace(old, new))
+          text = text.replace(old, new)
+          marker = "/*** Create the persistent Postgres 17 workload and first-boot configuration. */"
+          arguments = """const SUPABASE_DATABASE_ARGUMENTS = [
+            'postgres',
+            '-c',
+            'config_file=/etc/postgresql/postgresql.conf',
+            '-c',
+            'log_min_messages=fatal',
+          ] as const;
+
+          """
+          if text.count(marker) != 1:
+              raise SystemExit('Expected exactly one Supabase database workload declaration.')
+          workload.write_text(text.replace(marker, arguments + marker))
 
           test = Path('src/supabaseLifecycle.test.ts')
           test_text = test.read_text()
