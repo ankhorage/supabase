@@ -76,9 +76,8 @@ jobs:
           bun run check-types
           bun run lint
           bun run knip:check
-          bun run changeset:status
           bun run format
-      - name: Remove temporary workflow and commit verified state
+      - name: Commit verified state
         run: |
           rm .github/workflows/tmp-infra145-postgres-entrypoint.yml
           git diff --check
@@ -86,4 +85,7 @@ jobs:
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add -A
           git commit -m 'fix: preserve Supabase Postgres entrypoint'
+      - name: Validate changeset and publish branch
+        run: |
+          bun run changeset:status
           git push origin HEAD:fix/infra-145-postgres-entrypoint
