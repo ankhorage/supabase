@@ -33,7 +33,8 @@ export function createInfraAdapter(options: SupabaseAdapterOptions = {}): InfraS
           : desired,
       );
     },
-    reconcileAsync: (context) => reconcileSupabaseAsync(controlPlane, context),
+    reconcileAsync: (context, runtimeOutputs) =>
+      reconcileSupabaseAsync(controlPlane, context, runtimeOutputs),
     statusAsync: (context) => getSupabaseStatusAsync(controlPlane, context),
     destroyAsync: (context, request) => destroySupabaseAsync(controlPlane, context, request),
   };

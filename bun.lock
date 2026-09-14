@@ -5,7 +5,7 @@
     "": {
       "name": "@ankhorage/supabase",
       "dependencies": {
-        "@ankhorage/contracts": "^18.0.0",
+        "@ankhorage/contracts": "^19.1.0",
       },
       "devDependencies": {
         "@ankhorage/devtools": "^1.14.6",
@@ -19,7 +19,7 @@
   "packages": {
     "@ankhorage/color-theory": ["@ankhorage/color-theory@0.3.1", "", { "dependencies": { "culori": "^4.0.2" } }, "sha512-PqGeC16IkWzTA3Qig3T1p6CE6oN6JC1fv83cJ8SdohY5vlNE1YqJAZsLkzCy59ylJOwgPITA98TRH3jIVnlGBw=="],
 
-    "@ankhorage/contracts": ["@ankhorage/contracts@18.0.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0", "@ankhorage/utility": "^0.8.0", "expo-splash-screen": "~57.0.9" } }, "sha512-z4pSN5YV7VmaGvIWWb4sklFMMQlqbRyUYP6Vp/HN3GxAvFh1zsw7Eeq1KHGKo3FoX8ZaplljjWWYdebsZGPPzg=="],
+    "@ankhorage/contracts": ["@ankhorage/contracts@19.1.0", "", { "dependencies": { "@ankhorage/color-theory": "^0.3.0", "@ankhorage/utility": "^0.8.0", "expo-splash-screen": "~57.0.9" } }, "sha512-beWMuwFxGVXHd2IRnDsHSpjUOpQuPFVALkt6QLoiCQA2KvjS18TB7tG1s7F8E7e8PBu6zSt36C1LSTuoZ6MfTg=="],
 
     "@ankhorage/devtools": ["@ankhorage/devtools@1.14.6", "", { "dependencies": { "@ankhorage/utility": "^0.5.1", "@changesets/cli": "^3.0.2", "@eslint/compat": "^2.1.1", "@eslint/js": "^10.0.1", "eslint": "^10.10.0", "eslint-config-prettier": "^10.1.8", "eslint-plugin-import": "^2.32.0", "eslint-plugin-prettier": "^5.5.6", "eslint-plugin-react": "^7.37.5", "eslint-plugin-react-hooks": "^7.0.0", "eslint-plugin-react-native": "^5.0.0", "eslint-plugin-security": "^4.0.1", "eslint-plugin-simple-import-sort": "^14.0.0", "eslint-plugin-unused-imports": "^4.4.1", "knip": "^6.34.0", "prettier": "^3.9.6", "typescript-eslint": "^8.69.0" }, "bin": { "ankhorage-changeset": "dist/cli/bin/changeset.js", "ankhorage-eslint": "dist/cli/bin/eslint.js", "ankhorage-knip": "dist/cli/bin/knip.js", "ankhorage-prettier": "dist/cli/bin/prettier.js" } }, "sha512-O3g8Ep2ccSY3c972dbrnJn6mCLUQCZdA8pCggw/ja+MzlbNRVc+KrpyZSNMxgHOaoVTkG32lpVmJUPX4uULCBg=="],
 

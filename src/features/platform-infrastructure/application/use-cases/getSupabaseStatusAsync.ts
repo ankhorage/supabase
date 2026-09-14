@@ -6,6 +6,7 @@ import type {
 
 import type { SupabaseControlPlane } from '../../../../types/supabase';
 import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
+import { resolveSupabaseControlPlaneUrl } from '../../utils/resolveSupabaseControlPlaneUrl';
 import { resolveSupabaseBootstrapCredentialsAsync } from './resolveSupabaseBootstrapCredentialsAsync';
 
 /*** Read platform health and bucket presence through the provider control plane. */
@@ -28,10 +29,16 @@ export async function getSupabaseStatusAsync(
       diagnostics: [],
     };
   }
+  const controlPlaneUrl = resolveSupabaseControlPlaneUrl(
+    context,
+    desired.value.baseUrl,
+    context.previous?.outputs ?? [],
+  );
+  if (!controlPlaneUrl.ok) return controlPlaneUrl;
   const credentials = await resolveSupabaseBootstrapCredentialsAsync(context);
   if (!credentials.ok) return credentials;
   const request = {
-    baseUrl: desired.value.baseUrl,
+    baseUrl: controlPlaneUrl.value,
     serviceRoleKey: credentials.value.serviceRoleKey,
     ...(context.signal === undefined ? {} : { signal: context.signal }),
   };

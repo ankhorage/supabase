@@ -30,7 +30,7 @@ export function createSupabaseWorkloads(
     createStorageWorkload(context, baseUrl),
     meta,
     studio,
-    createGatewayWorkload(),
+    createGatewayWorkload(context, baseUrl),
   ];
 }
 
@@ -217,13 +217,20 @@ function createStorageWorkload(context: InfraExecutionContext, baseUrl: string):
 }
 
 /*** Create the current Envoy gateway with portable service-DNS routes. */
-function createGatewayWorkload(): InfraWorkloadSpec {
+function createGatewayWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
+  const publishedPort = resolveLocalPublishedPort(context, baseUrl);
   return {
     id: 'supabase-gateway',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.gateway },
     command: ['envoy'],
     args: ['-c', '/etc/envoy/envoy.yaml'],
-    ports: [{ name: 'http', port: 8000 }],
+    ports: [
+      {
+        name: 'http',
+        port: 8000,
+        ...(publishedPort === undefined ? {} : { publishedPort }),
+      },
+    ],
     files: [
       {
         path: '/etc/envoy/envoy.yaml',
@@ -235,6 +242,21 @@ function createGatewayWorkload(): InfraWorkloadSpec {
     replicas: 1,
     dependsOn: ['supabase-auth', 'supabase-rest', 'supabase-realtime', 'supabase-storage'],
   };
+}
+
+/*** Resolve an exact plain-HTTP listener only for the local runtime boundary. */
+function resolveLocalPublishedPort(
+  context: InfraExecutionContext,
+  baseUrl: string,
+): number | undefined {
+  if (context.environment !== 'local') return undefined;
+  try {
+    const url = new URL(baseUrl);
+    if (url.protocol !== 'http:') return undefined;
+    return url.port === '' ? 80 : Number(url.port);
+  } catch {
+    return undefined;
+  }
 }
 
 /*** Create one literal workload value. */
