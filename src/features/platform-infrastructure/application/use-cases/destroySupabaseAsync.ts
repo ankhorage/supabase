@@ -8,6 +8,7 @@ import type {
 
 import type { SupabaseControlPlane } from '../../../../types/supabase';
 import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
+import { resolveSupabaseControlPlaneUrl } from '../../utils/resolveSupabaseControlPlaneUrl';
 import { resolveSupabaseBootstrapCredentialsAsync } from './resolveSupabaseBootstrapCredentialsAsync';
 
 /*** Remove only explicitly confirmed persistent buckets and retain all other provider data. */
@@ -25,10 +26,16 @@ export async function destroySupabaseAsync(
     confirmed.some((identity) => isSameIdentity(identity, bucket.identity)),
   );
   if (removed.length > 0) {
+    const controlPlaneUrl = resolveSupabaseControlPlaneUrl(
+      context,
+      desired.value.baseUrl,
+      context.previous?.outputs ?? [],
+    );
+    if (!controlPlaneUrl.ok) return controlPlaneUrl;
     const credentials = await resolveSupabaseBootstrapCredentialsAsync(context);
     if (!credentials.ok) return credentials;
     const controlRequest = {
-      baseUrl: desired.value.baseUrl,
+      baseUrl: controlPlaneUrl.value,
       serviceRoleKey: credentials.value.serviceRoleKey,
       ...(context.signal === undefined ? {} : { signal: context.signal }),
     };

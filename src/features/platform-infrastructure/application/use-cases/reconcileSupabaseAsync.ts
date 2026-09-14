@@ -7,19 +7,27 @@ import type {
 
 import type { SupabaseControlPlane } from '../../../../types/supabase';
 import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
+import { resolveSupabaseControlPlaneUrl } from '../../utils/resolveSupabaseControlPlaneUrl';
 import { resolveSupabaseBootstrapCredentialsAsync } from './resolveSupabaseBootstrapCredentialsAsync';
 
 /*** Reconcile desired Storage buckets and return only safe platform outputs and ownership. */
 export async function reconcileSupabaseAsync(
   controlPlane: SupabaseControlPlane,
   context: InfraExecutionContext,
+  runtimeOutputs: readonly InfraOutput[],
 ): Promise<InfraResult<InfraReconcileResult>> {
   const desired = resolveSupabaseDesiredState(context);
   if (!desired.ok) return desired;
+  const controlPlaneUrl = resolveSupabaseControlPlaneUrl(
+    context,
+    desired.value.baseUrl,
+    runtimeOutputs,
+  );
+  if (!controlPlaneUrl.ok) return controlPlaneUrl;
   const credentials = await resolveSupabaseBootstrapCredentialsAsync(context);
   if (!credentials.ok) return credentials;
   const request = {
-    baseUrl: desired.value.baseUrl,
+    baseUrl: controlPlaneUrl.value,
     serviceRoleKey: credentials.value.serviceRoleKey,
     ...(context.signal === undefined ? {} : { signal: context.signal }),
   };
