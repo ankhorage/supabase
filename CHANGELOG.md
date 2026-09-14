@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.1
+
+### Patch Changes
+
+- b8c6391: Preserve the Supabase Postgres image entrypoint while passing the database server command as container arguments.
+
 ## 0.4.0
 
 ### Minor Changes
