@@ -1,7 +1,7 @@
 import type { InfraExecutionContext, InfraResult } from '@ankhorage/contracts/infra';
 
+import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
 import { resolveSupabaseBootstrapCredentialsAsync } from './resolveSupabaseBootstrapCredentialsAsync';
-import { resolveSupabaseDesiredState } from './resolveSupabaseDesiredState';
 
 /*** Validate Supabase selection, public origin, buckets and bootstrap credentials without mutation. */
 export async function validateSupabaseAsync(

@@ -3,13 +3,13 @@ import type { InfraServiceAdapter } from '@ankhorage/contracts/infra';
 import { infraAdapterDescriptor } from '../../../constants/infra';
 import type { SupabaseAdapterOptions } from '../../../types/supabase';
 import { createFetchSupabaseControlPlane } from '../adapters/outbound/createFetchSupabaseControlPlane';
-import { createSupabaseWorkloads } from '../application/createSupabaseWorkloads';
-import { destroySupabaseAsync } from '../application/destroySupabaseAsync';
-import { getSupabaseStatusAsync } from '../application/getSupabaseStatusAsync';
-import { planSupabase } from '../application/planSupabase';
-import { reconcileSupabaseAsync } from '../application/reconcileSupabaseAsync';
-import { resolveSupabaseDesiredState } from '../application/resolveSupabaseDesiredState';
-import { validateSupabaseAsync } from '../application/validateSupabaseAsync';
+import { destroySupabaseAsync } from '../application/use-cases/destroySupabaseAsync';
+import { getSupabaseStatusAsync } from '../application/use-cases/getSupabaseStatusAsync';
+import { planSupabase } from '../application/use-cases/planSupabase';
+import { reconcileSupabaseAsync } from '../application/use-cases/reconcileSupabaseAsync';
+import { validateSupabaseAsync } from '../application/use-cases/validateSupabaseAsync';
+import { createSupabaseWorkloads } from '../domain/createSupabaseWorkloads';
+import { resolveSupabaseDesiredState } from '../domain/resolveSupabaseDesiredState';
 
 /***
  * Create the canonical runtime-neutral Supabase platform adapter.

@@ -1,7 +1,7 @@
 import type { InfraExecutionContext, InfraResult } from '@ankhorage/contracts/infra';
 
-import type { SupabaseBootstrapCredentials } from '../../../types/supabase';
-import { SUPABASE_BOOTSTRAP_CREDENTIAL } from '../constants/supabase';
+import type { SupabaseBootstrapCredentials } from '../../../../types/supabase';
+import { SUPABASE_BOOTSTRAP_CREDENTIAL } from '../../constants/supabase';
 
 /*** Resolve and validate the execution-only Supabase bootstrap credential bundle. */
 export async function resolveSupabaseBootstrapCredentialsAsync(
@@ -18,6 +18,7 @@ export async function resolveSupabaseBootstrapCredentialsAsync(
   if (credentials.value.realtimeDatabaseEncryptionKey.length !== 16) {
     return exactLengthCredential('realtimeDatabaseEncryptionKey', 16);
   }
+  if (credentials.value.pgMetaCryptoKey.length < 32) return weakCredential('pgMetaCryptoKey', 32);
   return credentials;
 }
 
@@ -32,6 +33,7 @@ function readCredentials(
     serviceRoleKey,
     realtimeSecretKeyBase,
     realtimeDatabaseEncryptionKey,
+    pgMetaCryptoKey,
   } = values;
   if (!postgresPassword) return missingCredential('postgresPassword');
   if (!jwtSecret) return missingCredential('jwtSecret');
@@ -41,6 +43,7 @@ function readCredentials(
   if (!realtimeDatabaseEncryptionKey) {
     return missingCredential('realtimeDatabaseEncryptionKey');
   }
+  if (!pgMetaCryptoKey) return missingCredential('pgMetaCryptoKey');
   return {
     ok: true,
     value: {
@@ -50,6 +53,7 @@ function readCredentials(
       serviceRoleKey,
       realtimeSecretKeyBase,
       realtimeDatabaseEncryptionKey,
+      pgMetaCryptoKey,
     },
     diagnostics: [],
   };

@@ -28,6 +28,7 @@ export interface SupabaseBootstrapCredentials {
   readonly serviceRoleKey: string;
   readonly realtimeSecretKeyBase: string;
   readonly realtimeDatabaseEncryptionKey: string;
+  readonly pgMetaCryptoKey: string;
 }
 
 export interface SupabaseDesiredState {

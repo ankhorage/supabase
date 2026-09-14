@@ -4,9 +4,9 @@ import type {
   InfraResult,
 } from '@ankhorage/contracts/infra';
 
-import type { SupabaseControlPlane } from '../../../types/supabase';
+import type { SupabaseControlPlane } from '../../../../types/supabase';
+import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
 import { resolveSupabaseBootstrapCredentialsAsync } from './resolveSupabaseBootstrapCredentialsAsync';
-import { resolveSupabaseDesiredState } from './resolveSupabaseDesiredState';
 
 /*** Read platform health and bucket presence through the provider control plane. */
 export async function getSupabaseStatusAsync(

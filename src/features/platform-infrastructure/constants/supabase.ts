@@ -9,7 +9,10 @@ export const SUPABASE_IMAGES = {
   rest: 'postgrest/postgrest:v14.17',
   realtime: 'supabase/realtime:v2.134.10',
   storage: 'supabase/storage-api:v1.74.0',
+  imgproxy: 'darthsim/imgproxy:v3.31.4',
+  meta: 'supabase/postgres-meta:v0.99.0',
   gateway: 'envoyproxy/envoy:v1.39.1',
+  studio: 'supabase/studio:2026.09.07-sha-7996410',
 } as const;
 
 export const SUPABASE_DATABASE_ROLES_SQL = `\\set pgpass \`echo "$POSTGRES_PASSWORD"\`

@@ -5,9 +5,9 @@ import type {
   InfraResult,
 } from '@ankhorage/contracts/infra';
 
-import type { SupabaseControlPlane } from '../../../types/supabase';
+import type { SupabaseControlPlane } from '../../../../types/supabase';
+import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
 import { resolveSupabaseBootstrapCredentialsAsync } from './resolveSupabaseBootstrapCredentialsAsync';
-import { resolveSupabaseDesiredState } from './resolveSupabaseDesiredState';
 
 /*** Reconcile desired Storage buckets and return only safe platform outputs and ownership. */
 export async function reconcileSupabaseAsync(
