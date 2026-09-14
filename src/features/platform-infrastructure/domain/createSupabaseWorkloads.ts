@@ -13,18 +13,23 @@ import {
   SUPABASE_ENVOY_CONFIG,
   SUPABASE_IMAGES,
 } from '../constants/supabase';
+import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';
 
 /*** Project the selected Supabase platform into one ordered runtime-neutral workload graph. */
 export function createSupabaseWorkloads(
   context: InfraExecutionContext,
 ): readonly InfraWorkloadSpec[] {
   const baseUrl = context.desired.networking?.publicBaseUrl ?? '';
+  const [imgproxy, meta, studio] = createSupabaseOperationalWorkloads(context, baseUrl);
   return [
     createDatabaseWorkload(context),
     createAuthWorkload(baseUrl),
     createRestWorkload(),
     createRealtimeWorkload(),
+    imgproxy,
     createStorageWorkload(context, baseUrl),
+    meta,
+    studio,
     createGatewayWorkload(),
   ];
 }
@@ -171,7 +176,7 @@ function createRealtimeWorkload(): InfraWorkloadSpec {
   };
 }
 
-/*** Create file-backed Supabase Storage with image transformation disabled. */
+/*** Create file-backed Supabase Storage with the self-hosted image transformation service. */
 function createStorageWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
   const prod =
     context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod';
@@ -193,7 +198,8 @@ function createStorageWorkload(context: InfraExecutionContext, baseUrl: string):
       FILE_STORAGE_BACKEND_PATH: literal('/var/lib/storage'),
       TENANT_ID: literal(context.projectId),
       REGION: literal(context.environment),
-      ENABLE_IMAGE_TRANSFORMATION: literal('false'),
+      ENABLE_IMAGE_TRANSFORMATION: literal('true'),
+      IMGPROXY_URL: literal('http://supabase-imgproxy:5001'),
     },
     health: { kind: 'http', port: 5000, path: '/status' },
     persistence: [
@@ -206,7 +212,7 @@ function createStorageWorkload(context: InfraExecutionContext, baseUrl: string):
     ],
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-db', 'supabase-rest'],
+    dependsOn: ['supabase-db', 'supabase-rest', 'supabase-imgproxy'],
   };
 }
 

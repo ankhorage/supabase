@@ -6,9 +6,9 @@ import type {
   InfraResult,
 } from '@ankhorage/contracts/infra';
 
-import type { SupabaseControlPlane } from '../../../types/supabase';
+import type { SupabaseControlPlane } from '../../../../types/supabase';
+import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
 import { resolveSupabaseBootstrapCredentialsAsync } from './resolveSupabaseBootstrapCredentialsAsync';
-import { resolveSupabaseDesiredState } from './resolveSupabaseDesiredState';
 
 /*** Remove only explicitly confirmed persistent buckets and retain all other provider data. */
 export async function destroySupabaseAsync(

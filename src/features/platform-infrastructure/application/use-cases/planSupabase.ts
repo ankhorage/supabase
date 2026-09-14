@@ -4,7 +4,7 @@ import type {
   InfraResult,
 } from '@ankhorage/contracts/infra';
 
-import { resolveSupabaseDesiredState } from './resolveSupabaseDesiredState';
+import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
 
 /*** Plan the logical platform and persistent bucket state without control-plane mutation. */
 export function planSupabase(

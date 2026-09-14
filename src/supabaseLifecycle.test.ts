@@ -19,7 +19,10 @@ it('contributes one deterministic current runtime-neutral Supabase workload grap
     'supabase-auth',
     'supabase-rest',
     'supabase-realtime',
+    'supabase-imgproxy',
     'supabase-storage',
+    'supabase-meta',
+    'supabase-studio',
     'supabase-gateway',
   ]);
   expect(workloads.value.map(({ artifact }) => artifact.image)).toEqual([
@@ -27,8 +30,34 @@ it('contributes one deterministic current runtime-neutral Supabase workload grap
     'supabase/gotrue:v2.196.0',
     'postgrest/postgrest:v14.17',
     'supabase/realtime:v2.134.10',
+    'darthsim/imgproxy:v3.31.4',
     'supabase/storage-api:v1.74.0',
+    'supabase/postgres-meta:v0.99.0',
+    'supabase/studio:2026.09.07-sha-7996410',
     'envoyproxy/envoy:v1.39.1',
+  ]);
+});
+
+it('defines readiness, bootstrap and dependency boundaries without leaking secrets', async () => {
+  const adapter = createInfraAdapter({ controlPlane: new FakeSupabaseControlPlane() });
+  const workloads = await adapter.desiredWorkloadsAsync(createContext());
+
+  expect(workloads.ok).toBe(true);
+  if (!workloads.ok) return;
+  expect(workloads.value.every(({ health }) => health !== undefined)).toBe(true);
+  expect(workloads.value.find(({ id }) => id === 'supabase-storage')?.dependsOn).toContain(
+    'supabase-imgproxy',
+  );
+  expect(workloads.value.find(({ id }) => id === 'supabase-studio')?.dependsOn).toEqual([
+    'supabase-db',
+    'supabase-meta',
+  ]);
+  expect(
+    workloads.value.find(({ id }) => id === 'supabase-db')?.files?.map(({ path }) => path),
+  ).toEqual([
+    '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql',
+    '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql',
+    '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
   ]);
   const serialized = JSON.stringify(workloads.value);
   expect(serialized).toContain('https://supabase.example.test/auth/v1');
@@ -213,6 +242,7 @@ function successCredentials() {
     serviceRoleKey: 'service-role-key',
     realtimeSecretKeyBase: 'r'.repeat(64),
     realtimeDatabaseEncryptionKey: '0123456789abcdef',
+    pgMetaCryptoKey: 'meta-crypto-key-that-is-at-least-32-characters',
   });
 }
 
