@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.3.0
+
+### Minor Changes
+
+- efc58a1: Complete the provider-neutral self-hosted Supabase workload graph with Imgproxy, Postgres Meta, Studio, current image pins, explicit readiness and bootstrap dependencies.
+
 ## 0.2.0
 
 ### Minor Changes

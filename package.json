@@ -1,6 +1,6 @@
 {
   "name": "@ankhorage/supabase",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Supabase platform service adapter for provider-neutral Ankhorage infrastructure.",
   "type": "module",
   "main": "./dist/index.js",
