@@ -37,6 +37,15 @@ it('contributes one deterministic current runtime-neutral Supabase workload grap
     'supabase/studio:2026.09.07-sha-7996410',
     'envoyproxy/envoy:v1.39.1',
   ]);
+  const database = workloads.value.find(({ id }) => id === 'supabase-db');
+  expect(database?.command).toBeUndefined();
+  expect(database?.args).toEqual([
+    'postgres',
+    '-c',
+    'config_file=/etc/postgresql/postgresql.conf',
+    '-c',
+    'log_min_messages=fatal',
+  ]);
   expect(workloads.value.find(({ id }) => id === 'supabase-gateway')?.ports).toEqual([
     { name: 'http', port: 8000, publishedPort: 54_321 },
   ]);

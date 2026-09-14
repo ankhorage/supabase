@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.3.0",
+      "value": "v0.4.0",
       "color": "cb3837"
     },
     {
@@ -71,7 +71,7 @@
     {
       "path": "examples/basic-usage/index.ts",
       "isEntrypoint": false,
-      "dependencies": ["dist/index.d.ts"],
+      "dependencies": [],
       "exports": []
     },
     {
@@ -229,6 +229,12 @@
     },
     {
       "path": "src/supabaseLifecycle.test.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/index.ts"],
+      "exports": []
+    },
+    {
+      "path": "src/supabaseRuntimeEndpoints.test.ts",
       "isEntrypoint": false,
       "dependencies": ["src/index.ts"],
       "exports": []
@@ -738,7 +744,7 @@
       "description": "Create the persistent Postgres 17 workload and first-boot configuration.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 38,
+        "line": 46,
         "column": 1
       }
     },
@@ -747,7 +753,7 @@
       "description": "Create the GoTrue authentication workload using the current external Auth URL shape.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 88,
+        "line": 95,
         "column": 1
       }
     },
@@ -756,7 +762,7 @@
       "description": "Create the PostgREST Data API workload.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 120,
+        "line": 127,
         "column": 1
       }
     },
@@ -765,7 +771,7 @@
       "description": "Create the Realtime workload without runtime-specific networking assumptions.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 147,
+        "line": 154,
         "column": 1
       }
     },
@@ -774,7 +780,7 @@
       "description": "Create file-backed Supabase Storage with the self-hosted image transformation service.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 180,
+        "line": 187,
         "column": 1
       }
     },
@@ -783,7 +789,7 @@
       "description": "Create the current Envoy gateway with portable service-DNS routes.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 220,
+        "line": 227,
         "column": 1
       }
     },
@@ -792,7 +798,7 @@
       "description": "Resolve an exact plain-HTTP listener only for the local runtime boundary.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 248,
+        "line": 255,
         "column": 1
       }
     },
@@ -801,7 +807,7 @@
       "description": "Create one literal workload value.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 263,
+        "line": 270,
         "column": 1
       }
     },
@@ -810,7 +816,7 @@
       "description": "Create one execution-only control-plane credential field reference.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 268,
+        "line": 275,
         "column": 1
       }
     },
@@ -819,7 +825,7 @@
       "description": "Create one password-bearing Postgres URL materialized only by the selected runtime.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 273,
+        "line": 280,
         "column": 1
       }
     },
@@ -954,7 +960,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 222,
+        "line": 212,
         "column": 1
       }
     },
@@ -963,7 +969,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 241,
+        "line": 231,
         "column": 1
       }
     },
@@ -972,7 +978,7 @@
       "description": "Create the selected runtime's canonical public Supabase gateway output.",
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 263,
+        "line": 253,
         "column": 1
       }
     },
@@ -981,7 +987,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 280,
+        "line": 270,
         "column": 1
       }
     },
@@ -990,7 +996,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 292,
+        "line": 282,
         "column": 1
       }
     },
@@ -999,7 +1005,25 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 304,
+        "line": 294,
+        "column": 1
+      }
+    },
+    {
+      "name": "createContext",
+      "description": "Create a complete environment for local or production endpoint selection.",
+      "sourceLocation": {
+        "filePath": "src/supabaseRuntimeEndpoints.test.ts",
+        "line": 63,
+        "column": 1
+      }
+    },
+    {
+      "name": "createMinikubeEndpoint",
+      "description": "Create the Minikube-owned local gateway endpoint.",
+      "sourceLocation": {
+        "filePath": "src/supabaseRuntimeEndpoints.test.ts",
+        "line": 104,
         "column": 1
       }
     }
@@ -1060,9 +1084,9 @@
         "sourcePath": "src/supabaseLifecycle.test.ts"
       },
       {
-        "fromPath": "examples/basic-usage/index.ts",
-        "toPath": "dist/index.d.ts",
-        "sourcePath": "examples/basic-usage/index.ts"
+        "fromPath": "src/supabaseRuntimeEndpoints.test.ts",
+        "toPath": "src/index.ts",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
       },
       {
         "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
@@ -1405,6 +1429,60 @@
         "toSymbol": "success",
         "callExpression": "success",
         "sourcePath": "src/supabaseLifecycle.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseRuntimeEndpoints.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseRuntimeEndpoints.test.ts",
+        "toSymbol": "createInfraAdapter",
+        "callExpression": "createInfraAdapter",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseRuntimeEndpoints.test.ts",
+        "toSymbol": "createContext",
+        "callExpression": "createContext",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseRuntimeEndpoints.test.ts",
+        "toSymbol": "createMinikubeEndpoint",
+        "callExpression": "createMinikubeEndpoint",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseRuntimeEndpoints.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "healthAsync",
+        "toSymbol": "capture",
+        "callExpression": "this.capture",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "listBucketsAsync",
+        "toSymbol": "capture",
+        "callExpression": "this.capture",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "createBucketAsync",
+        "toSymbol": "capture",
+        "callExpression": "this.capture",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "deleteBucketAsync",
+        "toSymbol": "capture",
+        "callExpression": "this.capture",
+        "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
       },
       {
         "fromSymbol": "examples/basic-usage/index.ts",

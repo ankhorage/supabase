@@ -4,7 +4,6 @@ graph TD
   package__ankhorage_supabase --> entrypoint_src_index_ts
   module_examples_basic_usage_index_ts["examples/basic-usage/index.ts"]
   package__ankhorage_supabase -.-> module_examples_basic_usage_index_ts
-  module_examples_basic_usage_index_ts --> module_dist_index_d_ts
   module_src_constants_infra_ts["src/constants/infra.ts"]
   package__ankhorage_supabase -.-> module_src_constants_infra_ts
   module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts["src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"]
@@ -75,5 +74,8 @@ graph TD
   module_src_supabaseLifecycle_test_ts["src/supabaseLifecycle.test.ts"]
   package__ankhorage_supabase -.-> module_src_supabaseLifecycle_test_ts
   module_src_supabaseLifecycle_test_ts --> module_src_index_ts
+  module_src_supabaseRuntimeEndpoints_test_ts["src/supabaseRuntimeEndpoints.test.ts"]
+  package__ankhorage_supabase -.-> module_src_supabaseRuntimeEndpoints_test_ts
+  module_src_supabaseRuntimeEndpoints_test_ts --> module_src_index_ts
   module_src_types_supabase_ts["src/types/supabase.ts"]
   package__ankhorage_supabase -.-> module_src_types_supabase_ts
