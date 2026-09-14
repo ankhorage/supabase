@@ -18,8 +18,8 @@ graph LR
   module_src_infraAdapter_test_ts["src/infraAdapter.test.ts"]
   module_src_supabaseControlPlane_test_ts["src/supabaseControlPlane.test.ts"]
   module_src_supabaseLifecycle_test_ts["src/supabaseLifecycle.test.ts"]
+  module_src_supabaseRuntimeEndpoints_test_ts["src/supabaseRuntimeEndpoints.test.ts"]
   module_src_types_supabase_ts["src/types/supabase.ts"]
-  module_examples_basic_usage_index_ts --> module_dist_index_d_ts
   module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts --> module_src_types_supabase_ts
   module_src_features_platform_infrastructure_application_use_cases_destroySupabaseAsync_ts --> module_src_features_platform_infrastructure_application_use_cases_resolveSupabaseBootstrapCredentialsAsync_ts
   module_src_features_platform_infrastructure_application_use_cases_destroySupabaseAsync_ts --> module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
@@ -55,3 +55,4 @@ graph LR
   module_src_infraAdapter_test_ts --> module_src_index_ts
   module_src_supabaseControlPlane_test_ts --> module_src_index_ts
   module_src_supabaseLifecycle_test_ts --> module_src_index_ts
+  module_src_supabaseRuntimeEndpoints_test_ts --> module_src_index_ts

@@ -34,6 +34,14 @@ export function createSupabaseWorkloads(
   ];
 }
 
+const SUPABASE_DATABASE_ARGUMENTS = [
+  'postgres',
+  '-c',
+  'config_file=/etc/postgresql/postgresql.conf',
+  '-c',
+  'log_min_messages=fatal',
+] as const;
+
 /*** Create the persistent Postgres 17 workload and first-boot configuration. */
 function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSpec {
   const prod =
@@ -41,8 +49,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
   return {
     id: 'supabase-db',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.database },
-    command: ['postgres'],
-    args: ['-c', 'config_file=/etc/postgresql/postgresql.conf', '-c', 'log_min_messages=fatal'],
+    args: SUPABASE_DATABASE_ARGUMENTS,
     ports: [{ name: 'postgres', port: 5432 }],
     environment: {
       POSTGRES_USER: literal('postgres'),
