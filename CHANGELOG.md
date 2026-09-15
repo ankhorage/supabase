@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.6
+
+### Patch Changes
+
+- 2f13ca5: Use the postgres-meta image's native Node health command so provider readiness works without assuming `wget` exists in the container.
+
 ## 0.4.5
 
 ### Patch Changes
