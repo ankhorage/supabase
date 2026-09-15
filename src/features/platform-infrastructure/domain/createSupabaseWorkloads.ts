@@ -243,22 +243,25 @@ function createStorageWorkload(context: InfraExecutionContext, baseUrl: string):
           }),
     },
     health: { kind: 'http', port: 5000, path: '/status' },
-    ...(s3 === undefined
-      ? {
-          persistence: [
-            {
-              id: 'data',
-              mountPath: '/var/lib/storage',
-              sizeGiB: prod ? 20 : 5,
-              retention: prod ? ('retain' as const) : ('delete-on-destroy' as const),
-            },
-          ],
-        }
-      : {}),
+    ...(s3 === undefined ? { persistence: createFileStoragePersistence(prod) } : {}),
     exposure: 'internal',
     replicas: 1,
     dependsOn: ['supabase-db', 'supabase-rest', 'supabase-imgproxy'],
   };
+}
+
+/*** Create retained production or destroyable development file-storage persistence. */
+function createFileStoragePersistence(
+  prod: boolean,
+): NonNullable<InfraWorkloadSpec['persistence']> {
+  return [
+    {
+      id: 'data',
+      mountPath: '/var/lib/storage',
+      sizeGiB: prod ? 20 : 5,
+      retention: prod ? 'retain' : 'delete-on-destroy',
+    },
+  ];
 }
 
 /*** Create the current Envoy gateway with portable service-DNS routes. */
