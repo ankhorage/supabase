@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.8
+
+### Patch Changes
+
+- 56a656f: Persist the Postgres custom configuration volume so production pgsodium key material survives runtime and host recreation alongside database data.
+
 ## 0.4.7
 
 ### Patch Changes
