@@ -52,6 +52,22 @@ it('contributes one deterministic current runtime-neutral Supabase workload grap
   ]);
 });
 
+it('makes dev persistence explicitly destroyable while retaining production data', async () => {
+  const adapter = createInfraAdapter({ controlPlane: new FakeSupabaseControlPlane() });
+  const dev = await adapter.desiredWorkloadsAsync(createContext('dev'));
+  const prod = await adapter.desiredWorkloadsAsync(createContext('prod'));
+
+  expect(dev.ok).toBe(true);
+  expect(prod.ok).toBe(true);
+  if (!dev.ok || !prod.ok) return;
+  expect(
+    dev.value.flatMap(({ persistence }) => persistence?.map(({ retention }) => retention) ?? []),
+  ).toEqual(['delete-on-destroy', 'delete-on-destroy']);
+  expect(
+    prod.value.flatMap(({ persistence }) => persistence?.map(({ retention }) => retention) ?? []),
+  ).toEqual(['retain', 'retain']);
+});
+
 it('defines readiness, bootstrap and dependency boundaries without leaking secrets', async () => {
   const adapter = createInfraAdapter({ controlPlane: new FakeSupabaseControlPlane() });
   const workloads = await adapter.desiredWorkloadsAsync(createContext());
@@ -211,7 +227,7 @@ class FakeSupabaseControlPlane implements SupabaseControlPlane {
   }
 }
 
-function createContext(): InfraExecutionContext {
+function createContext(tier: 'dev' | 'prod' = 'dev'): InfraExecutionContext {
   return {
     projectId: 'sample',
     environment: 'local',
@@ -220,7 +236,7 @@ function createContext(): InfraExecutionContext {
         compute: { provider: 'local' },
         runtime: { provider: 'docker-compose' },
       },
-      database: { provider: 'supabase', tier: 'dev' },
+      database: { provider: 'supabase', tier },
       auth: { provider: 'supabase' },
       objectStorage: { provider: 'supabase', buckets: ['documents', 'avatars', 'avatars'] },
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
