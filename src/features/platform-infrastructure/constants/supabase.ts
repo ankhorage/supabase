@@ -15,28 +15,6 @@ export const SUPABASE_IMAGES = {
   studio: 'supabase/studio:2026.09.07-sha-7996410',
 } as const;
 
-export const SUPABASE_DATABASE_ROLES_SQL = `\\set pgpass \`echo "$POSTGRES_PASSWORD"\`
-
-ALTER USER authenticator WITH PASSWORD :'pgpass';
-ALTER USER pgbouncer WITH PASSWORD :'pgpass';
-ALTER USER supabase_auth_admin WITH PASSWORD :'pgpass';
-ALTER USER supabase_functions_admin WITH PASSWORD :'pgpass';
-ALTER USER supabase_storage_admin WITH PASSWORD :'pgpass';
-`;
-
-export const SUPABASE_DATABASE_JWT_SQL = `\\set jwt_secret \`echo "$JWT_SECRET"\`
-\\set jwt_exp \`echo "$JWT_EXP"\`
-
-ALTER DATABASE postgres SET "app.settings.jwt_secret" TO :'jwt_secret';
-ALTER DATABASE postgres SET "app.settings.jwt_exp" TO :'jwt_exp';
-`;
-
-export const SUPABASE_DATABASE_REALTIME_SQL = `\\set pguser \`echo "$POSTGRES_USER"\`
-
-create schema if not exists _realtime;
-alter schema _realtime owner to :pguser;
-`;
-
 export const SUPABASE_ENVOY_CONFIG = `static_resources:
   listeners:
     - name: supabase

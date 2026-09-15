@@ -6,10 +6,13 @@ import type {
 } from '@ankhorage/contracts/infra';
 
 import {
-  SUPABASE_BOOTSTRAP_CREDENTIAL,
   SUPABASE_DATABASE_JWT_SQL,
   SUPABASE_DATABASE_REALTIME_SQL,
   SUPABASE_DATABASE_ROLES_SQL,
+  SUPABASE_DATABASE_WEBHOOKS_SQL,
+} from '../constants/databaseBootstrap';
+import {
+  SUPABASE_BOOTSTRAP_CREDENTIAL,
   SUPABASE_ENVOY_CONFIG,
   SUPABASE_IMAGES,
 } from '../constants/supabase';
@@ -63,6 +66,10 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
       JWT_EXP: literal('3600'),
     },
     files: [
+      {
+        path: '/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql',
+        content: literal(SUPABASE_DATABASE_WEBHOOKS_SQL),
+      },
       {
         path: '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql',
         content: literal(SUPABASE_DATABASE_ROLES_SQL),
