@@ -91,16 +91,21 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
       },
       ...restore.files,
     ],
-    health: {
-      kind: 'command',
-      command: ['pg_isready', '-U', 'postgres', '-h', 'localhost'],
-      intervalSeconds: 10,
-      timeoutSeconds: 5,
-      failureThreshold: restore.files.length === 0 ? 3 : 60,
-    },
+    health: createDatabaseHealth(restore.files.length > 0),
     persistence: createSupabaseDatabasePersistence(prod),
     exposure: 'internal',
     replicas: 1,
+  };
+}
+
+/*** Keep the database alive while a configured first-boot restore waits for off-host backup data. */
+function createDatabaseHealth(restoreEnabled: boolean): NonNullable<InfraWorkloadSpec['health']> {
+  return {
+    kind: 'command',
+    command: ['pg_isready', '-U', 'postgres', '-h', 'localhost'],
+    intervalSeconds: 10,
+    timeoutSeconds: 5,
+    failureThreshold: restoreEnabled ? 60 : 3,
   };
 }
 
