@@ -4,6 +4,7 @@ graph TD
   package__ankhorage_supabase --> entrypoint_src_index_ts
   module_examples_basic_usage_index_ts["examples/basic-usage/index.ts"]
   package__ankhorage_supabase -.-> module_examples_basic_usage_index_ts
+  module_examples_basic_usage_index_ts --> module_dist_index_d_ts
   module_src_constants_infra_ts["src/constants/infra.ts"]
   package__ankhorage_supabase -.-> module_src_constants_infra_ts
   module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts["src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts"]
@@ -50,14 +51,20 @@ graph TD
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --> module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --> module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --> module_src_types_supabase_ts
+  module_src_features_platform_infrastructure_constants_databaseBootstrap_ts["src/features/platform-infrastructure/constants/databaseBootstrap.ts"]
+  package__ankhorage_supabase -.-> module_src_features_platform_infrastructure_constants_databaseBootstrap_ts
   module_src_features_platform_infrastructure_constants_supabase_ts["src/features/platform-infrastructure/constants/supabase.ts"]
   package__ankhorage_supabase -.-> module_src_features_platform_infrastructure_constants_supabase_ts
+  module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts["src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts"]
+  package__ankhorage_supabase -.-> module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts
   module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts["src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts"]
   package__ankhorage_supabase -.-> module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
   module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts --> module_src_features_platform_infrastructure_constants_supabase_ts
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts["src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"]
   package__ankhorage_supabase -.-> module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
+  module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --> module_src_features_platform_infrastructure_constants_databaseBootstrap_ts
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --> module_src_features_platform_infrastructure_constants_supabase_ts
+  module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --> module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --> module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
   module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts["src/features/platform-infrastructure/domain/resolveSupabaseDesiredState.ts"]
   package__ankhorage_supabase -.-> module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
@@ -74,8 +81,20 @@ graph TD
   module_src_supabaseLifecycle_test_ts["src/supabaseLifecycle.test.ts"]
   package__ankhorage_supabase -.-> module_src_supabaseLifecycle_test_ts
   module_src_supabaseLifecycle_test_ts --> module_src_index_ts
+  module_src_supabaseMetaHealth_test_ts["src/supabaseMetaHealth.test.ts"]
+  package__ankhorage_supabase -.-> module_src_supabaseMetaHealth_test_ts
+  module_src_supabaseMetaHealth_test_ts --> module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
+  module_src_supabaseNativeHealth_test_ts["src/supabaseNativeHealth.test.ts"]
+  package__ankhorage_supabase -.-> module_src_supabaseNativeHealth_test_ts
+  module_src_supabaseNativeHealth_test_ts --> module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
+  module_src_supabasePersistence_test_ts["src/supabasePersistence.test.ts"]
+  package__ankhorage_supabase -.-> module_src_supabasePersistence_test_ts
+  module_src_supabasePersistence_test_ts --> module_src_index_ts
   module_src_supabaseRuntimeEndpoints_test_ts["src/supabaseRuntimeEndpoints.test.ts"]
   package__ankhorage_supabase -.-> module_src_supabaseRuntimeEndpoints_test_ts
   module_src_supabaseRuntimeEndpoints_test_ts --> module_src_index_ts
+  module_src_supabaseStudioHealth_test_ts["src/supabaseStudioHealth.test.ts"]
+  package__ankhorage_supabase -.-> module_src_supabaseStudioHealth_test_ts
+  module_src_supabaseStudioHealth_test_ts --> module_src_index_ts
   module_src_types_supabase_ts["src/types/supabase.ts"]
   package__ankhorage_supabase -.-> module_src_types_supabase_ts

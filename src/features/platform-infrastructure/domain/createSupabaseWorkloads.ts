@@ -16,6 +16,7 @@ import {
   SUPABASE_ENVOY_CONFIG,
   SUPABASE_IMAGES,
 } from '../constants/supabase';
+import { createSupabaseDatabasePersistence } from './createSupabaseDatabasePersistence';
 import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';
 
 /*** Project the selected Supabase platform into one ordered runtime-neutral workload graph. */
@@ -45,7 +46,7 @@ const SUPABASE_DATABASE_ARGUMENTS = [
   'log_min_messages=fatal',
 ] as const;
 
-/*** Create the persistent Postgres 17 workload and first-boot configuration. */
+/*** Create persistent Postgres 17 data and custom configuration for safe runtime recreation. */
 function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSpec {
   const prod = isSupabaseProductionTier(context);
   return {
@@ -83,14 +84,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
       },
     ],
     health: { kind: 'command', command: ['pg_isready', '-U', 'postgres', '-h', 'localhost'] },
-    persistence: [
-      {
-        id: 'data',
-        mountPath: '/var/lib/postgresql/data',
-        sizeGiB: prod ? 20 : 5,
-        retention: prod ? 'retain' : 'delete-on-destroy',
-      },
-    ],
+    persistence: createSupabaseDatabasePersistence(prod),
     exposure: 'internal',
     replicas: 1,
   };
