@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.3
+
+### Patch Changes
+
+- e07b451: Restore the self-hosted Supabase webhooks bootstrap before database role password initialization.
+
 ## 0.4.2
 
 ### Patch Changes
