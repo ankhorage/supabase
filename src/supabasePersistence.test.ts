@@ -51,6 +51,15 @@ it('keeps dev persistence destroyable while retaining production data and pgsodi
   ]);
 });
 
+it('uses the Auth namespace contract without a connection-string search path', async () => {
+  const result = await createInfraAdapter().desiredWorkloadsAsync(createContext('dev'));
+  expect(result.ok).toBe(true);
+  if (!result.ok) return;
+  const auth = result.value.find(({ id }) => id === 'supabase-auth');
+  expect(auth?.environment?.DB_NAMESPACE).toEqual({ kind: 'literal', value: 'auth' });
+  expect(JSON.stringify(auth?.environment?.GOTRUE_DB_DATABASE_URL)).not.toContain('search_path');
+});
+
 it('projects scheduled database backup plus first-boot restore through credential references', async () => {
   const result = await createInfraAdapter().desiredWorkloadsAsync(
     createContext('prod', {

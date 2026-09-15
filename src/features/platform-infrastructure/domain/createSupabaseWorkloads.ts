@@ -91,10 +91,21 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
       },
       ...restore.files,
     ],
-    health: { kind: 'command', command: ['pg_isready', '-U', 'postgres', '-h', 'localhost'] },
+    health: createDatabaseHealth(restore.files.length > 0),
     persistence: createSupabaseDatabasePersistence(prod),
     exposure: 'internal',
     replicas: 1,
+  };
+}
+
+/*** Keep the database alive while a configured first-boot restore waits for off-host backup data. */
+function createDatabaseHealth(restoreEnabled: boolean): NonNullable<InfraWorkloadSpec['health']> {
+  return {
+    kind: 'command',
+    command: ['pg_isready', '-U', 'postgres', '-h', 'localhost'],
+    intervalSeconds: 10,
+    timeoutSeconds: 5,
+    failureThreshold: restoreEnabled ? 60 : 3,
   };
 }
 
@@ -111,7 +122,8 @@ function createAuthWorkload(baseUrl: string): InfraWorkloadSpec {
       GOTRUE_SITE_URL: literal(baseUrl),
       GOTRUE_URI_ALLOW_LIST: literal(''),
       GOTRUE_DB_DRIVER: literal('postgres'),
-      GOTRUE_DB_DATABASE_URL: databaseUrl('supabase_auth_admin', 'auth'),
+      GOTRUE_DB_DATABASE_URL: databaseUrl('supabase_auth_admin'),
+      DB_NAMESPACE: literal('auth'),
       GOTRUE_JWT_ADMIN_ROLES: literal('service_role'),
       GOTRUE_JWT_AUD: literal('authenticated'),
       GOTRUE_JWT_DEFAULT_GROUP_NAME: literal('authenticated'),
@@ -268,15 +280,13 @@ function credential(key: string): InfraWorkloadScalarValue {
 }
 
 /*** Create one password-bearing Postgres URL materialized only by the selected runtime. */
-function databaseUrl(user: string, searchPath?: string): InfraWorkloadValue {
+function databaseUrl(user: string): InfraWorkloadValue {
   return {
     kind: 'template',
     segments: [
       literal(`postgres://${user}:`),
       credential('postgresPassword'),
-      literal(
-        `@supabase-db:5432/postgres${searchPath === undefined ? '' : `?search_path=${searchPath}&sslmode=disable`}`,
-      ),
+      literal('@supabase-db:5432/postgres'),
     ],
   };
 }
