@@ -48,7 +48,14 @@ function createMetaWorkload(): InfraWorkloadSpec {
       PG_META_DB_PASSWORD: credential('postgresPassword'),
       CRYPTO_KEY: credential('pgMetaCryptoKey'),
     },
-    health: { kind: 'http', port: 8080, path: '/health' },
+    health: {
+      kind: 'command',
+      command: [
+        'node',
+        '-e',
+        "fetch('http://localhost:8080/health').then((r) => {if (r.status !== 200) throw new Error(r.status)})",
+      ],
+    },
     exposure: 'internal',
     replicas: 1,
     dependsOn: ['supabase-db'],
