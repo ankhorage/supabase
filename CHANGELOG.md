@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.4
+
+### Patch Changes
+
+- bcf34be: Use the current self-hosted Supabase Studio health endpoint for runtime readiness checks.
+
 ## 0.4.3
 
 ### Patch Changes
