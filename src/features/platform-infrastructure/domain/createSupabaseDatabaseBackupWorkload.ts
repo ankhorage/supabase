@@ -14,15 +14,15 @@ umask 077
 printf 'user = "%s:%s"\n' "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > /tmp/ankhorage-s3-curl.conf
 backup_once() {
   timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
-  key="database/${timestamp}.dump"
-  dump="/tmp/${timestamp}.dump"
+  key="database/\${timestamp}.dump"
+  dump="/tmp/\${timestamp}.dump"
   pointer="/tmp/latest"
   pg_dump --format=custom --no-owner --no-acl --file="$dump"
   curl --fail --silent --show-error --config /tmp/ankhorage-s3-curl.conf \
-    --aws-sigv4 "aws:amz:${S3_REGION}:s3" --upload-file "$dump" "${S3_URL_PREFIX}/$key"
+    --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --upload-file "$dump" "\${S3_URL_PREFIX}/$key"
   printf '%s' "$key" > "$pointer"
   curl --fail --silent --show-error --config /tmp/ankhorage-s3-curl.conf \
-    --aws-sigv4 "aws:amz:${S3_REGION}:s3" --upload-file "$pointer" "${S3_URL_PREFIX}/database/latest"
+    --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --upload-file "$pointer" "\${S3_URL_PREFIX}/database/latest"
   rm -f "$dump" "$pointer"
   touch /tmp/ankhorage-backup-ready
 }
@@ -34,7 +34,8 @@ while sleep "$BACKUP_INTERVAL_SECONDS"; do backup_once; done
 export function createSupabaseDatabaseBackupWorkload(
   context: InfraExecutionContext,
 ): InfraWorkloadSpec | undefined {
-  const backup = context.desired.database?.provider === 'supabase' ? context.desired.database.backup : undefined;
+  const backup =
+    context.desired.database?.provider === 'supabase' ? context.desired.database.backup : undefined;
   if (backup === undefined) return undefined;
   const s3 = createSupabaseS3Values(backup.target);
   const intervalHours = backup.intervalHours ?? DEFAULT_BACKUP_INTERVAL_HOURS;
