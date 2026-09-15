@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.9
+
+### Patch Changes
+
+- b079422: Seed the retained Postgres custom configuration volume from the Supabase image on first creation so Kubernetes preserves image-provided configuration and the generated pgsodium root key.
+
 ## 0.4.8
 
 ### Patch Changes
