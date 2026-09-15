@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.1
+
+### Patch Changes
+
+- e86cb78: Align Auth with Supabase's explicit database namespace contract so persisted databases restart cleanly, and harden the database recovery path used by production backup acceptance.
+
 ## 0.5.0
 
 ### Minor Changes
