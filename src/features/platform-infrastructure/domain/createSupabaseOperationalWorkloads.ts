@@ -89,7 +89,17 @@ function createStudioWorkload(context: InfraExecutionContext, baseUrl: string): 
       AUTH_JWT_SECRET: credential('jwtSecret'),
       ENABLED_FEATURES_LOGS_ALL: literal('false'),
     },
-    health: { kind: 'http', port: 3000, path: '/api/platform/profile' },
+    health: {
+      kind: 'command',
+      command: [
+        'node',
+        '-e',
+        "fetch('http://localhost:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})",
+      ],
+      intervalSeconds: 5,
+      timeoutSeconds: 10,
+      failureThreshold: 3,
+    },
     exposure: 'internal',
     replicas: 1,
     dependsOn: ['supabase-db', 'supabase-meta'],
