@@ -47,8 +47,7 @@ const SUPABASE_DATABASE_ARGUMENTS = [
 
 /*** Create the persistent Postgres 17 workload and first-boot configuration. */
 function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSpec {
-  const prod =
-    context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod';
+  const prod = isSupabaseProductionTier(context);
   return {
     id: 'supabase-db',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.database },
@@ -89,7 +88,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
         id: 'data',
         mountPath: '/var/lib/postgresql/data',
         sizeGiB: prod ? 20 : 5,
-        retention: 'retain',
+        retention: prod ? 'retain' : 'delete-on-destroy',
       },
     ],
     exposure: 'internal',
@@ -191,8 +190,7 @@ function createRealtimeWorkload(): InfraWorkloadSpec {
 
 /*** Create file-backed Supabase Storage with the self-hosted image transformation service. */
 function createStorageWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
-  const prod =
-    context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod';
+  const prod = isSupabaseProductionTier(context);
   return {
     id: 'supabase-storage',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.storage },
@@ -220,7 +218,7 @@ function createStorageWorkload(context: InfraExecutionContext, baseUrl: string):
         id: 'data',
         mountPath: '/var/lib/storage',
         sizeGiB: prod ? 20 : 5,
-        retention: 'retain',
+        retention: prod ? 'retain' : 'delete-on-destroy',
       },
     ],
     exposure: 'internal',
@@ -255,6 +253,11 @@ function createGatewayWorkload(context: InfraExecutionContext, baseUrl: string):
     replicas: 1,
     dependsOn: ['supabase-auth', 'supabase-rest', 'supabase-realtime', 'supabase-storage'],
   };
+}
+
+/*** Decide whether the selected Supabase database tier requires production persistence policy. */
+function isSupabaseProductionTier(context: InfraExecutionContext): boolean {
+  return context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod';
 }
 
 /*** Resolve an exact plain-HTTP listener only for the local runtime boundary. */
