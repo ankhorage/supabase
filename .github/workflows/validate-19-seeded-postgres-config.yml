@@ -1,0 +1,50 @@
+name: Validate seeded Postgres config
+
+on:
+  push:
+    branches:
+      - fix/19-seed-postgres-custom-config
+    paths:
+      - '.github/workflows/validate-19-seeded-postgres-config.yml'
+      - 'package.json'
+      - 'bun.lock'
+      - 'src/**'
+      - '.changeset/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/19-seed-postgres-custom-config
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun update @ankhorage/contracts@^19.4.0
+      - run: bun run build
+      - run: bun run check-types
+      - run: bun run lint
+      - run: bun run knip:check
+      - run: bun run changeset:status
+      - run: bun run format
+      - run: bun run test
+      - run: bun run docs
+      - run: bun run format
+      - run: bun run format:check
+      - name: Persist validated baseline
+        run: |
+          rm .github/workflows/validate-19-seeded-postgres-config.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add package.json bun.lock src .changeset README.md paradox .github/workflows/validate-19-seeded-postgres-config.yml
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'test: persist seeded Postgres config baseline'
+          git push origin HEAD:fix/19-seed-postgres-custom-config
