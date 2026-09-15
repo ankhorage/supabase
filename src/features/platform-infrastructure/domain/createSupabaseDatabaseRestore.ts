@@ -12,8 +12,8 @@ umask 077
 printf 'user = "%s:%s"\n' "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > /tmp/ankhorage-s3-curl.conf
 pointer=/tmp/ankhorage-latest
 status="$(curl --silent --show-error --config /tmp/ankhorage-s3-curl.conf \
-  --aws-sigv4 "aws:amz:${S3_REGION}:s3" --output "$pointer" --write-out '%{http_code}' \
-  "${S3_URL_PREFIX}/database/latest")"
+  --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --output "$pointer" --write-out '%{http_code}' \
+  "\${S3_URL_PREFIX}/database/latest")"
 if [ "$status" = '404' ]; then
   echo 'No database backup exists yet; continuing with a fresh database.'
   rm -f "$pointer" /tmp/ankhorage-s3-curl.conf
@@ -30,8 +30,8 @@ case "$key" in
 esac
 dump=/tmp/ankhorage-restore.dump
 status="$(curl --silent --show-error --config /tmp/ankhorage-s3-curl.conf \
-  --aws-sigv4 "aws:amz:${S3_REGION}:s3" --output "$dump" --write-out '%{http_code}' \
-  "${S3_URL_PREFIX}/$key")"
+  --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --output "$dump" --write-out '%{http_code}' \
+  "\${S3_URL_PREFIX}/$key")"
 if [ "$status" != '200' ]; then
   echo "Database backup download failed with HTTP $status." >&2
   exit 1
