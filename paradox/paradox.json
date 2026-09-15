@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.4.7",
+      "value": "v0.4.8",
       "color": "cb3837"
     },
     {
@@ -1106,7 +1106,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabasePersistence.test.ts",
-        "line": 36,
+        "line": 37,
         "column": 1
       }
     },
