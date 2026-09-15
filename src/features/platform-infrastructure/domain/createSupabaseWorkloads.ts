@@ -20,7 +20,7 @@ import { createSupabaseDatabaseBackupWorkload } from './createSupabaseDatabaseBa
 import { createSupabaseDatabasePersistence } from './createSupabaseDatabasePersistence';
 import { createSupabaseDatabaseRestore } from './createSupabaseDatabaseRestore';
 import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';
-import { createSupabaseS3Values } from './createSupabaseS3Values';
+import { createSupabaseStorageWorkload } from './createSupabaseStorageWorkload';
 
 /*** Project the selected Supabase platform into one ordered runtime-neutral workload graph. */
 export function createSupabaseWorkloads(
@@ -36,7 +36,7 @@ export function createSupabaseWorkloads(
     createRestWorkload(),
     createRealtimeWorkload(),
     imgproxy,
-    createStorageWorkload(context, baseUrl),
+    createSupabaseStorageWorkload(context, baseUrl),
     meta,
     studio,
     createGatewayWorkload(context, baseUrl),
@@ -199,69 +199,6 @@ function createRealtimeWorkload(): InfraWorkloadSpec {
     replicas: 1,
     dependsOn: ['supabase-db'],
   };
-}
-
-/*** Create Supabase Storage using either retained file storage or the selected S3 backend. */
-function createStorageWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
-  const prod = isSupabaseProductionTier(context);
-  const backend =
-    context.desired.objectStorage?.provider === 'supabase'
-      ? context.desired.objectStorage.backend
-      : undefined;
-  const s3 = backend === undefined ? undefined : createSupabaseS3Values(backend);
-  return {
-    id: 'supabase-storage',
-    artifact: { kind: 'image', image: SUPABASE_IMAGES.storage },
-    ports: [{ name: 'http', port: 5000 }],
-    environment: {
-      ANON_KEY: credential('anonKey'),
-      SERVICE_KEY: credential('serviceRoleKey'),
-      POSTGREST_URL: literal('http://supabase-rest:3000'),
-      AUTH_JWT_SECRET: credential('jwtSecret'),
-      DATABASE_URL: databaseUrl('supabase_storage_admin', 'storage'),
-      STORAGE_PUBLIC_URL: literal(baseUrl),
-      REQUEST_ALLOW_X_FORWARDED_PATH: literal('true'),
-      FILE_SIZE_LIMIT: literal('52428800'),
-      TENANT_ID: literal(context.projectId),
-      REGION: literal(context.environment),
-      ENABLE_IMAGE_TRANSFORMATION: literal('true'),
-      IMGPROXY_URL: literal('http://supabase-imgproxy:5001'),
-      ...(s3 === undefined
-        ? {
-            STORAGE_BACKEND: literal('file'),
-            GLOBAL_S3_BUCKET: literal('stub'),
-            FILE_STORAGE_BACKEND_PATH: literal('/var/lib/storage'),
-          }
-        : {
-            STORAGE_BACKEND: literal('s3'),
-            STORAGE_S3_BUCKET: s3.bucket,
-            STORAGE_S3_ENDPOINT: s3.endpoint,
-            STORAGE_S3_FORCE_PATH_STYLE: s3.forcePathStyle,
-            STORAGE_S3_REGION: s3.region,
-            AWS_ACCESS_KEY_ID: s3.accessKeyId,
-            AWS_SECRET_ACCESS_KEY: s3.secretAccessKey,
-          }),
-    },
-    health: { kind: 'http', port: 5000, path: '/status' },
-    ...(s3 === undefined ? { persistence: createFileStoragePersistence(prod) } : {}),
-    exposure: 'internal',
-    replicas: 1,
-    dependsOn: ['supabase-db', 'supabase-rest', 'supabase-imgproxy'],
-  };
-}
-
-/*** Create retained production or destroyable development file-storage persistence. */
-function createFileStoragePersistence(
-  prod: boolean,
-): NonNullable<InfraWorkloadSpec['persistence']> {
-  return [
-    {
-      id: 'data',
-      mountPath: '/var/lib/storage',
-      sizeGiB: prod ? 20 : 5,
-      retention: prod ? 'retain' : 'delete-on-destroy',
-    },
-  ];
 }
 
 /*** Create the current Envoy gateway with portable service-DNS routes. */
