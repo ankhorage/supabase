@@ -41,14 +41,12 @@ rm -f "$pointer" "$dump" /tmp/ankhorage-s3-curl.conf
 `;
 
 /*** Project first-boot restore state for a database protected by scheduled S3 backups. */
-export function createSupabaseDatabaseRestore(context: InfraExecutionContext) {
-  const backup = context.desired.database?.provider === 'supabase' ? context.desired.database.backup : undefined;
-  if (backup === undefined) {
-    return {
-      environment: {} as Readonly<Record<string, InfraWorkloadValue>>,
-      files: [] as readonly InfraWorkloadFileSpec[],
-    };
-  }
+export function createSupabaseDatabaseRestore(
+  context: InfraExecutionContext,
+): SupabaseDatabaseRestoreProjection {
+  const backup =
+    context.desired.database?.provider === 'supabase' ? context.desired.database.backup : undefined;
+  if (backup === undefined) return { environment: {}, files: [] };
   const s3 = createSupabaseS3Values(backup.target);
   return {
     environment: {
@@ -56,12 +54,17 @@ export function createSupabaseDatabaseRestore(context: InfraExecutionContext) {
       S3_URL_PREFIX: s3.urlPrefix,
       AWS_ACCESS_KEY_ID: s3.accessKeyId,
       AWS_SECRET_ACCESS_KEY: s3.secretAccessKey,
-    } satisfies Readonly<Record<string, InfraWorkloadValue>>,
+    },
     files: [
       {
         path: '/docker-entrypoint-initdb.d/zzzz-ankhorage-restore.sh',
         content: { kind: 'literal', value: RESTORE_SCRIPT },
       },
-    ] satisfies readonly InfraWorkloadFileSpec[],
+    ],
   };
+}
+
+interface SupabaseDatabaseRestoreProjection {
+  readonly environment: Readonly<Record<string, InfraWorkloadValue>>;
+  readonly files: readonly InfraWorkloadFileSpec[];
 }
