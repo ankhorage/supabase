@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.7
+
+### Patch Changes
+
+- 64d6ecb: Align Realtime, Studio, and Envoy readiness probes with the health commands supported by their current container images while keeping credentials execution-only.
+
 ## 0.4.6
 
 ### Patch Changes
