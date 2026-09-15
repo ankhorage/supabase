@@ -46,6 +46,7 @@ it('contributes one deterministic current runtime-neutral Supabase workload grap
     '-c',
     'log_min_messages=fatal',
   ]);
+  expect(database?.environment?.POSTGRES_USER).toBeUndefined();
   expect(workloads.value.find(({ id }) => id === 'supabase-gateway')?.ports).toEqual([
     { name: 'http', port: 8000, publishedPort: 54_321 },
   ]);
