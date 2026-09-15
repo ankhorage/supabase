@@ -35,9 +35,7 @@ function uniqueReferences(
 ): readonly InfraControlPlaneCredentialRef[] {
   return references.filter(
     (reference, index) =>
-      references.findIndex(
-        (candidate) => candidate.source === reference.source && candidate.name === reference.name,
-      ) === index,
+      references.findIndex((candidate) => candidate.name === reference.name) === index,
   );
 }
 
