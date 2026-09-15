@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.4.0",
+      "value": "v0.4.7",
       "color": "cb3837"
     },
     {
@@ -71,7 +71,7 @@
     {
       "path": "examples/basic-usage/index.ts",
       "isEntrypoint": false,
-      "dependencies": [],
+      "dependencies": ["dist/index.d.ts"],
       "exports": []
     },
     {
@@ -163,17 +163,27 @@
       "exports": ["createInfraAdapter"]
     },
     {
-      "path": "src/features/platform-infrastructure/constants/supabase.ts",
+      "path": "src/features/platform-infrastructure/constants/databaseBootstrap.ts",
       "isEntrypoint": false,
       "dependencies": [],
       "exports": [
-        "SUPABASE_BOOTSTRAP_CREDENTIAL",
         "SUPABASE_DATABASE_JWT_SQL",
         "SUPABASE_DATABASE_REALTIME_SQL",
         "SUPABASE_DATABASE_ROLES_SQL",
-        "SUPABASE_ENVOY_CONFIG",
-        "SUPABASE_IMAGES"
+        "SUPABASE_DATABASE_WEBHOOKS_SQL"
       ]
+    },
+    {
+      "path": "src/features/platform-infrastructure/constants/supabase.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": ["SUPABASE_BOOTSTRAP_CREDENTIAL", "SUPABASE_ENVOY_CONFIG", "SUPABASE_IMAGES"]
+    },
+    {
+      "path": "src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts",
+      "isEntrypoint": false,
+      "dependencies": [],
+      "exports": ["createSupabaseDatabasePersistence"]
     },
     {
       "path": "src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts",
@@ -185,7 +195,9 @@
       "path": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
       "isEntrypoint": false,
       "dependencies": [
+        "src/features/platform-infrastructure/constants/databaseBootstrap.ts",
         "src/features/platform-infrastructure/constants/supabase.ts",
+        "src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts",
         "src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts"
       ],
       "exports": ["createSupabaseWorkloads"]
@@ -234,7 +246,33 @@
       "exports": []
     },
     {
+      "path": "src/supabaseMetaHealth.test.ts",
+      "isEntrypoint": false,
+      "dependencies": [
+        "src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts"
+      ],
+      "exports": []
+    },
+    {
+      "path": "src/supabaseNativeHealth.test.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"],
+      "exports": []
+    },
+    {
+      "path": "src/supabasePersistence.test.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/index.ts"],
+      "exports": []
+    },
+    {
       "path": "src/supabaseRuntimeEndpoints.test.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/index.ts"],
+      "exports": []
+    },
+    {
+      "path": "src/supabaseStudioHealth.test.ts",
       "isEntrypoint": false,
       "dependencies": ["src/index.ts"],
       "exports": []
@@ -677,6 +715,15 @@
       }
     },
     {
+      "name": "createSupabaseDatabasePersistence",
+      "description": "Keep Postgres data and pgsodium configuration on independently retained runtime volumes.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts",
+        "line": 4,
+        "column": 1
+      }
+    },
+    {
       "name": "createSupabaseOperationalWorkloads",
       "description": "Create the operational services supporting Storage and the self-hosted Studio.",
       "sourceLocation": {
@@ -708,7 +755,7 @@
       "description": "Create the self-hosted Studio without exposing privileged credentials as outputs.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts",
-        "line": 59,
+        "line": 66,
         "column": 1
       }
     },
@@ -717,7 +764,7 @@
       "description": "Create one literal workload value.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts",
-        "line": 93,
+        "line": 110,
         "column": 1
       }
     },
@@ -726,7 +773,7 @@
       "description": "Create one execution-only control-plane credential field reference.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts",
-        "line": 98,
+        "line": 115,
         "column": 1
       }
     },
@@ -735,16 +782,16 @@
       "description": "Project the selected Supabase platform into one ordered runtime-neutral workload graph.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 19,
+        "line": 23,
         "column": 1
       }
     },
     {
       "name": "createDatabaseWorkload",
-      "description": "Create the persistent Postgres 17 workload and first-boot configuration.",
+      "description": "Create persistent Postgres 17 data and custom configuration for safe runtime recreation.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 46,
+        "line": 50,
         "column": 1
       }
     },
@@ -753,7 +800,7 @@
       "description": "Create the GoTrue authentication workload using the current external Auth URL shape.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 95,
+        "line": 94,
         "column": 1
       }
     },
@@ -762,7 +809,7 @@
       "description": "Create the PostgREST Data API workload.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 127,
+        "line": 126,
         "column": 1
       }
     },
@@ -771,7 +818,7 @@
       "description": "Create the Realtime workload without runtime-specific networking assumptions.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 154,
+        "line": 153,
         "column": 1
       }
     },
@@ -780,7 +827,7 @@
       "description": "Create file-backed Supabase Storage with the self-hosted image transformation service.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 187,
+        "line": 197,
         "column": 1
       }
     },
@@ -789,7 +836,16 @@
       "description": "Create the current Envoy gateway with portable service-DNS routes.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 227,
+        "line": 236,
+        "column": 1
+      }
+    },
+    {
+      "name": "isSupabaseProductionTier",
+      "description": "Decide whether the selected Supabase database tier requires production persistence policy.",
+      "sourceLocation": {
+        "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
+        "line": 270,
         "column": 1
       }
     },
@@ -798,7 +854,7 @@
       "description": "Resolve an exact plain-HTTP listener only for the local runtime boundary.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 255,
+        "line": 277,
         "column": 1
       }
     },
@@ -807,7 +863,7 @@
       "description": "Create one literal workload value.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 270,
+        "line": 292,
         "column": 1
       }
     },
@@ -816,7 +872,7 @@
       "description": "Create one execution-only control-plane credential field reference.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 275,
+        "line": 297,
         "column": 1
       }
     },
@@ -825,7 +881,7 @@
       "description": "Create one password-bearing Postgres URL materialized only by the selected runtime.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 280,
+        "line": 302,
         "column": 1
       }
     },
@@ -960,7 +1016,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 212,
+        "line": 214,
         "column": 1
       }
     },
@@ -969,7 +1025,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 231,
+        "line": 233,
         "column": 1
       }
     },
@@ -978,7 +1034,7 @@
       "description": "Create the selected runtime's canonical public Supabase gateway output.",
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 253,
+        "line": 255,
         "column": 1
       }
     },
@@ -987,7 +1043,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 270,
+        "line": 272,
         "column": 1
       }
     },
@@ -996,7 +1052,7 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 282,
+        "line": 284,
         "column": 1
       }
     },
@@ -1005,7 +1061,52 @@
       "description": null,
       "sourceLocation": {
         "filePath": "src/supabaseLifecycle.test.ts",
-        "line": 294,
+        "line": 296,
+        "column": 1
+      }
+    },
+    {
+      "name": "createContext",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseMetaHealth.test.ts",
+        "line": 19,
+        "column": 1
+      }
+    },
+    {
+      "name": "success",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseMetaHealth.test.ts",
+        "line": 42,
+        "column": 1
+      }
+    },
+    {
+      "name": "createContext",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseNativeHealth.test.ts",
+        "line": 49,
+        "column": 1
+      }
+    },
+    {
+      "name": "success",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseNativeHealth.test.ts",
+        "line": 72,
+        "column": 1
+      }
+    },
+    {
+      "name": "createContext",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabasePersistence.test.ts",
+        "line": 36,
         "column": 1
       }
     },
@@ -1024,6 +1125,15 @@
       "sourceLocation": {
         "filePath": "src/supabaseRuntimeEndpoints.test.ts",
         "line": 104,
+        "column": 1
+      }
+    },
+    {
+      "name": "createContext",
+      "description": null,
+      "sourceLocation": {
+        "filePath": "src/supabaseStudioHealth.test.ts",
+        "line": 24,
         "column": 1
       }
     }
@@ -1084,9 +1194,34 @@
         "sourcePath": "src/supabaseLifecycle.test.ts"
       },
       {
+        "fromPath": "src/supabaseMetaHealth.test.ts",
+        "toPath": "src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts",
+        "sourcePath": "src/supabaseMetaHealth.test.ts"
+      },
+      {
+        "fromPath": "src/supabaseNativeHealth.test.ts",
+        "toPath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
+        "sourcePath": "src/supabaseNativeHealth.test.ts"
+      },
+      {
+        "fromPath": "src/supabasePersistence.test.ts",
+        "toPath": "src/index.ts",
+        "sourcePath": "src/supabasePersistence.test.ts"
+      },
+      {
         "fromPath": "src/supabaseRuntimeEndpoints.test.ts",
         "toPath": "src/index.ts",
         "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromPath": "src/supabaseStudioHealth.test.ts",
+        "toPath": "src/index.ts",
+        "sourcePath": "src/supabaseStudioHealth.test.ts"
+      },
+      {
+        "fromPath": "examples/basic-usage/index.ts",
+        "toPath": "dist/index.d.ts",
+        "sourcePath": "examples/basic-usage/index.ts"
       },
       {
         "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
@@ -1145,7 +1280,17 @@
       },
       {
         "fromPath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
+        "toPath": "src/features/platform-infrastructure/constants/databaseBootstrap.ts",
+        "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
         "toPath": "src/features/platform-infrastructure/constants/supabase.ts",
+        "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromPath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
+        "toPath": "src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts",
         "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
       },
       {
@@ -1431,6 +1576,90 @@
         "sourcePath": "src/supabaseLifecycle.test.ts"
       },
       {
+        "fromSymbol": "src/supabaseMetaHealth.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/supabaseMetaHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseMetaHealth.test.ts",
+        "toSymbol": "createSupabaseOperationalWorkloads",
+        "callExpression": "createSupabaseOperationalWorkloads",
+        "sourcePath": "src/supabaseMetaHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseMetaHealth.test.ts",
+        "toSymbol": "createContext",
+        "callExpression": "createContext",
+        "sourcePath": "src/supabaseMetaHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseMetaHealth.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/supabaseMetaHealth.test.ts"
+      },
+      {
+        "fromSymbol": "resolveAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseMetaHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseNativeHealth.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/supabaseNativeHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseNativeHealth.test.ts",
+        "toSymbol": "createSupabaseWorkloads",
+        "callExpression": "createSupabaseWorkloads",
+        "sourcePath": "src/supabaseNativeHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseNativeHealth.test.ts",
+        "toSymbol": "createContext",
+        "callExpression": "createContext",
+        "sourcePath": "src/supabaseNativeHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseNativeHealth.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/supabaseNativeHealth.test.ts"
+      },
+      {
+        "fromSymbol": "resolveAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseNativeHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabasePersistence.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/supabasePersistence.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabasePersistence.test.ts",
+        "toSymbol": "createInfraAdapter",
+        "callExpression": "createInfraAdapter",
+        "sourcePath": "src/supabasePersistence.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabasePersistence.test.ts",
+        "toSymbol": "createContext",
+        "callExpression": "createContext",
+        "sourcePath": "src/supabasePersistence.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabasePersistence.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/supabasePersistence.test.ts"
+      },
+      {
         "fromSymbol": "src/supabaseRuntimeEndpoints.test.ts",
         "toSymbol": "it",
         "callExpression": "it",
@@ -1483,6 +1712,30 @@
         "toSymbol": "capture",
         "callExpression": "this.capture",
         "sourcePath": "src/supabaseRuntimeEndpoints.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseStudioHealth.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/supabaseStudioHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseStudioHealth.test.ts",
+        "toSymbol": "createInfraAdapter",
+        "callExpression": "createInfraAdapter",
+        "sourcePath": "src/supabaseStudioHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseStudioHealth.test.ts",
+        "toSymbol": "createContext",
+        "callExpression": "createContext",
+        "sourcePath": "src/supabaseStudioHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseStudioHealth.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/supabaseStudioHealth.test.ts"
       },
       {
         "fromSymbol": "examples/basic-usage/index.ts",
@@ -1630,6 +1883,12 @@
       },
       {
         "fromSymbol": "createDatabaseWorkload",
+        "toSymbol": "isSupabaseProductionTier",
+        "callExpression": "isSupabaseProductionTier",
+        "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createDatabaseWorkload",
         "toSymbol": "literal",
         "callExpression": "literal",
         "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
@@ -1641,6 +1900,12 @@
         "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
       },
       {
+        "fromSymbol": "createDatabaseWorkload",
+        "toSymbol": "createSupabaseDatabasePersistence",
+        "callExpression": "createSupabaseDatabasePersistence",
+        "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
+      },
+      {
         "fromSymbol": "createAuthWorkload",
         "toSymbol": "literal",
         "callExpression": "literal",
@@ -1686,6 +1951,12 @@
         "fromSymbol": "createRealtimeWorkload",
         "toSymbol": "credential",
         "callExpression": "credential",
+        "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
+      },
+      {
+        "fromSymbol": "createStorageWorkload",
+        "toSymbol": "isSupabaseProductionTier",
+        "callExpression": "isSupabaseProductionTier",
         "sourcePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
       },
       {

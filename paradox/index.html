@@ -279,6 +279,16 @@
               <button
                 class="nav-button"
                 type="button"
+                data-target="src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts"
+              >
+                src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
                 data-target="src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts"
               >
                 src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts
@@ -292,7 +302,7 @@
                 data-target="src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
               >
                 src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts
-                <small>11 functions</small>
+                <small>12 functions</small>
               </button>
             </li>
             <li>
@@ -332,6 +342,32 @@
               </button>
             </li>
             <li>
+              <button class="nav-button" type="button" data-target="src/supabaseMetaHealth.test.ts">
+                src/supabaseMetaHealth.test.ts
+                <small>2 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/supabaseNativeHealth.test.ts"
+              >
+                src/supabaseNativeHealth.test.ts
+                <small>2 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/supabasePersistence.test.ts"
+              >
+                src/supabasePersistence.test.ts
+                <small>1 function</small>
+              </button>
+            </li>
+            <li>
               <button
                 class="nav-button"
                 type="button"
@@ -339,6 +375,16 @@
               >
                 src/supabaseRuntimeEndpoints.test.ts
                 <small>2 functions</small>
+              </button>
+            </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/supabaseStudioHealth.test.ts"
+              >
+                src/supabaseStudioHealth.test.ts
+                <small>1 function</small>
               </button>
             </li>
           </ul>
@@ -351,7 +397,7 @@
             <div class="summary">
               <div><strong>6</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>21</strong><span class="muted">modules</span></div>
+              <div><strong>27</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -362,10 +408,10 @@
 
           <section class="panel">
             <h2>Modules</h2>
-            <article class="item" data-search="examples/basic-usage/index.ts">
+            <article class="item" data-search="examples/basic-usage/index.ts dist/index.d.ts">
               <h3>examples/basic-usage/index.ts</h3>
               <p class="muted">Referenced module</p>
-              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p><strong>Dependencies:</strong> <code>dist/index.d.ts</code></p>
               <p><strong>Exports:</strong> <span class="empty">None</span></p>
             </article>
             <article class="item" data-search="src/constants/infra.ts infraAdapterDescriptor">
@@ -534,17 +580,40 @@
             </article>
             <article
               class="item"
-              data-search="src/features/platform-infrastructure/constants/supabase.ts SUPABASE_BOOTSTRAP_CREDENTIAL SUPABASE_DATABASE_JWT_SQL SUPABASE_DATABASE_REALTIME_SQL SUPABASE_DATABASE_ROLES_SQL SUPABASE_ENVOY_CONFIG SUPABASE_IMAGES"
+              data-search="src/features/platform-infrastructure/constants/databaseBootstrap.ts SUPABASE_DATABASE_JWT_SQL SUPABASE_DATABASE_REALTIME_SQL SUPABASE_DATABASE_ROLES_SQL SUPABASE_DATABASE_WEBHOOKS_SQL"
+            >
+              <h3>src/features/platform-infrastructure/constants/databaseBootstrap.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p>
+                <strong>Exports:</strong> <code>SUPABASE_DATABASE_JWT_SQL</code>,
+                <code>SUPABASE_DATABASE_REALTIME_SQL</code>,
+                <code>SUPABASE_DATABASE_ROLES_SQL</code>,
+                <code>SUPABASE_DATABASE_WEBHOOKS_SQL</code>
+              </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/features/platform-infrastructure/constants/supabase.ts SUPABASE_BOOTSTRAP_CREDENTIAL SUPABASE_ENVOY_CONFIG SUPABASE_IMAGES"
             >
               <h3>src/features/platform-infrastructure/constants/supabase.ts</h3>
               <p class="muted">Referenced module</p>
               <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
               <p>
                 <strong>Exports:</strong> <code>SUPABASE_BOOTSTRAP_CREDENTIAL</code>,
-                <code>SUPABASE_DATABASE_JWT_SQL</code>, <code>SUPABASE_DATABASE_REALTIME_SQL</code>,
-                <code>SUPABASE_DATABASE_ROLES_SQL</code>, <code>SUPABASE_ENVOY_CONFIG</code>,
-                <code>SUPABASE_IMAGES</code>
+                <code>SUPABASE_ENVOY_CONFIG</code>, <code>SUPABASE_IMAGES</code>
               </p>
+            </article>
+            <article
+              class="item"
+              data-search="src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts createSupabaseDatabasePersistence"
+            >
+              <h3>
+                src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts
+              </h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <span class="empty">None</span></p>
+              <p><strong>Exports:</strong> <code>createSupabaseDatabasePersistence</code></p>
             </article>
             <article
               class="item"
@@ -562,13 +631,17 @@
             </article>
             <article
               class="item"
-              data-search="src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts src/features/platform-infrastructure/constants/supabase.ts src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts createSupabaseWorkloads"
+              data-search="src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts src/features/platform-infrastructure/constants/databaseBootstrap.ts src/features/platform-infrastructure/constants/supabase.ts src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts createSupabaseWorkloads"
             >
               <h3>src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts</h3>
               <p class="muted">Referenced module</p>
               <p>
                 <strong>Dependencies:</strong>
+                <code>src/features/platform-infrastructure/constants/databaseBootstrap.ts</code>,
                 <code>src/features/platform-infrastructure/constants/supabase.ts</code>,
+                <code
+                  >src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts</code
+                >,
                 <code
                   >src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts</code
                 >
@@ -625,8 +698,46 @@
               <p><strong>Dependencies:</strong> <code>src/index.ts</code></p>
               <p><strong>Exports:</strong> <span class="empty">None</span></p>
             </article>
+            <article
+              class="item"
+              data-search="src/supabaseMetaHealth.test.ts src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts"
+            >
+              <h3>src/supabaseMetaHealth.test.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong>
+                <code
+                  >src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts</code
+                >
+              </p>
+              <p><strong>Exports:</strong> <span class="empty">None</span></p>
+            </article>
+            <article
+              class="item"
+              data-search="src/supabaseNativeHealth.test.ts src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
+            >
+              <h3>src/supabaseNativeHealth.test.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p>
+                <strong>Dependencies:</strong>
+                <code>src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts</code>
+              </p>
+              <p><strong>Exports:</strong> <span class="empty">None</span></p>
+            </article>
+            <article class="item" data-search="src/supabasePersistence.test.ts src/index.ts">
+              <h3>src/supabasePersistence.test.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/index.ts</code></p>
+              <p><strong>Exports:</strong> <span class="empty">None</span></p>
+            </article>
             <article class="item" data-search="src/supabaseRuntimeEndpoints.test.ts src/index.ts">
               <h3>src/supabaseRuntimeEndpoints.test.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/index.ts</code></p>
+              <p><strong>Exports:</strong> <span class="empty">None</span></p>
+            </article>
+            <article class="item" data-search="src/supabaseStudioHealth.test.ts src/index.ts">
+              <h3>src/supabaseStudioHealth.test.ts</h3>
               <p class="muted">Referenced module</p>
               <p><strong>Dependencies:</strong> <code>src/index.ts</code></p>
               <p><strong>Exports:</strong> <span class="empty">None</span></p>
@@ -949,6 +1060,7 @@
                 entrypoint_src_index_ts
                 module_examples_basic_usage_index_ts[&quot;examples/basic-usage/index.ts&quot;]
                 package__ankhorage_supabase -.-&gt; module_examples_basic_usage_index_ts
+                module_examples_basic_usage_index_ts --&gt; module_dist_index_d_ts
                 module_src_constants_infra_ts[&quot;src/constants/infra.ts&quot;]
                 package__ankhorage_supabase -.-&gt; module_src_constants_infra_ts
                 module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts[&quot;src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts&quot;]
@@ -1043,9 +1155,15 @@
                 module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
                 module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --&gt;
                 module_src_types_supabase_ts
+                module_src_features_platform_infrastructure_constants_databaseBootstrap_ts[&quot;src/features/platform-infrastructure/constants/databaseBootstrap.ts&quot;]
+                package__ankhorage_supabase -.-&gt;
+                module_src_features_platform_infrastructure_constants_databaseBootstrap_ts
                 module_src_features_platform_infrastructure_constants_supabase_ts[&quot;src/features/platform-infrastructure/constants/supabase.ts&quot;]
                 package__ankhorage_supabase -.-&gt;
                 module_src_features_platform_infrastructure_constants_supabase_ts
+                module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts&quot;]
+                package__ankhorage_supabase -.-&gt;
+                module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts
                 module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts&quot;]
                 package__ankhorage_supabase -.-&gt;
                 module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
@@ -1055,7 +1173,11 @@
                 package__ankhorage_supabase -.-&gt;
                 module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
                 module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt;
+                module_src_features_platform_infrastructure_constants_databaseBootstrap_ts
+                module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt;
                 module_src_features_platform_infrastructure_constants_supabase_ts
+                module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt;
+                module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts
                 module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt;
                 module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
                 module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts[&quot;src/features/platform-infrastructure/domain/resolveSupabaseDesiredState.ts&quot;]
@@ -1076,9 +1198,23 @@
                 module_src_supabaseLifecycle_test_ts[&quot;src/supabaseLifecycle.test.ts&quot;]
                 package__ankhorage_supabase -.-&gt; module_src_supabaseLifecycle_test_ts
                 module_src_supabaseLifecycle_test_ts --&gt; module_src_index_ts
+                module_src_supabaseMetaHealth_test_ts[&quot;src/supabaseMetaHealth.test.ts&quot;]
+                package__ankhorage_supabase -.-&gt; module_src_supabaseMetaHealth_test_ts
+                module_src_supabaseMetaHealth_test_ts --&gt;
+                module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
+                module_src_supabaseNativeHealth_test_ts[&quot;src/supabaseNativeHealth.test.ts&quot;]
+                package__ankhorage_supabase -.-&gt; module_src_supabaseNativeHealth_test_ts
+                module_src_supabaseNativeHealth_test_ts --&gt;
+                module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
+                module_src_supabasePersistence_test_ts[&quot;src/supabasePersistence.test.ts&quot;]
+                package__ankhorage_supabase -.-&gt; module_src_supabasePersistence_test_ts
+                module_src_supabasePersistence_test_ts --&gt; module_src_index_ts
                 module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
                 package__ankhorage_supabase -.-&gt; module_src_supabaseRuntimeEndpoints_test_ts
                 module_src_supabaseRuntimeEndpoints_test_ts --&gt; module_src_index_ts
+                module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
+                package__ankhorage_supabase -.-&gt; module_src_supabaseStudioHealth_test_ts
+                module_src_supabaseStudioHealth_test_ts --&gt; module_src_index_ts
                 module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
                 package__ankhorage_supabase -.-&gt; module_src_types_supabase_ts
               </div>
@@ -1091,6 +1227,7 @@ graph TD
   package__ankhorage_supabase --&gt; entrypoint_src_index_ts
   module_examples_basic_usage_index_ts[&quot;examples/basic-usage/index.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_examples_basic_usage_index_ts
+  module_examples_basic_usage_index_ts --&gt; module_dist_index_d_ts
   module_src_constants_infra_ts[&quot;src/constants/infra.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_constants_infra_ts
   module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts[&quot;src/features/platform-infrastructure/adapters/outbound/createFetchSupabaseControlPlane.ts&quot;]
@@ -1137,14 +1274,20 @@ graph TD
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --&gt; module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --&gt; module_src_types_supabase_ts
+  module_src_features_platform_infrastructure_constants_databaseBootstrap_ts[&quot;src/features/platform-infrastructure/constants/databaseBootstrap.ts&quot;]
+  package__ankhorage_supabase -.-&gt; module_src_features_platform_infrastructure_constants_databaseBootstrap_ts
   module_src_features_platform_infrastructure_constants_supabase_ts[&quot;src/features/platform-infrastructure/constants/supabase.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_features_platform_infrastructure_constants_supabase_ts
+  module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts&quot;]
+  package__ankhorage_supabase -.-&gt; module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts
   module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
   module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts --&gt; module_src_features_platform_infrastructure_constants_supabase_ts
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
+  module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt; module_src_features_platform_infrastructure_constants_databaseBootstrap_ts
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt; module_src_features_platform_infrastructure_constants_supabase_ts
+  module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
   module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts[&quot;src/features/platform-infrastructure/domain/resolveSupabaseDesiredState.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
@@ -1161,9 +1304,21 @@ graph TD
   module_src_supabaseLifecycle_test_ts[&quot;src/supabaseLifecycle.test.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_supabaseLifecycle_test_ts
   module_src_supabaseLifecycle_test_ts --&gt; module_src_index_ts
+  module_src_supabaseMetaHealth_test_ts[&quot;src/supabaseMetaHealth.test.ts&quot;]
+  package__ankhorage_supabase -.-&gt; module_src_supabaseMetaHealth_test_ts
+  module_src_supabaseMetaHealth_test_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
+  module_src_supabaseNativeHealth_test_ts[&quot;src/supabaseNativeHealth.test.ts&quot;]
+  package__ankhorage_supabase -.-&gt; module_src_supabaseNativeHealth_test_ts
+  module_src_supabaseNativeHealth_test_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
+  module_src_supabasePersistence_test_ts[&quot;src/supabasePersistence.test.ts&quot;]
+  package__ankhorage_supabase -.-&gt; module_src_supabasePersistence_test_ts
+  module_src_supabasePersistence_test_ts --&gt; module_src_index_ts
   module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_supabaseRuntimeEndpoints_test_ts
   module_src_supabaseRuntimeEndpoints_test_ts --&gt; module_src_index_ts
+  module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
+  package__ankhorage_supabase -.-&gt; module_src_supabaseStudioHealth_test_ts
+  module_src_supabaseStudioHealth_test_ts --&gt; module_src_index_ts
   module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_types_supabase_ts
 </pre>
@@ -1187,7 +1342,9 @@ graph TD
                 module_src_features_platform_infrastructure_application_use_cases_resolveSupabaseBootstrapCredentialsAsync_ts[&quot;src/features/platform-infrastructure/application/use-cases/resolveSupabaseBootstrapCredentialsAsync.ts&quot;]
                 module_src_features_platform_infrastructure_application_use_cases_validateSupabaseAsync_ts[&quot;src/features/platform-infrastructure/application/use-cases/validateSupabaseAsync.ts&quot;]
                 module_src_features_platform_infrastructure_composition_createInfraAdapter_ts[&quot;src/features/platform-infrastructure/composition/createInfraAdapter.ts&quot;]
+                module_src_features_platform_infrastructure_constants_databaseBootstrap_ts[&quot;src/features/platform-infrastructure/constants/databaseBootstrap.ts&quot;]
                 module_src_features_platform_infrastructure_constants_supabase_ts[&quot;src/features/platform-infrastructure/constants/supabase.ts&quot;]
+                module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts&quot;]
                 module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts&quot;]
                 module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts&quot;]
                 module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts[&quot;src/features/platform-infrastructure/domain/resolveSupabaseDesiredState.ts&quot;]
@@ -1196,8 +1353,13 @@ graph TD
                 module_src_infraAdapter_test_ts[&quot;src/infraAdapter.test.ts&quot;]
                 module_src_supabaseControlPlane_test_ts[&quot;src/supabaseControlPlane.test.ts&quot;]
                 module_src_supabaseLifecycle_test_ts[&quot;src/supabaseLifecycle.test.ts&quot;]
+                module_src_supabaseMetaHealth_test_ts[&quot;src/supabaseMetaHealth.test.ts&quot;]
+                module_src_supabaseNativeHealth_test_ts[&quot;src/supabaseNativeHealth.test.ts&quot;]
+                module_src_supabasePersistence_test_ts[&quot;src/supabasePersistence.test.ts&quot;]
                 module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
+                module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
                 module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
+                module_examples_basic_usage_index_ts --&gt; module_dist_index_d_ts
                 module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts
                 --&gt; module_src_types_supabase_ts
                 module_src_features_platform_infrastructure_application_use_cases_destroySupabaseAsync_ts
@@ -1269,14 +1431,24 @@ graph TD
                 module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
                 --&gt; module_src_features_platform_infrastructure_constants_supabase_ts
                 module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt;
+                module_src_features_platform_infrastructure_constants_databaseBootstrap_ts
+                module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt;
                 module_src_features_platform_infrastructure_constants_supabase_ts
+                module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt;
+                module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts
                 module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt;
                 module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
                 module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
                 --&gt; module_src_types_supabase_ts module_src_infraAdapter_test_ts --&gt;
                 module_src_index_ts module_src_supabaseControlPlane_test_ts --&gt;
                 module_src_index_ts module_src_supabaseLifecycle_test_ts --&gt; module_src_index_ts
+                module_src_supabaseMetaHealth_test_ts --&gt;
+                module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
+                module_src_supabaseNativeHealth_test_ts --&gt;
+                module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
+                module_src_supabasePersistence_test_ts --&gt; module_src_index_ts
                 module_src_supabaseRuntimeEndpoints_test_ts --&gt; module_src_index_ts
+                module_src_supabaseStudioHealth_test_ts --&gt; module_src_index_ts
               </div>
               <details>
                 <summary>View Mermaid source</summary>
@@ -1292,7 +1464,9 @@ graph LR
   module_src_features_platform_infrastructure_application_use_cases_resolveSupabaseBootstrapCredentialsAsync_ts[&quot;src/features/platform-infrastructure/application/use-cases/resolveSupabaseBootstrapCredentialsAsync.ts&quot;]
   module_src_features_platform_infrastructure_application_use_cases_validateSupabaseAsync_ts[&quot;src/features/platform-infrastructure/application/use-cases/validateSupabaseAsync.ts&quot;]
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts[&quot;src/features/platform-infrastructure/composition/createInfraAdapter.ts&quot;]
+  module_src_features_platform_infrastructure_constants_databaseBootstrap_ts[&quot;src/features/platform-infrastructure/constants/databaseBootstrap.ts&quot;]
   module_src_features_platform_infrastructure_constants_supabase_ts[&quot;src/features/platform-infrastructure/constants/supabase.ts&quot;]
+  module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts&quot;]
   module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts&quot;]
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts&quot;]
   module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts[&quot;src/features/platform-infrastructure/domain/resolveSupabaseDesiredState.ts&quot;]
@@ -1301,8 +1475,13 @@ graph LR
   module_src_infraAdapter_test_ts[&quot;src/infraAdapter.test.ts&quot;]
   module_src_supabaseControlPlane_test_ts[&quot;src/supabaseControlPlane.test.ts&quot;]
   module_src_supabaseLifecycle_test_ts[&quot;src/supabaseLifecycle.test.ts&quot;]
+  module_src_supabaseMetaHealth_test_ts[&quot;src/supabaseMetaHealth.test.ts&quot;]
+  module_src_supabaseNativeHealth_test_ts[&quot;src/supabaseNativeHealth.test.ts&quot;]
+  module_src_supabasePersistence_test_ts[&quot;src/supabasePersistence.test.ts&quot;]
   module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
+  module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
   module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
+  module_examples_basic_usage_index_ts --&gt; module_dist_index_d_ts
   module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts --&gt; module_src_types_supabase_ts
   module_src_features_platform_infrastructure_application_use_cases_destroySupabaseAsync_ts --&gt; module_src_features_platform_infrastructure_application_use_cases_resolveSupabaseBootstrapCredentialsAsync_ts
   module_src_features_platform_infrastructure_application_use_cases_destroySupabaseAsync_ts --&gt; module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
@@ -1332,13 +1511,19 @@ graph LR
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --&gt; module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts --&gt; module_src_types_supabase_ts
   module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts --&gt; module_src_features_platform_infrastructure_constants_supabase_ts
+  module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt; module_src_features_platform_infrastructure_constants_databaseBootstrap_ts
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt; module_src_features_platform_infrastructure_constants_supabase_ts
+  module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
   module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts --&gt; module_src_types_supabase_ts
   module_src_infraAdapter_test_ts --&gt; module_src_index_ts
   module_src_supabaseControlPlane_test_ts --&gt; module_src_index_ts
   module_src_supabaseLifecycle_test_ts --&gt; module_src_index_ts
+  module_src_supabaseMetaHealth_test_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts
+  module_src_supabaseNativeHealth_test_ts --&gt; module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts
+  module_src_supabasePersistence_test_ts --&gt; module_src_index_ts
   module_src_supabaseRuntimeEndpoints_test_ts --&gt; module_src_index_ts
+  module_src_supabaseStudioHealth_test_ts --&gt; module_src_index_ts
 </pre>
               </details>
             </article>
@@ -1357,7 +1542,9 @@ graph LR
                 module_src_features_platform_infrastructure_application_use_cases_resolveSupabaseBootstrapCredentialsAsync_ts[&quot;src/features/platform-infrastructure/application/use-cases/resolveSupabaseBootstrapCredentialsAsync.ts&quot;]
                 module_src_features_platform_infrastructure_application_use_cases_validateSupabaseAsync_ts[&quot;src/features/platform-infrastructure/application/use-cases/validateSupabaseAsync.ts&quot;]
                 module_src_features_platform_infrastructure_composition_createInfraAdapter_ts[&quot;src/features/platform-infrastructure/composition/createInfraAdapter.ts&quot;]
+                module_src_features_platform_infrastructure_constants_databaseBootstrap_ts[&quot;src/features/platform-infrastructure/constants/databaseBootstrap.ts&quot;]
                 module_src_features_platform_infrastructure_constants_supabase_ts[&quot;src/features/platform-infrastructure/constants/supabase.ts&quot;]
+                module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts&quot;]
                 module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts&quot;]
                 module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts&quot;]
                 module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts[&quot;src/features/platform-infrastructure/domain/resolveSupabaseDesiredState.ts&quot;]
@@ -1366,7 +1553,11 @@ graph LR
                 module_src_infraAdapter_test_ts[&quot;src/infraAdapter.test.ts&quot;]
                 module_src_supabaseControlPlane_test_ts[&quot;src/supabaseControlPlane.test.ts&quot;]
                 module_src_supabaseLifecycle_test_ts[&quot;src/supabaseLifecycle.test.ts&quot;]
+                module_src_supabaseMetaHealth_test_ts[&quot;src/supabaseMetaHealth.test.ts&quot;]
+                module_src_supabaseNativeHealth_test_ts[&quot;src/supabaseNativeHealth.test.ts&quot;]
+                module_src_supabasePersistence_test_ts[&quot;src/supabasePersistence.test.ts&quot;]
                 module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
+                module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
                 module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
                 export_createFetchSupabaseControlPlane[&quot;createFetchSupabaseControlPlane&quot;]
                 module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts
@@ -1401,7 +1592,9 @@ graph LR
   module_src_features_platform_infrastructure_application_use_cases_resolveSupabaseBootstrapCredentialsAsync_ts[&quot;src/features/platform-infrastructure/application/use-cases/resolveSupabaseBootstrapCredentialsAsync.ts&quot;]
   module_src_features_platform_infrastructure_application_use_cases_validateSupabaseAsync_ts[&quot;src/features/platform-infrastructure/application/use-cases/validateSupabaseAsync.ts&quot;]
   module_src_features_platform_infrastructure_composition_createInfraAdapter_ts[&quot;src/features/platform-infrastructure/composition/createInfraAdapter.ts&quot;]
+  module_src_features_platform_infrastructure_constants_databaseBootstrap_ts[&quot;src/features/platform-infrastructure/constants/databaseBootstrap.ts&quot;]
   module_src_features_platform_infrastructure_constants_supabase_ts[&quot;src/features/platform-infrastructure/constants/supabase.ts&quot;]
+  module_src_features_platform_infrastructure_domain_createSupabaseDatabasePersistence_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts&quot;]
   module_src_features_platform_infrastructure_domain_createSupabaseOperationalWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts&quot;]
   module_src_features_platform_infrastructure_domain_createSupabaseWorkloads_ts[&quot;src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts&quot;]
   module_src_features_platform_infrastructure_domain_resolveSupabaseDesiredState_ts[&quot;src/features/platform-infrastructure/domain/resolveSupabaseDesiredState.ts&quot;]
@@ -1410,7 +1603,11 @@ graph LR
   module_src_infraAdapter_test_ts[&quot;src/infraAdapter.test.ts&quot;]
   module_src_supabaseControlPlane_test_ts[&quot;src/supabaseControlPlane.test.ts&quot;]
   module_src_supabaseLifecycle_test_ts[&quot;src/supabaseLifecycle.test.ts&quot;]
+  module_src_supabaseMetaHealth_test_ts[&quot;src/supabaseMetaHealth.test.ts&quot;]
+  module_src_supabaseNativeHealth_test_ts[&quot;src/supabaseNativeHealth.test.ts&quot;]
+  module_src_supabasePersistence_test_ts[&quot;src/supabasePersistence.test.ts&quot;]
   module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
+  module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
   module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
   export_createFetchSupabaseControlPlane[&quot;createFetchSupabaseControlPlane&quot;]
   module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts --&gt; export_createFetchSupabaseControlPlane
@@ -1874,6 +2071,33 @@ sequenceDiagram
           </section>
         </section>
         <section
+          id="view-src-features-platform-infrastructure-domain-createsupabasedatabasepersistence-ts"
+          class="view"
+          data-view="src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>
+              src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts
+            </h2>
+            <article
+              class="item"
+              data-search="createSupabaseDatabasePersistence src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts Keep Postgres data and pgsodium configuration on independently retained runtime volumes."
+            >
+              <h3>createSupabaseDatabasePersistence</h3>
+              <p class="muted">
+                <code
+                  >src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts:4:1</code
+                >
+              </p>
+              <p>
+                Keep Postgres data and pgsodium configuration on independently retained runtime
+                volumes.
+              </p>
+            </article>
+          </section>
+        </section>
+        <section
           id="view-src-features-platform-infrastructure-domain-createsupabaseoperationalworkloads-ts"
           class="view"
           data-view="src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts"
@@ -1926,7 +2150,7 @@ sequenceDiagram
               <h3>createStudioWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts:59:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts:66:1</code
                 >
               </p>
               <p>
@@ -1940,7 +2164,7 @@ sequenceDiagram
               <h3>literal</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts:93:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts:110:1</code
                 >
               </p>
               <p>Create one literal workload value.</p>
@@ -1952,7 +2176,7 @@ sequenceDiagram
               <h3>credential</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts:98:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseOperationalWorkloads.ts:115:1</code
                 >
               </p>
               <p>Create one execution-only control-plane credential field reference.</p>
@@ -1974,7 +2198,7 @@ sequenceDiagram
               <h3>createSupabaseWorkloads</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:19:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:23:1</code
                 >
               </p>
               <p>
@@ -1984,15 +2208,18 @@ sequenceDiagram
             </article>
             <article
               class="item"
-              data-search="createDatabaseWorkload src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts Create the persistent Postgres 17 workload and first-boot configuration."
+              data-search="createDatabaseWorkload src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts Create persistent Postgres 17 data and custom configuration for safe runtime recreation."
             >
               <h3>createDatabaseWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:46:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:50:1</code
                 >
               </p>
-              <p>Create the persistent Postgres 17 workload and first-boot configuration.</p>
+              <p>
+                Create persistent Postgres 17 data and custom configuration for safe runtime
+                recreation.
+              </p>
             </article>
             <article
               class="item"
@@ -2001,7 +2228,7 @@ sequenceDiagram
               <h3>createAuthWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:95:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:94:1</code
                 >
               </p>
               <p>
@@ -2015,7 +2242,7 @@ sequenceDiagram
               <h3>createRestWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:127:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:126:1</code
                 >
               </p>
               <p>Create the PostgREST Data API workload.</p>
@@ -2027,7 +2254,7 @@ sequenceDiagram
               <h3>createRealtimeWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:154:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:153:1</code
                 >
               </p>
               <p>Create the Realtime workload without runtime-specific networking assumptions.</p>
@@ -2039,7 +2266,7 @@ sequenceDiagram
               <h3>createStorageWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:187:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:197:1</code
                 >
               </p>
               <p>
@@ -2054,10 +2281,25 @@ sequenceDiagram
               <h3>createGatewayWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:227:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:236:1</code
                 >
               </p>
               <p>Create the current Envoy gateway with portable service-DNS routes.</p>
+            </article>
+            <article
+              class="item"
+              data-search="isSupabaseProductionTier src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts Decide whether the selected Supabase database tier requires production persistence policy."
+            >
+              <h3>isSupabaseProductionTier</h3>
+              <p class="muted">
+                <code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:270:1</code
+                >
+              </p>
+              <p>
+                Decide whether the selected Supabase database tier requires production persistence
+                policy.
+              </p>
             </article>
             <article
               class="item"
@@ -2066,7 +2308,7 @@ sequenceDiagram
               <h3>resolveLocalPublishedPort</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:255:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:277:1</code
                 >
               </p>
               <p>Resolve an exact plain-HTTP listener only for the local runtime boundary.</p>
@@ -2078,7 +2320,7 @@ sequenceDiagram
               <h3>literal</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:270:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:292:1</code
                 >
               </p>
               <p>Create one literal workload value.</p>
@@ -2090,7 +2332,7 @@ sequenceDiagram
               <h3>credential</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:275:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:297:1</code
                 >
               </p>
               <p>Create one execution-only control-plane credential field reference.</p>
@@ -2102,7 +2344,7 @@ sequenceDiagram
               <h3>databaseUrl</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:280:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:302:1</code
                 >
               </p>
               <p>
@@ -2322,12 +2564,12 @@ sequenceDiagram
             <h2>src/supabaseLifecycle.test.ts</h2>
             <article class="item" data-search="createContext src/supabaseLifecycle.test.ts ">
               <h3>createContext</h3>
-              <p class="muted"><code>src/supabaseLifecycle.test.ts:212:1</code></p>
+              <p class="muted"><code>src/supabaseLifecycle.test.ts:214:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="createOwnedContext src/supabaseLifecycle.test.ts ">
               <h3>createOwnedContext</h3>
-              <p class="muted"><code>src/supabaseLifecycle.test.ts:231:1</code></p>
+              <p class="muted"><code>src/supabaseLifecycle.test.ts:233:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article
@@ -2335,22 +2577,77 @@ sequenceDiagram
               data-search="createRuntimeEndpoint src/supabaseLifecycle.test.ts Create the selected runtime&#39;s canonical public Supabase gateway output."
             >
               <h3>createRuntimeEndpoint</h3>
-              <p class="muted"><code>src/supabaseLifecycle.test.ts:253:1</code></p>
+              <p class="muted"><code>src/supabaseLifecycle.test.ts:255:1</code></p>
               <p>Create the selected runtime&#39;s canonical public Supabase gateway output.</p>
             </article>
             <article class="item" data-search="createDestroyRequest src/supabaseLifecycle.test.ts ">
               <h3>createDestroyRequest</h3>
-              <p class="muted"><code>src/supabaseLifecycle.test.ts:270:1</code></p>
+              <p class="muted"><code>src/supabaseLifecycle.test.ts:272:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="successCredentials src/supabaseLifecycle.test.ts ">
               <h3>successCredentials</h3>
-              <p class="muted"><code>src/supabaseLifecycle.test.ts:282:1</code></p>
+              <p class="muted"><code>src/supabaseLifecycle.test.ts:284:1</code></p>
               <p class="empty">No description available.</p>
             </article>
             <article class="item" data-search="success src/supabaseLifecycle.test.ts ">
               <h3>success</h3>
-              <p class="muted"><code>src/supabaseLifecycle.test.ts:294:1</code></p>
+              <p class="muted"><code>src/supabaseLifecycle.test.ts:296:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-supabasemetahealth-test-ts"
+          class="view"
+          data-view="src/supabaseMetaHealth.test.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/supabaseMetaHealth.test.ts</h2>
+            <article class="item" data-search="createContext src/supabaseMetaHealth.test.ts ">
+              <h3>createContext</h3>
+              <p class="muted"><code>src/supabaseMetaHealth.test.ts:19:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="success src/supabaseMetaHealth.test.ts ">
+              <h3>success</h3>
+              <p class="muted"><code>src/supabaseMetaHealth.test.ts:42:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-supabasenativehealth-test-ts"
+          class="view"
+          data-view="src/supabaseNativeHealth.test.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/supabaseNativeHealth.test.ts</h2>
+            <article class="item" data-search="createContext src/supabaseNativeHealth.test.ts ">
+              <h3>createContext</h3>
+              <p class="muted"><code>src/supabaseNativeHealth.test.ts:49:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+            <article class="item" data-search="success src/supabaseNativeHealth.test.ts ">
+              <h3>success</h3>
+              <p class="muted"><code>src/supabaseNativeHealth.test.ts:72:1</code></p>
+              <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-supabasepersistence-test-ts"
+          class="view"
+          data-view="src/supabasePersistence.test.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/supabasePersistence.test.ts</h2>
+            <article class="item" data-search="createContext src/supabasePersistence.test.ts ">
+              <h3>createContext</h3>
+              <p class="muted"><code>src/supabasePersistence.test.ts:36:1</code></p>
               <p class="empty">No description available.</p>
             </article>
           </section>
@@ -2378,6 +2675,21 @@ sequenceDiagram
               <h3>createMinikubeEndpoint</h3>
               <p class="muted"><code>src/supabaseRuntimeEndpoints.test.ts:104:1</code></p>
               <p>Create the Minikube-owned local gateway endpoint.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-supabasestudiohealth-test-ts"
+          class="view"
+          data-view="src/supabaseStudioHealth.test.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/supabaseStudioHealth.test.ts</h2>
+            <article class="item" data-search="createContext src/supabaseStudioHealth.test.ts ">
+              <h3>createContext</h3>
+              <p class="muted"><code>src/supabaseStudioHealth.test.ts:24:1</code></p>
+              <p class="empty">No description available.</p>
             </article>
           </section>
         </section>
