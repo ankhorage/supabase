@@ -11,19 +11,21 @@ const DEFAULT_BACKUP_INTERVAL_HOURS = 24;
 const BACKUP_SCRIPT = `
 set -eu
 umask 077
-printf 'user = "%s:%s"\n' "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > /tmp/ankhorage-s3-curl.conf
+cleanup() { rm -f /tmp/ankhorage-s3-curl.conf /tmp/ankhorage-backup.dump /tmp/ankhorage-latest; }
+trap cleanup EXIT INT TERM
 backup_once() {
   timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
   key="database/\${timestamp}.dump"
-  dump="/tmp/\${timestamp}.dump"
-  pointer="/tmp/latest"
-  pg_dump --format=custom --no-owner --no-acl --file="$dump"
+  printf 'user = "%s:%s"\n' "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > /tmp/ankhorage-s3-curl.conf
+  pg_dump --format=custom --no-owner --no-acl --file=/tmp/ankhorage-backup.dump
   curl --fail --silent --show-error --config /tmp/ankhorage-s3-curl.conf \
-    --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --upload-file "$dump" "\${S3_URL_PREFIX}/$key"
-  printf '%s' "$key" > "$pointer"
+    --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --upload-file /tmp/ankhorage-backup.dump \
+    "\${S3_URL_PREFIX}/$key"
+  printf '%s' "$key" > /tmp/ankhorage-latest
   curl --fail --silent --show-error --config /tmp/ankhorage-s3-curl.conf \
-    --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --upload-file "$pointer" "\${S3_URL_PREFIX}/database/latest"
-  rm -f "$dump" "$pointer"
+    --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --upload-file /tmp/ankhorage-latest \
+    "\${S3_URL_PREFIX}/database/latest"
+  cleanup
   touch /tmp/ankhorage-backup-ready
 }
 backup_once
