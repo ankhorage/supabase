@@ -28,6 +28,7 @@ it('keeps dev persistence destroyable while retaining production data and pgsodi
       id: 'config',
       mountPath: '/etc/postgresql-custom',
       sizeGiB: 1,
+      seed: 'image',
       retention: 'retain',
     },
   ]);
