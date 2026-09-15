@@ -66,13 +66,14 @@ it('defines readiness, bootstrap and dependency boundaries without leaking secre
     'supabase-db',
     'supabase-meta',
   ]);
-  expect(
-    workloads.value.find(({ id }) => id === 'supabase-db')?.files?.map(({ path }) => path),
-  ).toEqual([
+  const databaseFiles = workloads.value.find(({ id }) => id === 'supabase-db')?.files ?? [];
+  expect(databaseFiles.map(({ path }) => path)).toEqual([
+    '/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql',
     '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql',
     '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql',
     '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
   ]);
+  expect(JSON.stringify(databaseFiles[0])).toContain('CREATE USER supabase_functions_admin');
   const serialized = JSON.stringify(workloads.value);
   expect(serialized).toContain('http://127.0.0.1:54321/auth/v1');
   expect(serialized).not.toContain('postgres-password');
