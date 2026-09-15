@@ -52,7 +52,6 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
     args: SUPABASE_DATABASE_ARGUMENTS,
     ports: [{ name: 'postgres', port: 5432 }],
     environment: {
-      POSTGRES_USER: literal('postgres'),
       POSTGRES_DB: literal('postgres'),
       POSTGRES_HOST: literal('/var/run/postgresql'),
       POSTGRES_PORT: literal('5432'),
