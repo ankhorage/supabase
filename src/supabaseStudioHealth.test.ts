@@ -3,15 +3,21 @@ import { expect, it } from 'bun:test';
 
 import { createInfraAdapter } from './index';
 
-it('projects the current self-hosted Studio health route', async () => {
+it('projects the current self-hosted Studio native health command', async () => {
   const workloads = await createInfraAdapter().desiredWorkloadsAsync(createContext());
 
   expect(workloads.ok).toBe(true);
   if (!workloads.ok) return;
   expect(workloads.value.find(({ id }) => id === 'supabase-studio')?.health).toEqual({
-    kind: 'http',
-    port: 3000,
-    path: '/api/platform/profile',
+    kind: 'command',
+    command: [
+      'node',
+      '-e',
+      "fetch('http://localhost:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})",
+    ],
+    intervalSeconds: 5,
+    timeoutSeconds: 10,
+    failureThreshold: 3,
   });
 });
 
