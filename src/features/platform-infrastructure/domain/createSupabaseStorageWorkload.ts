@@ -1,4 +1,9 @@
-import type { InfraExecutionContext, InfraWorkloadSpec } from '@ankhorage/contracts/infra';
+import type {
+  InfraExecutionContext,
+  InfraS3PersistenceTarget,
+  InfraWorkloadSpec,
+  InfraWorkloadValue,
+} from '@ankhorage/contracts/infra';
 
 import { SUPABASE_BOOTSTRAP_CREDENTIAL, SUPABASE_IMAGES } from '../constants/supabase';
 import { createSupabaseS3Values } from './createSupabaseS3Values';
@@ -14,7 +19,6 @@ export function createSupabaseStorageWorkload(
     context.desired.objectStorage?.provider === 'supabase'
       ? context.desired.objectStorage.backend
       : undefined;
-  const s3 = backend === undefined ? undefined : createSupabaseS3Values(backend);
   return {
     id: 'supabase-storage',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.storage },
@@ -58,30 +62,36 @@ export function createSupabaseStorageWorkload(
       REGION: { kind: 'literal', value: context.environment },
       ENABLE_IMAGE_TRANSFORMATION: { kind: 'literal', value: 'true' },
       IMGPROXY_URL: { kind: 'literal', value: 'http://supabase-imgproxy:5001' },
-      ...(s3 === undefined
-        ? {
-            STORAGE_BACKEND: { kind: 'literal' as const, value: 'file' },
-            GLOBAL_S3_BUCKET: { kind: 'literal' as const, value: 'stub' },
-            FILE_STORAGE_BACKEND_PATH: {
-              kind: 'literal' as const,
-              value: '/var/lib/storage',
-            },
-          }
-        : {
-            STORAGE_BACKEND: { kind: 'literal' as const, value: 's3' },
-            STORAGE_S3_BUCKET: s3.bucket,
-            STORAGE_S3_ENDPOINT: s3.endpoint,
-            STORAGE_S3_FORCE_PATH_STYLE: s3.forcePathStyle,
-            STORAGE_S3_REGION: s3.region,
-            AWS_ACCESS_KEY_ID: s3.accessKeyId,
-            AWS_SECRET_ACCESS_KEY: s3.secretAccessKey,
-          }),
+      ...createStorageBackendEnvironment(backend),
     },
     health: { kind: 'http', port: 5000, path: '/status' },
-    ...(s3 === undefined ? { persistence: createFileStoragePersistence(prod) } : {}),
+    ...(backend === undefined ? { persistence: createFileStoragePersistence(prod) } : {}),
     exposure: 'internal',
     replicas: 1,
     dependsOn: ['supabase-db', 'supabase-rest', 'supabase-imgproxy'],
+  };
+}
+
+/*** Project file-backed or S3-backed Storage environment without leaking resolved credentials. */
+function createStorageBackendEnvironment(
+  target: InfraS3PersistenceTarget | undefined,
+): Readonly<Record<string, InfraWorkloadValue>> {
+  if (target === undefined) {
+    return {
+      STORAGE_BACKEND: { kind: 'literal', value: 'file' },
+      GLOBAL_S3_BUCKET: { kind: 'literal', value: 'stub' },
+      FILE_STORAGE_BACKEND_PATH: { kind: 'literal', value: '/var/lib/storage' },
+    };
+  }
+  const s3 = createSupabaseS3Values(target);
+  return {
+    STORAGE_BACKEND: { kind: 'literal', value: 's3' },
+    STORAGE_S3_BUCKET: s3.bucket,
+    STORAGE_S3_ENDPOINT: s3.endpoint,
+    STORAGE_S3_FORCE_PATH_STYLE: s3.forcePathStyle,
+    STORAGE_S3_REGION: s3.region,
+    AWS_ACCESS_KEY_ID: s3.accessKeyId,
+    AWS_SECRET_ACCESS_KEY: s3.secretAccessKey,
   };
 }
 
