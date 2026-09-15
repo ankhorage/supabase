@@ -257,7 +257,9 @@ function createGatewayWorkload(context: InfraExecutionContext, baseUrl: string):
 
 /*** Decide whether the selected Supabase database tier requires production persistence policy. */
 function isSupabaseProductionTier(context: InfraExecutionContext): boolean {
-  return context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod';
+  return (
+    context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod'
+  );
 }
 
 /*** Resolve an exact plain-HTTP listener only for the local runtime boundary. */
