@@ -6,11 +6,13 @@ import type {
 } from '@ankhorage/contracts/infra';
 
 import {
-  SUPABASE_BOOTSTRAP_CREDENTIAL,
   SUPABASE_DATABASE_JWT_SQL,
   SUPABASE_DATABASE_REALTIME_SQL,
   SUPABASE_DATABASE_ROLES_SQL,
   SUPABASE_DATABASE_WEBHOOKS_SQL,
+} from '../constants/databaseBootstrap';
+import {
+  SUPABASE_BOOTSTRAP_CREDENTIAL,
   SUPABASE_ENVOY_CONFIG,
   SUPABASE_IMAGES,
 } from '../constants/supabase';
