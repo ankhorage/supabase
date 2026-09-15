@@ -15,6 +15,7 @@ export function createSupabaseDatabasePersistence(
       id: 'config',
       mountPath: '/etc/postgresql-custom',
       sizeGiB: 1,
+      seed: 'image',
       retention: prod ? 'retain' : 'delete-on-destroy',
     },
   ];
