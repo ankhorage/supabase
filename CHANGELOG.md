@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.5
+
+### Patch Changes
+
+- 32f9781: Make dev/default Supabase database and file-storage volumes explicitly destroyable while retaining production-tier persistence.
+
 ## 0.4.4
 
 ### Patch Changes
