@@ -4,9 +4,7 @@ import type {
 } from '@ankhorage/contracts/infra';
 
 /*** Project one portable S3 target into execution-only workload values and a concrete URL prefix. */
-export function createSupabaseS3Values(
-  target: InfraS3PersistenceTarget,
-): SupabaseS3WorkloadValues {
+export function createSupabaseS3Values(target: InfraS3PersistenceTarget): SupabaseS3WorkloadValues {
   return {
     endpoint: literal(target.endpoint),
     region: literal(target.region),

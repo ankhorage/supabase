@@ -9,7 +9,9 @@ import type {
 export async function validateSupabasePersistenceCredentialsAsync(
   context: InfraExecutionContext,
 ): Promise<InfraResult<null>> {
-  const references = uniqueReferences(resolveTargets(context).map(({ credentials }) => credentials));
+  const references = uniqueReferences(
+    resolveTargets(context).map(({ credentials }) => credentials),
+  );
   const results = await Promise.all(
     references.map(async (reference) => validateCredentialAsync(context, reference)),
   );
