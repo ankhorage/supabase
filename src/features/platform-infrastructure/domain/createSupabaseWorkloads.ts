@@ -16,8 +16,11 @@ import {
   SUPABASE_ENVOY_CONFIG,
   SUPABASE_IMAGES,
 } from '../constants/supabase';
+import { createSupabaseDatabaseBackupWorkload } from './createSupabaseDatabaseBackupWorkload';
 import { createSupabaseDatabasePersistence } from './createSupabaseDatabasePersistence';
+import { createSupabaseDatabaseRestore } from './createSupabaseDatabaseRestore';
 import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';
+import { createSupabaseStorageWorkload } from './createSupabaseStorageWorkload';
 
 /*** Project the selected Supabase platform into one ordered runtime-neutral workload graph. */
 export function createSupabaseWorkloads(
@@ -25,13 +28,15 @@ export function createSupabaseWorkloads(
 ): readonly InfraWorkloadSpec[] {
   const baseUrl = context.desired.networking?.publicBaseUrl ?? '';
   const [imgproxy, meta, studio] = createSupabaseOperationalWorkloads(context, baseUrl);
+  const backup = createSupabaseDatabaseBackupWorkload(context);
   return [
     createDatabaseWorkload(context),
+    ...(backup === undefined ? [] : [backup]),
     createAuthWorkload(baseUrl),
     createRestWorkload(),
     createRealtimeWorkload(),
     imgproxy,
-    createStorageWorkload(context, baseUrl),
+    createSupabaseStorageWorkload(context, baseUrl),
     meta,
     studio,
     createGatewayWorkload(context, baseUrl),
@@ -49,6 +54,7 @@ const SUPABASE_DATABASE_ARGUMENTS = [
 /*** Create persistent Postgres 17 data and custom configuration for safe runtime recreation. */
 function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSpec {
   const prod = isSupabaseProductionTier(context);
+  const restore = createSupabaseDatabaseRestore(context);
   return {
     id: 'supabase-db',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.database },
@@ -64,6 +70,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
       PGPASSWORD: credential('postgresPassword'),
       JWT_SECRET: credential('jwtSecret'),
       JWT_EXP: literal('3600'),
+      ...restore.environment,
     },
     files: [
       {
@@ -82,6 +89,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
         path: '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
         content: literal(SUPABASE_DATABASE_REALTIME_SQL),
       },
+      ...restore.files,
     ],
     health: { kind: 'command', command: ['pg_isready', '-U', 'postgres', '-h', 'localhost'] },
     persistence: createSupabaseDatabasePersistence(prod),
@@ -190,45 +198,6 @@ function createRealtimeWorkload(): InfraWorkloadSpec {
     exposure: 'internal',
     replicas: 1,
     dependsOn: ['supabase-db'],
-  };
-}
-
-/*** Create file-backed Supabase Storage with the self-hosted image transformation service. */
-function createStorageWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
-  const prod = isSupabaseProductionTier(context);
-  return {
-    id: 'supabase-storage',
-    artifact: { kind: 'image', image: SUPABASE_IMAGES.storage },
-    ports: [{ name: 'http', port: 5000 }],
-    environment: {
-      ANON_KEY: credential('anonKey'),
-      SERVICE_KEY: credential('serviceRoleKey'),
-      POSTGREST_URL: literal('http://supabase-rest:3000'),
-      AUTH_JWT_SECRET: credential('jwtSecret'),
-      DATABASE_URL: databaseUrl('supabase_storage_admin', 'storage'),
-      STORAGE_PUBLIC_URL: literal(baseUrl),
-      REQUEST_ALLOW_X_FORWARDED_PATH: literal('true'),
-      FILE_SIZE_LIMIT: literal('52428800'),
-      STORAGE_BACKEND: literal('file'),
-      GLOBAL_S3_BUCKET: literal('stub'),
-      FILE_STORAGE_BACKEND_PATH: literal('/var/lib/storage'),
-      TENANT_ID: literal(context.projectId),
-      REGION: literal(context.environment),
-      ENABLE_IMAGE_TRANSFORMATION: literal('true'),
-      IMGPROXY_URL: literal('http://supabase-imgproxy:5001'),
-    },
-    health: { kind: 'http', port: 5000, path: '/status' },
-    persistence: [
-      {
-        id: 'data',
-        mountPath: '/var/lib/storage',
-        sizeGiB: prod ? 20 : 5,
-        retention: prod ? 'retain' : 'delete-on-destroy',
-      },
-    ],
-    exposure: 'internal',
-    replicas: 1,
-    dependsOn: ['supabase-db', 'supabase-rest', 'supabase-imgproxy'],
   };
 }
 

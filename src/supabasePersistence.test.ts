@@ -1,7 +1,24 @@
-import type { InfraExecutionContext } from '@ankhorage/contracts/infra';
+import type {
+  InfraEnvironmentSpec,
+  InfraExecutionContext,
+  InfraS3PersistenceTarget,
+} from '@ankhorage/contracts/infra';
 import { expect, it } from 'bun:test';
 
 import { createInfraAdapter } from './index';
+
+const s3Credentials = { source: 'control-plane', name: 'S3_PERSISTENCE' } as const;
+const backupTarget = {
+  endpoint: 'https://storage.example.test',
+  region: 'eu-central-1',
+  bucket: 'database-backups',
+  credentials: s3Credentials,
+  forcePathStyle: true,
+} as const satisfies InfraS3PersistenceTarget;
+const storageTarget = {
+  ...backupTarget,
+  bucket: 'storage-objects',
+} as const satisfies InfraS3PersistenceTarget;
 
 it('keeps dev persistence destroyable while retaining production data and pgsodium config', async () => {
   const adapter = createInfraAdapter();
@@ -34,7 +51,65 @@ it('keeps dev persistence destroyable while retaining production data and pgsodi
   ]);
 });
 
-function createContext(tier: 'dev' | 'prod'): InfraExecutionContext {
+it('projects scheduled database backup plus first-boot restore through credential references', async () => {
+  const result = await createInfraAdapter().desiredWorkloadsAsync(
+    createContext('prod', {
+      database: {
+        provider: 'supabase',
+        tier: 'prod',
+        backup: { mode: 'scheduled', target: backupTarget, intervalHours: 12 },
+      },
+    }),
+  );
+  expect(result.ok).toBe(true);
+  if (!result.ok) return;
+  const backup = result.value.find(({ id }) => id === 'supabase-db-backup');
+  const database = result.value.find(({ id }) => id === 'supabase-db');
+  expect(backup?.dependsOn).toEqual(['supabase-db']);
+  expect(backup?.environment?.BACKUP_INTERVAL_SECONDS).toEqual({ kind: 'literal', value: '43200' });
+  expect(backup?.environment?.AWS_ACCESS_KEY_ID).toEqual({
+    kind: 'credential',
+    reference: s3Credentials,
+    key: 'accessKeyId',
+  });
+  expect(backup?.args?.join('\n')).toContain('pg_dump --format=custom');
+  expect(backup?.args?.join('\n')).toContain('--aws-sigv4');
+  expect(database?.files?.some(({ path }) => path.endsWith('zzzz-ankhorage-restore.sh'))).toBe(
+    true,
+  );
+  expect(JSON.stringify(result.value)).not.toContain('s3-access-secret');
+});
+
+it('uses the pinned Storage S3 environment contract and removes file persistence', async () => {
+  const result = await createInfraAdapter().desiredWorkloadsAsync(
+    createContext('prod', {
+      objectStorage: { provider: 'supabase', buckets: ['media'], backend: storageTarget },
+    }),
+  );
+  expect(result.ok).toBe(true);
+  if (!result.ok) return;
+  const storage = result.value.find(({ id }) => id === 'supabase-storage');
+  expect(storage?.persistence).toBeUndefined();
+  expect(storage?.environment?.STORAGE_BACKEND).toEqual({ kind: 'literal', value: 's3' });
+  expect(storage?.environment?.STORAGE_S3_BUCKET).toEqual({
+    kind: 'literal',
+    value: 'storage-objects',
+  });
+  expect(storage?.environment?.STORAGE_S3_FORCE_PATH_STYLE).toEqual({
+    kind: 'literal',
+    value: 'true',
+  });
+  expect(storage?.environment?.AWS_SECRET_ACCESS_KEY).toEqual({
+    kind: 'credential',
+    reference: s3Credentials,
+    key: 'secretAccessKey',
+  });
+});
+
+function createContext(
+  tier: 'dev' | 'prod',
+  overrides: Partial<InfraEnvironmentSpec> = {},
+): InfraExecutionContext {
   return {
     projectId: 'sample',
     environment: tier === 'prod' ? 'production' : 'local',
@@ -45,6 +120,7 @@ function createContext(tier: 'dev' | 'prod'): InfraExecutionContext {
       },
       database: { provider: 'supabase', tier },
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
+      ...overrides,
     },
     credentials: {
       resolveAsync: () => Promise.reject(new Error('Persistence projection needs no credentials.')),
