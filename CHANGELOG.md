@@ -1,5 +1,12 @@
 # @ankhorage/supabase
 
+## 0.5.0
+
+### Minor Changes
+
+- 0cc1f77: Add scheduled logical database backup and first-boot restore through S3-compatible storage, plus an
+  optional S3 backend for Supabase Storage.
+
 ## 0.4.9
 
 ### Patch Changes
