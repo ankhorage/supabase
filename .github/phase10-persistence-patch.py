@@ -3,6 +3,12 @@ from pathlib import Path
 workloads = Path('src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts')
 source = workloads.read_text()
 source = source.replace(
+    "import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';",
+    """import { createSupabaseDatabasePersistence } from './createSupabaseDatabasePersistence';
+import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';""",
+    1,
+)
+source = source.replace(
     '/*** Create the persistent Postgres 17 workload and first-boot configuration. */',
     '/*** Create persistent Postgres 17 data and custom configuration for safe runtime recreation. */',
     1,
@@ -15,14 +21,15 @@ old = """    persistence: [
         retention: prod ? 'retain' : 'delete-on-destroy',
       },
     ],"""
-new = """    persistence: createDatabasePersistence(prod),"""
+new = """    persistence: createSupabaseDatabasePersistence(prod),"""
 if source.count(old) != 1:
     raise SystemExit(f'Expected one database persistence block, found {source.count(old)}')
-source = source.replace(old, new, 1)
-anchor = """/*** Create the GoTrue authentication workload using the current external Auth URL shape. */
-function createAuthWorkload(baseUrl: string): InfraWorkloadSpec {"""
-helper = """/*** Keep Postgres data and pgsodium configuration on independently retained runtime volumes. */
-function createDatabasePersistence(
+workloads.write_text(source.replace(old, new, 1))
+
+Path('src/features/platform-infrastructure/domain/createSupabaseDatabasePersistence.ts').write_text("""import type { InfraWorkloadSpec } from '@ankhorage/contracts/infra';
+
+/*** Keep Postgres data and pgsodium configuration on independently retained runtime volumes. */
+export function createSupabaseDatabasePersistence(
   prod: boolean,
 ): NonNullable<InfraWorkloadSpec['persistence']> {
   return [
@@ -40,12 +47,7 @@ function createDatabasePersistence(
     },
   ];
 }
-
-/*** Create the GoTrue authentication workload using the current external Auth URL shape. */
-function createAuthWorkload(baseUrl: string): InfraWorkloadSpec {"""
-if source.count(anchor) != 1:
-    raise SystemExit(f'Expected one auth workload anchor, found {source.count(anchor)}')
-workloads.write_text(source.replace(anchor, helper, 1))
+""")
 
 tests = Path('src/supabaseLifecycle.test.ts')
 test_source = tests.read_text()
