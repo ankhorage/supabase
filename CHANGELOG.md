@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.4.2
+
+### Patch Changes
+
+- 227b8b0: Preserve the Supabase Postgres image bootstrap user when projecting the database workload.
+
 ## 0.4.1
 
 ### Patch Changes
