@@ -16,8 +16,11 @@ import {
   SUPABASE_ENVOY_CONFIG,
   SUPABASE_IMAGES,
 } from '../constants/supabase';
+import { createSupabaseDatabaseBackupWorkload } from './createSupabaseDatabaseBackupWorkload';
 import { createSupabaseDatabasePersistence } from './createSupabaseDatabasePersistence';
+import { createSupabaseDatabaseRestore } from './createSupabaseDatabaseRestore';
 import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';
+import { createSupabaseS3Values } from './createSupabaseS3Values';
 
 /*** Project the selected Supabase platform into one ordered runtime-neutral workload graph. */
 export function createSupabaseWorkloads(
@@ -25,8 +28,10 @@ export function createSupabaseWorkloads(
 ): readonly InfraWorkloadSpec[] {
   const baseUrl = context.desired.networking?.publicBaseUrl ?? '';
   const [imgproxy, meta, studio] = createSupabaseOperationalWorkloads(context, baseUrl);
+  const backup = createSupabaseDatabaseBackupWorkload(context);
   return [
     createDatabaseWorkload(context),
+    ...(backup === undefined ? [] : [backup]),
     createAuthWorkload(baseUrl),
     createRestWorkload(),
     createRealtimeWorkload(),
@@ -49,6 +54,7 @@ const SUPABASE_DATABASE_ARGUMENTS = [
 /*** Create persistent Postgres 17 data and custom configuration for safe runtime recreation. */
 function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSpec {
   const prod = isSupabaseProductionTier(context);
+  const restore = createSupabaseDatabaseRestore(context);
   return {
     id: 'supabase-db',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.database },
@@ -64,6 +70,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
       PGPASSWORD: credential('postgresPassword'),
       JWT_SECRET: credential('jwtSecret'),
       JWT_EXP: literal('3600'),
+      ...restore.environment,
     },
     files: [
       {
@@ -82,6 +89,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
         path: '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
         content: literal(SUPABASE_DATABASE_REALTIME_SQL),
       },
+      ...restore.files,
     ],
     health: { kind: 'command', command: ['pg_isready', '-U', 'postgres', '-h', 'localhost'] },
     persistence: createSupabaseDatabasePersistence(prod),
@@ -193,9 +201,14 @@ function createRealtimeWorkload(): InfraWorkloadSpec {
   };
 }
 
-/*** Create file-backed Supabase Storage with the self-hosted image transformation service. */
+/*** Create Supabase Storage using either retained file storage or the selected S3 backend. */
 function createStorageWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
   const prod = isSupabaseProductionTier(context);
+  const backend =
+    context.desired.objectStorage?.provider === 'supabase'
+      ? context.desired.objectStorage.backend
+      : undefined;
+  const s3 = backend === undefined ? undefined : createSupabaseS3Values(backend);
   return {
     id: 'supabase-storage',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.storage },
@@ -209,23 +222,39 @@ function createStorageWorkload(context: InfraExecutionContext, baseUrl: string):
       STORAGE_PUBLIC_URL: literal(baseUrl),
       REQUEST_ALLOW_X_FORWARDED_PATH: literal('true'),
       FILE_SIZE_LIMIT: literal('52428800'),
-      STORAGE_BACKEND: literal('file'),
-      GLOBAL_S3_BUCKET: literal('stub'),
-      FILE_STORAGE_BACKEND_PATH: literal('/var/lib/storage'),
       TENANT_ID: literal(context.projectId),
       REGION: literal(context.environment),
       ENABLE_IMAGE_TRANSFORMATION: literal('true'),
       IMGPROXY_URL: literal('http://supabase-imgproxy:5001'),
+      ...(s3 === undefined
+        ? {
+            STORAGE_BACKEND: literal('file'),
+            GLOBAL_S3_BUCKET: literal('stub'),
+            FILE_STORAGE_BACKEND_PATH: literal('/var/lib/storage'),
+          }
+        : {
+            STORAGE_BACKEND: literal('s3'),
+            STORAGE_S3_BUCKET: s3.bucket,
+            STORAGE_S3_ENDPOINT: s3.endpoint,
+            STORAGE_S3_FORCE_PATH_STYLE: s3.forcePathStyle,
+            STORAGE_S3_REGION: s3.region,
+            AWS_ACCESS_KEY_ID: s3.accessKeyId,
+            AWS_SECRET_ACCESS_KEY: s3.secretAccessKey,
+          }),
     },
     health: { kind: 'http', port: 5000, path: '/status' },
-    persistence: [
-      {
-        id: 'data',
-        mountPath: '/var/lib/storage',
-        sizeGiB: prod ? 20 : 5,
-        retention: prod ? 'retain' : 'delete-on-destroy',
-      },
-    ],
+    ...(s3 === undefined
+      ? {
+          persistence: [
+            {
+              id: 'data',
+              mountPath: '/var/lib/storage',
+              sizeGiB: prod ? 20 : 5,
+              retention: prod ? ('retain' as const) : ('delete-on-destroy' as const),
+            },
+          ],
+        }
+      : {}),
     exposure: 'internal',
     replicas: 1,
     dependsOn: ['supabase-db', 'supabase-rest', 'supabase-imgproxy'],
