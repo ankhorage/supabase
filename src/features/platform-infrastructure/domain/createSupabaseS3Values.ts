@@ -4,7 +4,9 @@ import type {
 } from '@ankhorage/contracts/infra';
 
 /*** Project one portable S3 target into execution-only workload values and a concrete URL prefix. */
-export function createSupabaseS3Values(target: InfraS3PersistenceTarget) {
+export function createSupabaseS3Values(
+  target: InfraS3PersistenceTarget,
+): SupabaseS3WorkloadValues {
   return {
     endpoint: literal(target.endpoint),
     region: literal(target.region),
@@ -13,7 +15,17 @@ export function createSupabaseS3Values(target: InfraS3PersistenceTarget) {
     accessKeyId: credential(target, 'accessKeyId'),
     secretAccessKey: credential(target, 'secretAccessKey'),
     urlPrefix: literal(resolveS3UrlPrefix(target)),
-  } as const;
+  };
+}
+
+interface SupabaseS3WorkloadValues {
+  readonly endpoint: InfraWorkloadScalarValue;
+  readonly region: InfraWorkloadScalarValue;
+  readonly bucket: InfraWorkloadScalarValue;
+  readonly forcePathStyle: InfraWorkloadScalarValue;
+  readonly accessKeyId: InfraWorkloadScalarValue;
+  readonly secretAccessKey: InfraWorkloadScalarValue;
+  readonly urlPrefix: InfraWorkloadScalarValue;
 }
 
 /*** Resolve path-style by default while preserving explicit virtual-host addressing intent. */
