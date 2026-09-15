@@ -2,13 +2,15 @@ import type { InfraExecutionContext, InfraResult } from '@ankhorage/contracts/in
 
 import { resolveSupabaseDesiredState } from '../../domain/resolveSupabaseDesiredState';
 import { resolveSupabaseBootstrapCredentialsAsync } from './resolveSupabaseBootstrapCredentialsAsync';
+import { validateSupabasePersistenceCredentialsAsync } from './validateSupabasePersistenceCredentialsAsync';
 
-/*** Validate Supabase selection, public origin, buckets and bootstrap credentials without mutation. */
+/*** Validate Supabase selection, public origin, buckets and execution-only credentials. */
 export async function validateSupabaseAsync(
   context: InfraExecutionContext,
 ): Promise<InfraResult<null>> {
   const desired = resolveSupabaseDesiredState(context);
   if (!desired.ok) return desired;
-  const credentials = await resolveSupabaseBootstrapCredentialsAsync(context);
-  return credentials.ok ? { ok: true, value: null, diagnostics: [] } : credentials;
+  const bootstrap = await resolveSupabaseBootstrapCredentialsAsync(context);
+  if (!bootstrap.ok) return bootstrap;
+  return validateSupabasePersistenceCredentialsAsync(context);
 }
