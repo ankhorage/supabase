@@ -15,60 +15,75 @@ export function createSupabaseStorageWorkload(
 ): InfraWorkloadSpec {
   const prod =
     context.desired.database?.provider === 'supabase' && context.desired.database.tier === 'prod';
-  const backend =
-    context.desired.objectStorage?.provider === 'supabase'
-      ? context.desired.objectStorage.backend
-      : undefined;
+  const backend = resolveStorageBackend(context);
   return {
     id: 'supabase-storage',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.storage },
     ports: [{ name: 'http', port: 5000 }],
-    environment: {
-      ANON_KEY: {
-        kind: 'credential',
-        reference: SUPABASE_BOOTSTRAP_CREDENTIAL,
-        key: 'anonKey',
-      },
-      SERVICE_KEY: {
-        kind: 'credential',
-        reference: SUPABASE_BOOTSTRAP_CREDENTIAL,
-        key: 'serviceRoleKey',
-      },
-      POSTGREST_URL: { kind: 'literal', value: 'http://supabase-rest:3000' },
-      AUTH_JWT_SECRET: {
-        kind: 'credential',
-        reference: SUPABASE_BOOTSTRAP_CREDENTIAL,
-        key: 'jwtSecret',
-      },
-      DATABASE_URL: {
-        kind: 'template',
-        segments: [
-          { kind: 'literal', value: 'postgres://supabase_storage_admin:' },
-          {
-            kind: 'credential',
-            reference: SUPABASE_BOOTSTRAP_CREDENTIAL,
-            key: 'postgresPassword',
-          },
-          {
-            kind: 'literal',
-            value: '@supabase-db:5432/postgres?search_path=storage&sslmode=disable',
-          },
-        ],
-      },
-      STORAGE_PUBLIC_URL: { kind: 'literal', value: baseUrl },
-      REQUEST_ALLOW_X_FORWARDED_PATH: { kind: 'literal', value: 'true' },
-      FILE_SIZE_LIMIT: { kind: 'literal', value: '52428800' },
-      TENANT_ID: { kind: 'literal', value: context.projectId },
-      REGION: { kind: 'literal', value: context.environment },
-      ENABLE_IMAGE_TRANSFORMATION: { kind: 'literal', value: 'true' },
-      IMGPROXY_URL: { kind: 'literal', value: 'http://supabase-imgproxy:5001' },
-      ...createStorageBackendEnvironment(backend),
-    },
+    environment: createStorageEnvironment(context, baseUrl, backend),
     health: { kind: 'http', port: 5000, path: '/status' },
     ...(backend === undefined ? { persistence: createFileStoragePersistence(prod) } : {}),
     exposure: 'internal',
     replicas: 1,
     dependsOn: ['supabase-db', 'supabase-rest', 'supabase-imgproxy'],
+  };
+}
+
+/*** Resolve an optional external Storage backend only when Supabase owns object storage. */
+function resolveStorageBackend(
+  context: InfraExecutionContext,
+): InfraS3PersistenceTarget | undefined {
+  return context.desired.objectStorage?.provider === 'supabase'
+    ? context.desired.objectStorage.backend
+    : undefined;
+}
+
+/*** Project the stable Storage environment plus the selected persistence backend. */
+function createStorageEnvironment(
+  context: InfraExecutionContext,
+  baseUrl: string,
+  backend: InfraS3PersistenceTarget | undefined,
+): Readonly<Record<string, InfraWorkloadValue>> {
+  return {
+    ANON_KEY: {
+      kind: 'credential',
+      reference: SUPABASE_BOOTSTRAP_CREDENTIAL,
+      key: 'anonKey',
+    },
+    SERVICE_KEY: {
+      kind: 'credential',
+      reference: SUPABASE_BOOTSTRAP_CREDENTIAL,
+      key: 'serviceRoleKey',
+    },
+    POSTGREST_URL: { kind: 'literal', value: 'http://supabase-rest:3000' },
+    AUTH_JWT_SECRET: {
+      kind: 'credential',
+      reference: SUPABASE_BOOTSTRAP_CREDENTIAL,
+      key: 'jwtSecret',
+    },
+    DATABASE_URL: {
+      kind: 'template',
+      segments: [
+        { kind: 'literal', value: 'postgres://supabase_storage_admin:' },
+        {
+          kind: 'credential',
+          reference: SUPABASE_BOOTSTRAP_CREDENTIAL,
+          key: 'postgresPassword',
+        },
+        {
+          kind: 'literal',
+          value: '@supabase-db:5432/postgres?search_path=storage&sslmode=disable',
+        },
+      ],
+    },
+    STORAGE_PUBLIC_URL: { kind: 'literal', value: baseUrl },
+    REQUEST_ALLOW_X_FORWARDED_PATH: { kind: 'literal', value: 'true' },
+    FILE_SIZE_LIMIT: { kind: 'literal', value: '52428800' },
+    TENANT_ID: { kind: 'literal', value: context.projectId },
+    REGION: { kind: 'literal', value: context.environment },
+    ENABLE_IMAGE_TRANSFORMATION: { kind: 'literal', value: 'true' },
+    IMGPROXY_URL: { kind: 'literal', value: 'http://supabase-imgproxy:5001' },
+    ...createStorageBackendEnvironment(backend),
   };
 }
 
