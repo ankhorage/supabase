@@ -82,7 +82,7 @@ function createStudioWorkload(context: InfraExecutionContext, baseUrl: string): 
       AUTH_JWT_SECRET: credential('jwtSecret'),
       ENABLED_FEATURES_LOGS_ALL: literal('false'),
     },
-    health: { kind: 'http', port: 3000, path: '/api/profile' },
+    health: { kind: 'http', port: 3000, path: '/api/platform/profile' },
     exposure: 'internal',
     replicas: 1,
     dependsOn: ['supabase-db', 'supabase-meta'],
