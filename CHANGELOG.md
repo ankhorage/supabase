@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.5
+
+### Patch Changes
+
+- 6754aff: Respect independent object-storage provider selection so Supabase database/auth can run without contributing a second Supabase Storage stack.
+
 ## 0.5.4
 
 ### Patch Changes
