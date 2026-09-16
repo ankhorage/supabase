@@ -19,7 +19,9 @@ it('filters reserved ALTER ROLE config after re-enabling portable allowlisted co
   const backup = result.value.find(({ id }) => id === 'supabase-db-backup');
   if (backup === undefined) throw new Error('Expected Supabase database backup workload.');
   const script = backup.args?.join('\n') ?? '';
-  const allowlistedConfig = script.indexOf('s/^-- (.* SET "(pgaudit.*|pgrst.*|session_replication_role');
+  const allowlistedConfig = script.indexOf(
+    's/^-- (.* SET "(pgaudit.*|pgrst.*|session_replication_role',
+  );
   const reservedAlter = script.indexOf('s/^ALTER ROLE "(anon|authenticated|authenticator');
 
   expect(allowlistedConfig).toBeGreaterThan(-1);
