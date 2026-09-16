@@ -60,7 +60,22 @@ it('uses the Auth namespace contract without a connection-string search path', a
   expect(JSON.stringify(auth?.environment?.GOTRUE_DB_DATABASE_URL)).not.toContain('search_path');
 });
 
-it('projects scheduled database backup plus first-boot restore through credential references', async () => {
+it('keeps the normal database entrypoint when backup recovery is disabled', async () => {
+  const result = await createInfraAdapter().desiredWorkloadsAsync(createContext('prod'));
+  expect(result.ok).toBe(true);
+  if (!result.ok) return;
+  const database = result.value.find(({ id }) => id === 'supabase-db');
+  expect(database?.command).toBeUndefined();
+  expect(database?.args).toEqual([
+    'postgres',
+    '-c',
+    'config_file=/etc/postgresql/postgresql.conf',
+    '-c',
+    'log_min_messages=fatal',
+  ]);
+});
+
+it('projects Supabase-safe scheduled backups plus resumable first-boot restore', async () => {
   const result = await createInfraAdapter().desiredWorkloadsAsync(
     createContext('prod', {
       database: {
@@ -74,18 +89,37 @@ it('projects scheduled database backup plus first-boot restore through credentia
   if (!result.ok) return;
   const backup = result.value.find(({ id }) => id === 'supabase-db-backup');
   const database = result.value.find(({ id }) => id === 'supabase-db');
+  const backupScript = backup?.args?.join('\n') ?? '';
+  const restoreScript =
+    database?.files?.find(({ path }) => path.endsWith('zzzz-ankhorage-restore.sh'))?.content
+      .kind === 'literal'
+      ? database.files.find(({ path }) => path.endsWith('zzzz-ankhorage-restore.sh'))?.content.value
+      : undefined;
+
   expect(backup?.dependsOn).toEqual(['supabase-db']);
   expect(backup?.environment?.BACKUP_INTERVAL_SECONDS).toEqual({ kind: 'literal', value: '43200' });
+  expect(backup?.environment?.PGUSER).toEqual({ kind: 'literal', value: 'postgres' });
   expect(backup?.environment?.AWS_ACCESS_KEY_ID).toEqual({
     kind: 'credential',
     reference: s3Credentials,
     key: 'accessKeyId',
   });
-  expect(backup?.args?.join('\n')).toContain('pg_dump --format=custom');
-  expect(backup?.args?.join('\n')).toContain('--aws-sigv4');
-  expect(database?.files?.some(({ path }) => path.endsWith('zzzz-ankhorage-restore.sh'))).toBe(
-    true,
-  );
+  expect(backupScript).toContain('pg_dumpall --roles-only');
+  expect(backupScript).toContain('pg_dump --schema-only');
+  expect(backupScript).toContain("--exclude-table 'auth.schema_migrations'");
+  expect(backupScript).toContain('SET session_replication_role = replica;');
+  expect(backupScript).toContain('roles.sql');
+  expect(backupScript).toContain('schema.sql');
+  expect(backupScript).toContain('data.sql');
+  expect(backupScript).not.toContain('pg_dump --format=custom');
+  expect(database?.command).toEqual(['/bin/sh', '-c']);
+  expect(database?.args?.at(-5)).toBe('postgres');
+  expect(database?.health?.failureThreshold).toBe(60);
+  expect(restoreScript).toContain('.ankhorage-restore-pending');
+  expect(restoreScript).toContain('roles.sql');
+  expect(restoreScript).toContain('schema.sql');
+  expect(restoreScript).toContain('data.sql');
+  expect(restoreScript).toContain('psql --set ON_ERROR_STOP=1');
   expect(JSON.stringify(result.value)).not.toContain('s3-access-secret');
 });
 
