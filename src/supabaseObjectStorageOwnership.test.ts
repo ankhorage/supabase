@@ -48,9 +48,7 @@ class FakeSupabaseControlPlane implements SupabaseControlPlane {
     return success(null);
   }
 
-  listBucketsAsync(
-    _request: SupabaseControlPlaneRequest,
-  ): Promise<InfraResult<readonly string[]>> {
+  listBucketsAsync(_request: SupabaseControlPlaneRequest): Promise<InfraResult<readonly string[]>> {
     return success([]);
   }
 
