@@ -131,6 +131,8 @@ function assertBackupProjection(backup: InfraWorkloadSpec): void {
     key: 'accessKeyId',
   });
   expect(backupScript).toContain('pg_dumpall --roles-only');
+  expect(backupScript).toContain('s/^GRANT "(anon|authenticated|authenticator');
+  expect(backupScript).toContain('TO "(anon|authenticated|authenticator');
   expect(backupScript).toContain('pg_dump --schema-only');
   expect(backupScript).toContain("--exclude-table 'auth.schema_migrations'");
   expect(backupScript).toContain('SET session_replication_role = replica;');
