@@ -154,6 +154,8 @@ backup_once() {
     --exclude-schema '${DATA_EXCLUDED_SCHEMA_PATTERN}' \
     --exclude-table 'auth.schema_migrations' \
     --exclude-table 'storage.migrations' \
+    --exclude-table 'storage.buckets_vectors' \
+    --exclude-table 'storage.vector_indexes' \
     --exclude-table 'supabase_functions.migrations' \
     --schema '*' \
     | sed -E 's/^\\(un)?restrict .*$/-- &/' >> /tmp/ankhorage-data.sql
