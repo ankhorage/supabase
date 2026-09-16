@@ -24,7 +24,23 @@ set -eu
 umask 077
 data="\${PGDATA:-/var/lib/postgresql/data}"
 marker="$data/${RESTORE_PENDING_FILE}"
-cleanup() { rm -f /tmp/ankhorage-s3-curl.conf /tmp/ankhorage-latest /tmp/ankhorage-restore.dump; }
+cleanup() {
+  rm -f /tmp/ankhorage-s3-curl.conf /tmp/ankhorage-latest /tmp/ankhorage-roles.sql \
+    /tmp/ankhorage-schema.sql /tmp/ankhorage-data.sql
+}
+download_file() {
+  key="$1"
+  file="$2"
+  status="$(curl --silent --show-error --connect-timeout 2 --max-time 30 \
+    --retry 10 --retry-all-errors --retry-delay 2 \
+    --config /tmp/ankhorage-s3-curl.conf \
+    --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --output "$file" --write-out '%{http_code}' \
+    "\${S3_URL_PREFIX}/$key" || true)"
+  if [ "$status" != '200' ]; then
+    echo "Database backup file $key failed to download with HTTP $status." >&2
+    return 1
+  fi
+}
 trap cleanup EXIT INT TERM
 touch "$marker"
 printf 'user = "%s:%s"\n' "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > /tmp/ankhorage-s3-curl.conf
@@ -57,25 +73,28 @@ elif [ "$status" != '200' ]; then
   echo "Database backup pointer remained unavailable after ${RESTORE_POINTER_ATTEMPTS} attempts (HTTP $status)." >&2
   return 1
 else
-  key="$(cat /tmp/ankhorage-latest)"
-  case "$key" in
-    database/*.dump) ;;
-    *) echo 'Database backup pointer is invalid.' >&2; return 1 ;;
+  prefix="$(cat /tmp/ankhorage-latest)"
+  suffix="\${prefix#database/}"
+  case "$prefix:$suffix" in
+    database/*:*/*|database/*:*..*|database/:*)
+      echo 'Database backup pointer is invalid.' >&2
+      return 1
+      ;;
+    database/*:*) ;;
+    *)
+      echo 'Database backup pointer is invalid.' >&2
+      return 1
+      ;;
   esac
 
-  echo "Restoring database backup $key."
-  status="$(curl --silent --show-error --connect-timeout 2 --max-time 30 \
-    --retry 10 --retry-all-errors --retry-delay 2 \
-    --config /tmp/ankhorage-s3-curl.conf \
-    --aws-sigv4 "aws:amz:\${S3_REGION}:s3" --output /tmp/ankhorage-restore.dump --write-out '%{http_code}' \
-    "\${S3_URL_PREFIX}/$key" || true)"
-  if [ "$status" != '200' ]; then
-    echo "Database backup download failed with HTTP $status." >&2
-    return 1
-  fi
+  echo "Restoring database backup set $prefix."
+  download_file "$prefix/roles.sql" /tmp/ankhorage-roles.sql
+  download_file "$prefix/schema.sql" /tmp/ankhorage-schema.sql
+  download_file "$prefix/data.sql" /tmp/ankhorage-data.sql
 
-  pg_restore --clean --if-exists --no-owner --no-acl --exit-on-error \
-    --dbname "$POSTGRES_DB" /tmp/ankhorage-restore.dump
+  psql --set ON_ERROR_STOP=1 --dbname "$POSTGRES_DB" --file /tmp/ankhorage-roles.sql
+  psql --set ON_ERROR_STOP=1 --dbname "$POSTGRES_DB" --file /tmp/ankhorage-schema.sql
+  psql --set ON_ERROR_STOP=1 --dbname "$POSTGRES_DB" --file /tmp/ankhorage-data.sql
   echo 'Database backup restore completed.'
 fi
 rm -f "$marker"
