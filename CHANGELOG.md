@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.4
+
+### Patch Changes
+
+- 46a9671: Filter role-membership grants whose PostgreSQL grantor is a Supabase-managed reserved role so fresh-database restores do not reference platform roles that are absent during first boot.
+
 ## 0.5.3
 
 ### Patch Changes
