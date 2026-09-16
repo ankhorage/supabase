@@ -152,10 +152,7 @@ function assertRestoreProjection(database: InfraWorkloadSpec): void {
   expect(restoreScript).toContain('psql --set ON_ERROR_STOP=1');
 }
 
-function requireWorkload(
-  workloads: readonly InfraWorkloadSpec[],
-  id: string,
-): InfraWorkloadSpec {
+function requireWorkload(workloads: readonly InfraWorkloadSpec[], id: string): InfraWorkloadSpec {
   const workload = workloads.find((candidate) => candidate.id === id);
   if (workload === undefined) throw new Error(`Expected workload ${id}.`);
   return workload;
