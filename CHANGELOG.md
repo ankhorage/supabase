@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.3
+
+### Patch Changes
+
+- f701414: Filter database-backup role memberships whenever either side is a Supabase-managed reserved role, so recovery restores only portable custom-role relationships.
+
 ## 0.5.2
 
 ### Patch Changes
