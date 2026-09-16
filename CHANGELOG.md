@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.7
+
+### Patch Changes
+
+- 292b852: Filter PostgreSQL configuration-parameter grants that target Supabase-managed reserved roles so fresh-database recovery does not reference platform roles that are absent during portable role restore.
+
 ## 0.5.6
 
 ### Patch Changes
