@@ -31,10 +31,10 @@ it('keeps dev persistence destroyable while retaining production data and pgsodi
   if (!dev.ok || !prod.ok) return;
   expect(
     dev.value.flatMap(({ persistence }) => persistence?.map(({ retention }) => retention) ?? []),
-  ).toEqual(['delete-on-destroy', 'delete-on-destroy', 'delete-on-destroy']);
+  ).toEqual(['delete-on-destroy', 'delete-on-destroy']);
   expect(
     prod.value.flatMap(({ persistence }) => persistence?.map(({ retention }) => retention) ?? []),
-  ).toEqual(['retain', 'retain', 'retain']);
+  ).toEqual(['retain', 'retain']);
   expect(prod.value.find(({ id }) => id === 'supabase-db')?.persistence).toEqual([
     {
       id: 'data',

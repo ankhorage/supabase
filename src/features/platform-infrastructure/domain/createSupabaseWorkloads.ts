@@ -14,6 +14,7 @@ import {
 import {
   SUPABASE_BOOTSTRAP_CREDENTIAL,
   SUPABASE_ENVOY_CONFIG,
+  SUPABASE_ENVOY_CONFIG_WITHOUT_STORAGE,
   SUPABASE_IMAGES,
 } from '../constants/supabase';
 import { createSupabaseDatabaseBackupWorkload } from './createSupabaseDatabaseBackupWorkload';
@@ -29,17 +30,17 @@ export function createSupabaseWorkloads(
   const baseUrl = context.desired.networking?.publicBaseUrl ?? '';
   const [imgproxy, meta, studio] = createSupabaseOperationalWorkloads(context, baseUrl);
   const backup = createSupabaseDatabaseBackupWorkload(context);
+  const ownsObjectStorage = context.desired.objectStorage?.provider === 'supabase';
   return [
     createDatabaseWorkload(context),
     ...(backup === undefined ? [] : [backup]),
     createAuthWorkload(baseUrl),
     createRestWorkload(),
     createRealtimeWorkload(),
-    imgproxy,
-    createSupabaseStorageWorkload(context, baseUrl),
+    ...(ownsObjectStorage ? [imgproxy, createSupabaseStorageWorkload(context, baseUrl)] : []),
     meta,
     studio,
-    createGatewayWorkload(context, baseUrl),
+    createGatewayWorkload(context, baseUrl, ownsObjectStorage),
   ];
 }
 
@@ -215,7 +216,11 @@ function createRealtimeWorkload(): InfraWorkloadSpec {
 }
 
 /*** Create the current Envoy gateway with portable service-DNS routes. */
-function createGatewayWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
+function createGatewayWorkload(
+  context: InfraExecutionContext,
+  baseUrl: string,
+  ownsObjectStorage: boolean,
+): InfraWorkloadSpec {
   const publishedPort = resolveLocalPublishedPort(context, baseUrl);
   return {
     id: 'supabase-gateway',
@@ -232,7 +237,9 @@ function createGatewayWorkload(context: InfraExecutionContext, baseUrl: string):
     files: [
       {
         path: '/etc/envoy/envoy.yaml',
-        content: literal(SUPABASE_ENVOY_CONFIG),
+        content: literal(
+          ownsObjectStorage ? SUPABASE_ENVOY_CONFIG : SUPABASE_ENVOY_CONFIG_WITHOUT_STORAGE,
+        ),
       },
     ],
     health: {
@@ -244,7 +251,12 @@ function createGatewayWorkload(context: InfraExecutionContext, baseUrl: string):
     },
     exposure: 'public',
     replicas: 1,
-    dependsOn: ['supabase-auth', 'supabase-rest', 'supabase-realtime', 'supabase-storage'],
+    dependsOn: [
+      'supabase-auth',
+      'supabase-rest',
+      'supabase-realtime',
+      ...(ownsObjectStorage ? ['supabase-storage'] : []),
+    ],
   };
 }
 

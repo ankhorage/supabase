@@ -15,7 +15,7 @@ export const SUPABASE_IMAGES = {
   studio: 'supabase/studio:2026.09.07-sha-7996410',
 } as const;
 
-export const SUPABASE_ENVOY_CONFIG = `static_resources:
+const SUPABASE_ENVOY_CONFIG_BEFORE_STORAGE_ROUTE = `static_resources:
   listeners:
     - name: supabase
       address:
@@ -50,9 +50,13 @@ export const SUPABASE_ENVOY_CONFIG = `static_resources:
                           route: { cluster: rest, prefix_rewrite: "/", timeout: 30s }
                         - match: { prefix: "/realtime/v1/" }
                           route: { cluster: realtime, prefix_rewrite: "/", timeout: 30s }
-                        - match: { prefix: "/storage/v1/" }
+`;
+
+const SUPABASE_ENVOY_STORAGE_ROUTE = `                        - match: { prefix: "/storage/v1/" }
                           route: { cluster: storage, prefix_rewrite: "/", timeout: 30s }
-                http_filters:
+`;
+
+const SUPABASE_ENVOY_CONFIG_AFTER_STORAGE_ROUTE = `                http_filters:
                   - name: envoy.filters.http.cors
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors
@@ -87,7 +91,9 @@ export const SUPABASE_ENVOY_CONFIG = `static_resources:
           - lb_endpoints:
               - endpoint:
                   address: { socket_address: { address: supabase-realtime, port_value: 4000 } }
-    - name: storage
+`;
+
+const SUPABASE_ENVOY_STORAGE_CLUSTER = `    - name: storage
       connect_timeout: 5s
       type: STRICT_DNS
       load_assignment:
@@ -97,3 +103,7 @@ export const SUPABASE_ENVOY_CONFIG = `static_resources:
               - endpoint:
                   address: { socket_address: { address: supabase-storage, port_value: 5000 } }
 `;
+
+export const SUPABASE_ENVOY_CONFIG = `${SUPABASE_ENVOY_CONFIG_BEFORE_STORAGE_ROUTE}${SUPABASE_ENVOY_STORAGE_ROUTE}${SUPABASE_ENVOY_CONFIG_AFTER_STORAGE_ROUTE}${SUPABASE_ENVOY_STORAGE_CLUSTER}`;
+
+export const SUPABASE_ENVOY_CONFIG_WITHOUT_STORAGE = `${SUPABASE_ENVOY_CONFIG_BEFORE_STORAGE_ROUTE}${SUPABASE_ENVOY_CONFIG_AFTER_STORAGE_ROUTE}`;
