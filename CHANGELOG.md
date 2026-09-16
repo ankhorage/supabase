@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.6
+
+### Patch Changes
+
+- e382044: Keep allowlisted custom role settings portable while ensuring Supabase-managed reserved `ALTER ROLE` configuration remains filtered from fresh-database recovery backups.
+
 ## 0.5.5
 
 ### Patch Changes
