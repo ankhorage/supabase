@@ -106,11 +106,11 @@ backup_once() {
 
   pg_dumpall --roles-only --role postgres --quote-all-identifiers --no-role-passwords --no-comments \
     | sed -E 's/^\\(un)?restrict .*$/-- &/' \
-    | sed -E "s/^CREATE ROLE \"(${RESERVED_ROLE_PATTERN})\"/-- &/" \
-    | sed -E "s/^ALTER ROLE \"(${RESERVED_ROLE_PATTERN})\"/-- &/" \
+    | sed -E 's/^CREATE ROLE "(${RESERVED_ROLE_PATTERN})"/-- &/' \
+    | sed -E 's/^ALTER ROLE "(${RESERVED_ROLE_PATTERN})"/-- &/' \
     | sed -E 's/ (NOSUPERUSER|NOREPLICATION)//g' \
-    | sed -E "s/^-- (.* SET \"(${ALLOWED_CONFIG_PATTERN})\" .*)/\\1/" \
-    | sed -E "s/GRANT \".*\" TO \"(${RESERVED_ROLE_PATTERN})\"/-- &/" \
+    | sed -E 's/^-- (.* SET "(${ALLOWED_CONFIG_PATTERN})" .*)/\\1/' \
+    | sed -E 's/GRANT ".*" TO "(${RESERVED_ROLE_PATTERN})"/-- &/' \
     | uniq > /tmp/ankhorage-roles.sql
   printf '\nRESET ALL;\n' >> /tmp/ankhorage-roles.sql
 
@@ -132,8 +132,8 @@ backup_once() {
     | sed -E 's/^ALTER FOREIGN DATA WRAPPER (.+) OWNER TO /-- &/' \
     | sed -E 's/^ALTER DEFAULT PRIVILEGES FOR ROLE "supabase_admin"/-- &/' \
     | sed -E 's/^GRANT ALL ON FOREIGN DATA WRAPPER (.+) TO "postgres" WITH GRANT OPTION/-- &/' \
-    | sed -E "s/^GRANT (.+) ON (.+) \"(${INTERNAL_SCHEMA_PATTERN})\"/-- &/" \
-    | sed -E "s/^REVOKE (.+) ON (.+) \"(${INTERNAL_SCHEMA_PATTERN})\"/-- &/" \
+    | sed -E 's/^GRANT (.+) ON (.+) "(${INTERNAL_SCHEMA_PATTERN})"/-- &/' \
+    | sed -E 's/^REVOKE (.+) ON (.+) "(${INTERNAL_SCHEMA_PATTERN})"/-- &/' \
     | sed -E 's/^(CREATE EXTENSION IF NOT EXISTS "pg_tle").+/\\1;/' \
     | sed -E 's/^(CREATE EXTENSION IF NOT EXISTS "pgsodium").+/\\1;/' \
     | sed -E 's/^(CREATE EXTENSION IF NOT EXISTS "pgmq").+/\\1;/' \
