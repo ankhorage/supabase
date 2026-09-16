@@ -8,11 +8,25 @@ import { createSupabaseS3Values } from './createSupabaseS3Values';
 
 const RESTORE_POINTER_ATTEMPTS = 60;
 const RESTORE_POINTER_DELAY_SECONDS = 2;
+const RESTORE_PENDING_FILE = '.ankhorage-restore-pending';
+const RESTORE_ENTRYPOINT_SCRIPT = `
+set -eu
+data="\${PGDATA:-/var/lib/postgresql/data}"
+marker="$data/${RESTORE_PENDING_FILE}"
+if [ -f "$marker" ]; then
+  echo 'Retrying an interrupted database restore from a fresh Postgres data directory.'
+  find "$data" -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+fi
+exec /usr/local/bin/docker-entrypoint.sh "$@"
+`;
 const RESTORE_SCRIPT = `
 set -eu
 umask 077
+data="\${PGDATA:-/var/lib/postgresql/data}"
+marker="$data/${RESTORE_PENDING_FILE}"
 cleanup() { rm -f /tmp/ankhorage-s3-curl.conf /tmp/ankhorage-latest /tmp/ankhorage-restore.dump; }
 trap cleanup EXIT INT TERM
+touch "$marker"
 printf 'user = "%s:%s"\n' "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" > /tmp/ankhorage-s3-curl.conf
 
 echo 'Checking for a database backup to restore.'
@@ -64,6 +78,7 @@ else
     --dbname "$POSTGRES_DB" /tmp/ankhorage-restore.dump
   echo 'Database backup restore completed.'
 fi
+rm -f "$marker"
 cleanup
 trap - EXIT INT TERM
 `;
@@ -89,10 +104,18 @@ export function createSupabaseDatabaseRestore(
         content: { kind: 'literal', value: RESTORE_SCRIPT },
       },
     ],
+    entrypoint: {
+      command: ['/bin/sh', '-c'],
+      args: [RESTORE_ENTRYPOINT_SCRIPT, 'ankhorage-restore-entrypoint'],
+    },
   };
 }
 
 interface SupabaseDatabaseRestoreProjection {
   readonly environment: Readonly<Record<string, InfraWorkloadValue>>;
   readonly files: readonly InfraWorkloadFileSpec[];
+  readonly entrypoint?: {
+    readonly command: readonly string[];
+    readonly args: readonly string[];
+  };
 }
