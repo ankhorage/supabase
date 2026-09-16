@@ -82,41 +82,6 @@ it('defines readiness, bootstrap and dependency boundaries without leaking secre
   expect(serialized).not.toContain('docker-compose');
 });
 
-it('omits Supabase Storage when another provider owns object storage', async () => {
-  const controlPlane = new FakeSupabaseControlPlane();
-  const adapter = createInfraAdapter({ controlPlane });
-  const context = createContext('dev', 'r2');
-  const workloads = await adapter.desiredWorkloadsAsync(context);
-
-  expect(workloads.ok).toBe(true);
-  if (!workloads.ok) return;
-  expect(workloads.value.map(({ id }) => id)).toEqual([
-    'supabase-db',
-    'supabase-auth',
-    'supabase-rest',
-    'supabase-realtime',
-    'supabase-meta',
-    'supabase-studio',
-    'supabase-gateway',
-  ]);
-  expect(workloads.value.find(({ id }) => id === 'supabase-gateway')?.dependsOn).toEqual([
-    'supabase-auth',
-    'supabase-rest',
-    'supabase-realtime',
-  ]);
-  const serializedWorkloads = JSON.stringify(workloads.value);
-  expect(serializedWorkloads).not.toContain('supabase-storage');
-  expect(serializedWorkloads).not.toContain('supabase-imgproxy');
-  expect(serializedWorkloads).not.toContain('/storage/v1/');
-  expect(serializedWorkloads).not.toContain('cluster: storage');
-
-  const reconciled = await adapter.reconcileAsync(context, [createRuntimeEndpoint()]);
-  expect(reconciled.ok).toBe(true);
-  if (!reconciled.ok) return;
-  expect(reconciled.value.resources.map(({ identity }) => identity.resourceId)).toEqual(['platform']);
-  expect(controlPlane.created).toEqual([]);
-});
-
 it('deduplicates capabilities, reconciles buckets and returns only public client outputs', async () => {
   const controlPlane = new FakeSupabaseControlPlane(['avatars']);
   const adapter = createInfraAdapter({ controlPlane });
@@ -246,10 +211,7 @@ class FakeSupabaseControlPlane implements SupabaseControlPlane {
   }
 }
 
-function createContext(
-  tier: 'dev' | 'prod' = 'dev',
-  objectStorageProvider: 'supabase' | 'r2' = 'supabase',
-): InfraExecutionContext {
+function createContext(tier: 'dev' | 'prod' = 'dev'): InfraExecutionContext {
   return {
     projectId: 'sample',
     environment: 'local',
@@ -260,10 +222,7 @@ function createContext(
       },
       database: { provider: 'supabase', tier },
       auth: { provider: 'supabase' },
-      objectStorage:
-        objectStorageProvider === 'supabase'
-          ? { provider: 'supabase', buckets: ['documents', 'avatars', 'avatars'] }
-          : { provider: 'r2', accountId: 'account-id', buckets: ['documents'] },
+      objectStorage: { provider: 'supabase', buckets: ['documents', 'avatars', 'avatars'] },
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
     },
     credentials: { resolveAsync: () => successCredentials() },
