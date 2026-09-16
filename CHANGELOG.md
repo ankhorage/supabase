@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.2
+
+### Patch Changes
+
+- f88fd2b: Make scheduled database backups Supabase-safe and resume interrupted first-boot recovery from a fresh database directory.
+
 ## 0.5.1
 
 ### Patch Changes
