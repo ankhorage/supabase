@@ -113,6 +113,7 @@ backup_once() {
     | sed -E 's/^GRANT "(${RESERVED_ROLE_PATTERN})" TO /-- &/' \
     | sed -E 's/^GRANT ".*" TO "(${RESERVED_ROLE_PATTERN})"/-- &/' \
     | sed -E 's/^GRANT .* GRANTED BY "(${RESERVED_ROLE_PATTERN})";$/-- &/' \
+    | sed -E 's/^GRANT (SET|ALTER SYSTEM) ON PARAMETER .* TO "(${RESERVED_ROLE_PATTERN})"( WITH GRANT OPTION)?;$/-- &/' \
     | uniq > /tmp/ankhorage-roles.sql
   printf '\nRESET ALL;\n' >> /tmp/ankhorage-roles.sql
 
