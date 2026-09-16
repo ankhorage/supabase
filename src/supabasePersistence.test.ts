@@ -90,11 +90,8 @@ it('projects Supabase-safe scheduled backups plus resumable first-boot restore',
   const backup = result.value.find(({ id }) => id === 'supabase-db-backup');
   const database = result.value.find(({ id }) => id === 'supabase-db');
   const backupScript = backup?.args?.join('\n') ?? '';
-  const restoreScript =
-    database?.files?.find(({ path }) => path.endsWith('zzzz-ankhorage-restore.sh'))?.content
-      .kind === 'literal'
-      ? database.files.find(({ path }) => path.endsWith('zzzz-ankhorage-restore.sh'))?.content.value
-      : undefined;
+  const restoreFile = database?.files?.find(({ path }) => path.endsWith('zzzz-ankhorage-restore.sh'));
+  const restoreScript = restoreFile?.content.kind === 'literal' ? restoreFile.content.value : undefined;
 
   expect(backup?.dependsOn).toEqual(['supabase-db']);
   expect(backup?.environment?.BACKUP_INTERVAL_SECONDS).toEqual({ kind: 'literal', value: '43200' });
