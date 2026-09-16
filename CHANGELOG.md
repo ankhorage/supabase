@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.9
+
+### Patch Changes
+
+- 6a11c3d: Align logical database backups with Supabase restore exclusions for service-owned Storage vector tables.
+
 ## 0.5.8
 
 ### Patch Changes
