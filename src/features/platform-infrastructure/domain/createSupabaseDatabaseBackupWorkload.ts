@@ -4,10 +4,7 @@ import type {
   InfraWorkloadSpec,
 } from '@ankhorage/contracts/infra';
 
-import {
-  SUPABASE_DATA_RESTORE_WORKLOAD_ID,
-  SUPABASE_RECOVERY_SCHEMA,
-} from '../constants/recovery';
+import { SUPABASE_DATA_RESTORE_WORKLOAD_ID, SUPABASE_RECOVERY_SCHEMA } from '../constants/recovery';
 import { SUPABASE_BOOTSTRAP_CREDENTIAL, SUPABASE_IMAGES } from '../constants/supabase';
 import { createSupabaseS3Values } from './createSupabaseS3Values';
 
