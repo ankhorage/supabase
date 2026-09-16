@@ -2,6 +2,7 @@ import type {
   InfraEnvironmentSpec,
   InfraExecutionContext,
   InfraS3PersistenceTarget,
+  InfraWorkloadSpec,
 } from '@ankhorage/contracts/infra';
 import { expect, it } from 'bun:test';
 
@@ -60,7 +61,22 @@ it('uses the Auth namespace contract without a connection-string search path', a
   expect(JSON.stringify(auth?.environment?.GOTRUE_DB_DATABASE_URL)).not.toContain('search_path');
 });
 
-it('projects scheduled database backup plus first-boot restore through credential references', async () => {
+it('keeps the normal database entrypoint when backup recovery is disabled', async () => {
+  const result = await createInfraAdapter().desiredWorkloadsAsync(createContext('prod'));
+  expect(result.ok).toBe(true);
+  if (!result.ok) return;
+  const database = requireWorkload(result.value, 'supabase-db');
+  expect(database.command).toBeUndefined();
+  expect(database.args).toEqual([
+    'postgres',
+    '-c',
+    'config_file=/etc/postgresql/postgresql.conf',
+    '-c',
+    'log_min_messages=fatal',
+  ]);
+});
+
+it('projects Supabase-safe scheduled backups plus resumable first-boot restore', async () => {
   const result = await createInfraAdapter().desiredWorkloadsAsync(
     createContext('prod', {
       database: {
@@ -72,20 +88,9 @@ it('projects scheduled database backup plus first-boot restore through credentia
   );
   expect(result.ok).toBe(true);
   if (!result.ok) return;
-  const backup = result.value.find(({ id }) => id === 'supabase-db-backup');
-  const database = result.value.find(({ id }) => id === 'supabase-db');
-  expect(backup?.dependsOn).toEqual(['supabase-db']);
-  expect(backup?.environment?.BACKUP_INTERVAL_SECONDS).toEqual({ kind: 'literal', value: '43200' });
-  expect(backup?.environment?.AWS_ACCESS_KEY_ID).toEqual({
-    kind: 'credential',
-    reference: s3Credentials,
-    key: 'accessKeyId',
-  });
-  expect(backup?.args?.join('\n')).toContain('pg_dump --format=custom');
-  expect(backup?.args?.join('\n')).toContain('--aws-sigv4');
-  expect(database?.files?.some(({ path }) => path.endsWith('zzzz-ankhorage-restore.sh'))).toBe(
-    true,
-  );
+
+  assertBackupProjection(requireWorkload(result.value, 'supabase-db-backup'));
+  assertRestoreProjection(requireWorkload(result.value, 'supabase-db'));
   expect(JSON.stringify(result.value)).not.toContain('s3-access-secret');
 });
 
@@ -114,6 +119,51 @@ it('uses the pinned Storage S3 environment contract and removes file persistence
     key: 'secretAccessKey',
   });
 });
+
+function assertBackupProjection(backup: InfraWorkloadSpec): void {
+  const backupScript = backup.args?.join('\n') ?? '';
+  expect(backup.dependsOn).toEqual(['supabase-db']);
+  expect(backup.environment?.BACKUP_INTERVAL_SECONDS).toEqual({ kind: 'literal', value: '43200' });
+  expect(backup.environment?.PGUSER).toEqual({ kind: 'literal', value: 'postgres' });
+  expect(backup.environment?.AWS_ACCESS_KEY_ID).toEqual({
+    kind: 'credential',
+    reference: s3Credentials,
+    key: 'accessKeyId',
+  });
+  expect(backupScript).toContain('pg_dumpall --roles-only');
+  expect(backupScript).toContain('pg_dump --schema-only');
+  expect(backupScript).toContain("--exclude-table 'auth.schema_migrations'");
+  expect(backupScript).toContain('SET session_replication_role = replica;');
+  expect(backupScript).toContain('roles.sql');
+  expect(backupScript).toContain('schema.sql');
+  expect(backupScript).toContain('data.sql');
+  expect(backupScript).not.toContain('pg_dump --format=custom');
+}
+
+function assertRestoreProjection(database: InfraWorkloadSpec): void {
+  const restoreScript = requireLiteralFileContent(database, 'zzzz-ankhorage-restore.sh');
+  expect(database.command).toEqual(['/bin/sh', '-c']);
+  expect(database.args?.at(-5)).toBe('postgres');
+  expect(database.health?.failureThreshold).toBe(60);
+  expect(restoreScript).toContain('.ankhorage-restore-pending');
+  expect(restoreScript).toContain('roles.sql');
+  expect(restoreScript).toContain('schema.sql');
+  expect(restoreScript).toContain('data.sql');
+  expect(restoreScript).toContain('psql --set ON_ERROR_STOP=1');
+}
+
+function requireWorkload(workloads: readonly InfraWorkloadSpec[], id: string): InfraWorkloadSpec {
+  const workload = workloads.find((candidate) => candidate.id === id);
+  if (workload === undefined) throw new Error(`Expected workload ${id}.`);
+  return workload;
+}
+
+function requireLiteralFileContent(workload: InfraWorkloadSpec, suffix: string): string {
+  const file = workload.files?.find(({ path }) => path.endsWith(suffix));
+  if (file === undefined) throw new Error(`Expected workload file ending with ${suffix}.`);
+  if (file.content.kind !== 'literal') throw new Error(`Expected ${suffix} to contain a literal.`);
+  return file.content.value;
+}
 
 function createContext(
   tier: 'dev' | 'prod',

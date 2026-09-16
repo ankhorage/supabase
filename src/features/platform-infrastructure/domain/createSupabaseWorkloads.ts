@@ -58,7 +58,8 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
   return {
     id: 'supabase-db',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.database },
-    args: SUPABASE_DATABASE_ARGUMENTS,
+    ...(restore.entrypoint === undefined ? {} : { command: restore.entrypoint.command }),
+    args: [...(restore.entrypoint?.args ?? []), ...SUPABASE_DATABASE_ARGUMENTS],
     ports: [{ name: 'postgres', port: 5432 }],
     environment: {
       POSTGRES_DB: literal('postgres'),
