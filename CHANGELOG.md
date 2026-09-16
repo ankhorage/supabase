@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.8
+
+### Patch Changes
+
+- f86e630: Restore portable database data only after Supabase-managed Auth and Storage schema migrations complete, while keeping recovery replay-safe and blocking new backups until recovery finishes.
+
 ## 0.5.7
 
 ### Patch Changes
