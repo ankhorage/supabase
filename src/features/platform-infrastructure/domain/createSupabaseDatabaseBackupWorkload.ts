@@ -107,9 +107,9 @@ backup_once() {
   pg_dumpall --roles-only --role postgres --quote-all-identifiers --no-role-passwords --no-comments \
     | sed -E 's/^\\(un)?restrict .*$/-- &/' \
     | sed -E 's/^CREATE ROLE "(${RESERVED_ROLE_PATTERN})"/-- &/' \
-    | sed -E 's/^ALTER ROLE "(${RESERVED_ROLE_PATTERN})"/-- &/' \
     | sed -E 's/ (NOSUPERUSER|NOREPLICATION)//g' \
     | sed -E 's/^-- (.* SET "(${ALLOWED_CONFIG_PATTERN})" .*)/\\1/' \
+    | sed -E 's/^ALTER ROLE "(${RESERVED_ROLE_PATTERN})"/-- &/' \
     | sed -E 's/^GRANT "(${RESERVED_ROLE_PATTERN})" TO /-- &/' \
     | sed -E 's/^GRANT ".*" TO "(${RESERVED_ROLE_PATTERN})"/-- &/' \
     | sed -E 's/^GRANT .* GRANTED BY "(${RESERVED_ROLE_PATTERN})";$/-- &/' \
