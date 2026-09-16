@@ -167,6 +167,9 @@ function assertBackupProjection(backup: InfraWorkloadSpec): void {
   expect(backupScript).toContain('_ankhorage');
   expect(backupScript).toContain('pg_dump --schema-only');
   expect(backupScript).toContain("--exclude-table 'auth.schema_migrations'");
+  expect(backupScript).toContain("--exclude-table 'storage.buckets_vectors'");
+  expect(backupScript).toContain("--exclude-table 'storage.vector_indexes'");
+  expect(backupScript).not.toContain("--exclude-schema 'storage'");
   expect(backupScript).toContain('SET session_replication_role = replica;');
   expect(backupScript).toContain('roles.sql');
   expect(backupScript).toContain('schema.sql');
