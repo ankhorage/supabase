@@ -4,6 +4,7 @@ import type {
   InfraWorkloadSpec,
 } from '@ankhorage/contracts/infra';
 
+import { SUPABASE_DATA_RESTORE_WORKLOAD_ID, SUPABASE_RECOVERY_SCHEMA } from '../constants/recovery';
 import { SUPABASE_BOOTSTRAP_CREDENTIAL, SUPABASE_IMAGES } from '../constants/supabase';
 import { createSupabaseS3Values } from './createSupabaseS3Values';
 
@@ -11,6 +12,7 @@ const DEFAULT_BACKUP_INTERVAL_HOURS = 24;
 const INTERNAL_SCHEMA_PATTERN = [
   'information_schema',
   'pg_*',
+  SUPABASE_RECOVERY_SCHEMA,
   '_analytics',
   '_realtime',
   '_supavisor',
@@ -42,6 +44,7 @@ const INTERNAL_SCHEMA_PATTERN = [
 const DATA_EXCLUDED_SCHEMA_PATTERN = [
   'information_schema',
   'pg_*',
+  SUPABASE_RECOVERY_SCHEMA,
   'graphql',
   'graphql_public',
   'pgsodium',
@@ -203,7 +206,7 @@ export function createSupabaseDatabaseBackupWorkload(
     },
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-db'],
+    dependsOn: [SUPABASE_DATA_RESTORE_WORKLOAD_ID],
   };
 }
 

@@ -74,9 +74,13 @@ it('keeps the normal database entrypoint when backup recovery is disabled', asyn
     '-c',
     'log_min_messages=fatal',
   ]);
+  expect(result.value.some(({ id }) => id === 'supabase-db-data-restore')).toBe(false);
+  expect(requireWorkload(result.value, 'supabase-gateway').dependsOn).not.toContain(
+    'supabase-db-data-restore',
+  );
 });
 
-it('projects Supabase-safe scheduled backups plus resumable first-boot restore', async () => {
+it('projects Supabase-safe backup plus post-migration atomic data recovery', async () => {
   const result = await createInfraAdapter().desiredWorkloadsAsync(
     createContext('prod', {
       database: {
@@ -91,7 +95,30 @@ it('projects Supabase-safe scheduled backups plus resumable first-boot restore',
 
   assertBackupProjection(requireWorkload(result.value, 'supabase-db-backup'));
   assertRestoreProjection(requireWorkload(result.value, 'supabase-db'));
+  assertDataRestoreProjection(requireWorkload(result.value, 'supabase-db-data-restore'));
+  expect(requireWorkload(result.value, 'supabase-gateway').dependsOn).toContain(
+    'supabase-db-data-restore',
+  );
   expect(JSON.stringify(result.value)).not.toContain('s3-access-secret');
+});
+
+it('waits for Storage migrations before data recovery when Supabase owns object storage', async () => {
+  const result = await createInfraAdapter().desiredWorkloadsAsync(
+    createContext('prod', {
+      database: {
+        provider: 'supabase',
+        tier: 'prod',
+        backup: { mode: 'scheduled', target: backupTarget },
+      },
+      objectStorage: { provider: 'supabase', buckets: ['media'], backend: storageTarget },
+    }),
+  );
+  expect(result.ok).toBe(true);
+  if (!result.ok) return;
+  expect(requireWorkload(result.value, 'supabase-db-data-restore').dependsOn).toEqual([
+    'supabase-auth',
+    'supabase-storage',
+  ]);
 });
 
 it('uses the pinned Storage S3 environment contract and removes file persistence', async () => {
@@ -122,7 +149,7 @@ it('uses the pinned Storage S3 environment contract and removes file persistence
 
 function assertBackupProjection(backup: InfraWorkloadSpec): void {
   const backupScript = backup.args?.join('\n') ?? '';
-  expect(backup.dependsOn).toEqual(['supabase-db']);
+  expect(backup.dependsOn).toEqual(['supabase-db-data-restore']);
   expect(backup.environment?.BACKUP_INTERVAL_SECONDS).toEqual({ kind: 'literal', value: '43200' });
   expect(backup.environment?.PGUSER).toEqual({ kind: 'literal', value: 'postgres' });
   expect(backup.environment?.AWS_ACCESS_KEY_ID).toEqual({
@@ -137,6 +164,7 @@ function assertBackupProjection(backup: InfraWorkloadSpec): void {
   expect(backupScript).toContain(
     'GRANT (SET|ALTER SYSTEM) ON PARAMETER .* TO "(anon|authenticated|authenticator',
   );
+  expect(backupScript).toContain('_ankhorage');
   expect(backupScript).toContain('pg_dump --schema-only');
   expect(backupScript).toContain("--exclude-table 'auth.schema_migrations'");
   expect(backupScript).toContain('SET session_replication_role = replica;');
@@ -154,8 +182,25 @@ function assertRestoreProjection(database: InfraWorkloadSpec): void {
   expect(restoreScript).toContain('.ankhorage-restore-pending');
   expect(restoreScript).toContain('roles.sql');
   expect(restoreScript).toContain('schema.sql');
-  expect(restoreScript).toContain('data.sql');
-  expect(restoreScript).toContain('psql --set ON_ERROR_STOP=1');
+  expect(restoreScript).toContain('database_restore');
+  expect(restoreScript).toContain('data restore is deferred');
+  expect(restoreScript).not.toContain('download_file "$prefix/data.sql"');
+}
+
+function assertDataRestoreProjection(dataRestore: InfraWorkloadSpec): void {
+  const restoreScript = dataRestore.args?.join('\n') ?? '';
+  expect(dataRestore.dependsOn).toEqual(['supabase-auth']);
+  expect(dataRestore.health).toEqual({
+    kind: 'command',
+    command: ['test', '-f', '/tmp/ankhorage-data-restore-ready'],
+    intervalSeconds: 10,
+    timeoutSeconds: 5,
+    failureThreshold: 120,
+  });
+  expect(restoreScript).toContain('download_file "$prefix/data.sql"');
+  expect(restoreScript).toContain('psql --single-transaction');
+  expect(restoreScript).toContain('SET data_restored = TRUE');
+  expect(restoreScript).toContain("WHERE id = 'latest';");
 }
 
 function requireWorkload(workloads: readonly InfraWorkloadSpec[], id: string): InfraWorkloadSpec {

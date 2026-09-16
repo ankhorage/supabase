@@ -11,6 +11,7 @@ import {
   SUPABASE_DATABASE_ROLES_SQL,
   SUPABASE_DATABASE_WEBHOOKS_SQL,
 } from '../constants/databaseBootstrap';
+import { SUPABASE_DATA_RESTORE_WORKLOAD_ID } from '../constants/recovery';
 import {
   SUPABASE_BOOTSTRAP_CREDENTIAL,
   SUPABASE_ENVOY_CONFIG,
@@ -18,6 +19,7 @@ import {
   SUPABASE_IMAGES,
 } from '../constants/supabase';
 import { createSupabaseDatabaseBackupWorkload } from './createSupabaseDatabaseBackupWorkload';
+import { createSupabaseDatabaseDataRestoreWorkload } from './createSupabaseDatabaseDataRestoreWorkload';
 import { createSupabaseDatabasePersistence } from './createSupabaseDatabasePersistence';
 import { createSupabaseDatabaseRestore } from './createSupabaseDatabaseRestore';
 import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';
@@ -29,18 +31,20 @@ export function createSupabaseWorkloads(
 ): readonly InfraWorkloadSpec[] {
   const baseUrl = context.desired.networking?.publicBaseUrl ?? '';
   const [imgproxy, meta, studio] = createSupabaseOperationalWorkloads(context, baseUrl);
-  const backup = createSupabaseDatabaseBackupWorkload(context);
   const ownsObjectStorage = context.desired.objectStorage?.provider === 'supabase';
+  const dataRestore = createSupabaseDatabaseDataRestoreWorkload(context, ownsObjectStorage);
+  const backup = createSupabaseDatabaseBackupWorkload(context);
   return [
     createDatabaseWorkload(context),
-    ...(backup === undefined ? [] : [backup]),
     createAuthWorkload(baseUrl),
     createRestWorkload(),
     createRealtimeWorkload(),
     ...(ownsObjectStorage ? [imgproxy, createSupabaseStorageWorkload(context, baseUrl)] : []),
+    ...(dataRestore === undefined ? [] : [dataRestore]),
+    ...(backup === undefined ? [] : [backup]),
     meta,
     studio,
-    createGatewayWorkload(context, baseUrl, ownsObjectStorage),
+    createGatewayWorkload(context, baseUrl, ownsObjectStorage, dataRestore !== undefined),
   ];
 }
 
@@ -220,6 +224,7 @@ function createGatewayWorkload(
   context: InfraExecutionContext,
   baseUrl: string,
   ownsObjectStorage: boolean,
+  recoveryEnabled: boolean,
 ): InfraWorkloadSpec {
   const publishedPort = resolveLocalPublishedPort(context, baseUrl);
   return {
@@ -256,6 +261,7 @@ function createGatewayWorkload(
       'supabase-rest',
       'supabase-realtime',
       ...(ownsObjectStorage ? ['supabase-storage'] : []),
+      ...(recoveryEnabled ? [SUPABASE_DATA_RESTORE_WORKLOAD_ID] : []),
     ],
   };
 }

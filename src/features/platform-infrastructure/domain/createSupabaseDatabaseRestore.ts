@@ -4,11 +4,13 @@ import type {
   InfraWorkloadValue,
 } from '@ankhorage/contracts/infra';
 
+import { SUPABASE_RECOVERY_SCHEMA, SUPABASE_RECOVERY_STATE_TABLE } from '../constants/recovery';
 import { createSupabaseS3Values } from './createSupabaseS3Values';
 
 const RESTORE_POINTER_ATTEMPTS = 60;
 const RESTORE_POINTER_DELAY_SECONDS = 2;
 const RESTORE_PENDING_FILE = '.ankhorage-restore-pending';
+const RECOVERY_STATE_RELATION = `"${SUPABASE_RECOVERY_SCHEMA}"."${SUPABASE_RECOVERY_STATE_TABLE}"`;
 const RESTORE_ENTRYPOINT_SCRIPT = `
 set -eu
 data="\${PGDATA:-/var/lib/postgresql/data}"
@@ -26,7 +28,7 @@ data="\${PGDATA:-/var/lib/postgresql/data}"
 marker="$data/${RESTORE_PENDING_FILE}"
 cleanup() {
   rm -f /tmp/ankhorage-s3-curl.conf /tmp/ankhorage-latest /tmp/ankhorage-roles.sql \
-    /tmp/ankhorage-schema.sql /tmp/ankhorage-data.sql
+    /tmp/ankhorage-schema.sql
 }
 download_file() {
   key="$1"
@@ -40,6 +42,16 @@ download_file() {
     echo "Database backup file $key failed to download with HTTP $status." >&2
     return 1
   fi
+}
+create_recovery_state() {
+  psql --set ON_ERROR_STOP=1 --dbname "$POSTGRES_DB" <<'SQL'
+CREATE SCHEMA IF NOT EXISTS "${SUPABASE_RECOVERY_SCHEMA}";
+CREATE TABLE IF NOT EXISTS ${RECOVERY_STATE_RELATION} (
+  id text PRIMARY KEY,
+  backup_prefix text,
+  data_restored boolean NOT NULL
+);
+SQL
 }
 trap cleanup EXIT INT TERM
 touch "$marker"
@@ -67,8 +79,16 @@ while [ "$attempt" -le "${RESTORE_POINTER_ATTEMPTS}" ]; do
   esac
 done
 
+create_recovery_state
 if [ "$status" = '404' ]; then
   echo 'No database backup exists yet; continuing with a fresh database.'
+  psql --set ON_ERROR_STOP=1 --dbname "$POSTGRES_DB" <<'SQL'
+INSERT INTO ${RECOVERY_STATE_RELATION} (id, backup_prefix, data_restored)
+VALUES ('latest', NULL, TRUE)
+ON CONFLICT (id) DO UPDATE
+SET backup_prefix = EXCLUDED.backup_prefix,
+    data_restored = EXCLUDED.data_restored;
+SQL
 elif [ "$status" != '200' ]; then
   echo "Database backup pointer remained unavailable after ${RESTORE_POINTER_ATTEMPTS} attempts (HTTP $status)." >&2
   return 1
@@ -87,15 +107,20 @@ else
       ;;
   esac
 
-  echo "Restoring database backup set $prefix."
+  echo "Restoring database roles and schema from backup set $prefix."
   download_file "$prefix/roles.sql" /tmp/ankhorage-roles.sql
   download_file "$prefix/schema.sql" /tmp/ankhorage-schema.sql
-  download_file "$prefix/data.sql" /tmp/ankhorage-data.sql
 
   psql --set ON_ERROR_STOP=1 --dbname "$POSTGRES_DB" --file /tmp/ankhorage-roles.sql
   psql --set ON_ERROR_STOP=1 --dbname "$POSTGRES_DB" --file /tmp/ankhorage-schema.sql
-  psql --set ON_ERROR_STOP=1 --dbname "$POSTGRES_DB" --file /tmp/ankhorage-data.sql
-  echo 'Database backup restore completed.'
+  psql --set ON_ERROR_STOP=1 --set=backup_prefix="$prefix" --dbname "$POSTGRES_DB" <<'SQL'
+INSERT INTO ${RECOVERY_STATE_RELATION} (id, backup_prefix, data_restored)
+VALUES ('latest', :'backup_prefix', FALSE)
+ON CONFLICT (id) DO UPDATE
+SET backup_prefix = EXCLUDED.backup_prefix,
+    data_restored = EXCLUDED.data_restored;
+SQL
+  echo 'Database roles and schema restore completed; data restore is deferred until managed schema migrations finish.'
 fi
 rm -f "$marker"
 cleanup
