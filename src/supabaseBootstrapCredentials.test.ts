@@ -1,7 +1,7 @@
 import { createHmac } from 'node:crypto';
 
+import type { AppEnvironmentId } from '@ankhorage/contracts/environments';
 import type {
-  AppEnvironmentId,
   InfraControlPlaneCredentialRef,
   InfraCredentialPort,
   InfraExecutionContext,
@@ -28,8 +28,7 @@ it('generates one secure local bootstrap bundle and reuses it across repeated pr
   const adapter = createInfraAdapter();
   const context = createContext('local', store);
 
-  expect(adapter.prepareAsync).toBeDefined();
-  if (adapter.prepareAsync === undefined) return;
+  if (adapter.prepareAsync === undefined) throw new Error('Expected Supabase preparation.');
   const first = await adapter.prepareAsync(context);
   expect(first.ok).toBe(true);
   expect(store.persistCount).toBe(1);
