@@ -6,7 +6,7 @@
       "name": "@ankhorage/supabase",
       "dependencies": {
         "@ankhorage/contracts": "^21.0.0",
-        "@ankhorage/supabase-vault": "^0.3.1",
+        "@ankhorage/supabase-vault": "^0.3.3",
       },
       "devDependencies": {
         "@ankhorage/devtools": "^1.14.6",
@@ -26,7 +26,7 @@
 
     "@ankhorage/paradox": ["@ankhorage/paradox@0.1.26", "", { "dependencies": { "ts-morph": "^28.0.0" }, "bin": { "paradox": "dist/cli/standalone.js" } }, "sha512-6m+GVcA58LOgiZp9PZZERvd2vL9vus+Ab1fM+ZehS+b6MuSH/RAUvGZ5ifOpgVuCczLAMzi5mxKNrRlShm0zHw=="],
 
-    "@ankhorage/supabase-vault": ["@ankhorage/supabase-vault@0.3.1", "", { "dependencies": { "@ankhorage/contracts": "^16.0.0" } }, "sha512-fTy056aTQgaJ3/RMvcLfBk4ZGJWAcor1uX0BHwkx5GZnfrgoZ9S2av++l1wnl9AEsskcv4yyFBZwEyqK9zCVgg=="],
+    "@ankhorage/supabase-vault": ["@ankhorage/supabase-vault@0.3.3", "", { "dependencies": { "@ankhorage/contracts": "^16.0.0" } }, "sha512-PyqFwd1f0vF3wHsmLxdDTekoSKn5fUFptD2ub0cY6f++hInPsAh6sw3IYG33h2U4ulsW7kBzpfxGKNvj6iZp5A=="],
 
     "@ankhorage/utility": ["@ankhorage/utility@0.5.5", "", { "dependencies": { "@ankhorage/contracts": "^12.0.1" }, "peerDependencies": { "@techstark/opencv-js": "^5.0.0-release.1", "pixelmatch": "^7.2.0", "sharp": "^0.35.4", "tesseract.js": "^7.0.0" }, "optionalPeers": ["@techstark/opencv-js", "pixelmatch", "sharp", "tesseract.js"] }, "sha512-so1NXcIOQjEPNsNpdGp9McXsw8oIo4Mw/pF3y2x69f1MbwqEC79H7I0dResKs52S8Il4JeO/e5RO3Sf4yDdMGA=="],
 
