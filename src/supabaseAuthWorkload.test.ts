@@ -22,9 +22,7 @@ it('projects canonical sign-up policy into GoTrue email confirmation behavior', 
 });
 
 /*** Create one workload-generation context with an explicit or omitted sign-up policy. */
-function createContext(
-  signUpPolicy?: 'autoSignIn' | 'requireVerification',
-): InfraExecutionContext {
+function createContext(signUpPolicy?: 'autoSignIn' | 'requireVerification'): InfraExecutionContext {
   return {
     projectId: 'sample',
     environment: 'local',
