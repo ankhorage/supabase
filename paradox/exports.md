@@ -18,7 +18,7 @@ Create a sanitized HTTP adapter for self-hosted Supabase health and bucket lifec
 
 Kind: `function`
 Module: `src/features/platform-infrastructure/composition/createInfraAdapter.ts`
-Source: `src/features/platform-infrastructure/composition/createInfraAdapter.ts:22:1`
+Source: `src/features/platform-infrastructure/composition/createInfraAdapter.ts:23:1`
 
 Create the canonical runtime-neutral Supabase platform adapter.
 
