@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.11
+
+### Patch Changes
+
+- 5e3e256: Apply the canonical Supabase Vault migration through the Supabase database bootstrap when the Vault secret-store provider is selected.
+
 ## 0.5.10
 
 ### Patch Changes
