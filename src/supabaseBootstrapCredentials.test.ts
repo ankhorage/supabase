@@ -36,16 +36,26 @@ it('generates one secure local bootstrap bundle and reuses it across repeated pr
   expect(generated).not.toBeNull();
   if (generated === null) return;
 
-  const postgresPassword = requiredCredential(generated, 'postgresPassword');
-  const jwtSecret = requiredCredential(generated, 'jwtSecret');
-  const anonKey = requiredCredential(generated, 'anonKey');
-  const serviceRoleKey = requiredCredential(generated, 'serviceRoleKey');
-  const realtimeSecretKeyBase = requiredCredential(generated, 'realtimeSecretKeyBase');
-  const realtimeDatabaseEncryptionKey = requiredCredential(
-    generated,
-    'realtimeDatabaseEncryptionKey',
-  );
-  const pgMetaCryptoKey = requiredCredential(generated, 'pgMetaCryptoKey');
+  const {
+    postgresPassword,
+    jwtSecret,
+    anonKey,
+    serviceRoleKey,
+    realtimeSecretKeyBase,
+    realtimeDatabaseEncryptionKey,
+    pgMetaCryptoKey,
+  } = generated;
+  if (
+    postgresPassword === undefined ||
+    jwtSecret === undefined ||
+    anonKey === undefined ||
+    serviceRoleKey === undefined ||
+    realtimeSecretKeyBase === undefined ||
+    realtimeDatabaseEncryptionKey === undefined ||
+    pgMetaCryptoKey === undefined
+  ) {
+    throw new Error('Expected a complete generated Supabase bootstrap credential bundle.');
+  }
   expect(postgresPassword.length).toBeGreaterThanOrEqual(32);
   expect(jwtSecret.length).toBeGreaterThanOrEqual(32);
   expect(realtimeSecretKeyBase.length).toBeGreaterThanOrEqual(64);
@@ -221,13 +231,6 @@ function verifyJwt(token: string, secret: string, role: 'anon' | 'service_role')
     role,
     iss: 'supabase',
   });
-}
-
-/*** Read one required credential field without weakening strict indexed access. */
-function requiredCredential(values: Readonly<Record<string, string>>, key: string): string {
-  const value = values[key];
-  if (value === undefined) throw new Error(`Expected generated credential field ${key}.`);
-  return value;
 }
 
 /*** Provide one complete provider-valid bundle for supplied-credential policy tests. */
