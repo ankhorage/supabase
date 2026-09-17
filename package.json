@@ -55,7 +55,8 @@
     "version-packages": "ankhorage-changeset version"
   },
   "dependencies": {
-    "@ankhorage/contracts": "^21.0.0"
+    "@ankhorage/contracts": "^21.0.0",
+    "@ankhorage/supabase-vault": "^0.3.1"
   },
   "devDependencies": {
     "@ankhorage/devtools": "^1.14.6",
