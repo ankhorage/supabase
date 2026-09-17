@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@ankhorage/contracts": "^21.0.0",
-    "@ankhorage/supabase-vault": "^0.3.1"
+    "@ankhorage/supabase-vault": "^0.3.3"
   },
   "devDependencies": {
     "@ankhorage/devtools": "^1.14.6",
