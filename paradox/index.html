@@ -372,7 +372,7 @@
                 data-target="src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts"
               >
                 src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts
-                <small>12 functions</small>
+                <small>13 functions</small>
               </button>
             </li>
             <li>
@@ -3177,7 +3177,7 @@ sequenceDiagram
               <h3>createSupabaseWorkloads</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:31:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:30:1</code
                 >
               </p>
               <p>
@@ -3192,7 +3192,7 @@ sequenceDiagram
               <h3>createDatabaseWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:62:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:61:1</code
                 >
               </p>
               <p>
@@ -3202,12 +3202,24 @@ sequenceDiagram
             </article>
             <article
               class="item"
+              data-search="createDatabaseBootstrapFiles src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts Compose database bootstrap SQL, including selected provider-owned migrations."
+            >
+              <h3>createDatabaseBootstrapFiles</h3>
+              <p class="muted">
+                <code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:91:1</code
+                >
+              </p>
+              <p>Compose database bootstrap SQL, including selected provider-owned migrations.</p>
+            </article>
+            <article
+              class="item"
               data-search="createDatabaseHealth src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts Keep the database alive while a configured first-boot restore waits for off-host backup data."
             >
               <h3>createDatabaseHealth</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:118:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:125:1</code
                 >
               </p>
               <p>
@@ -3222,7 +3234,7 @@ sequenceDiagram
               <h3>createAuthWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:129:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:136:1</code
                 >
               </p>
               <p>
@@ -3236,7 +3248,7 @@ sequenceDiagram
               <h3>createRestWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:162:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:169:1</code
                 >
               </p>
               <p>Create the PostgREST Data API workload.</p>
@@ -3248,7 +3260,7 @@ sequenceDiagram
               <h3>createRealtimeWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:189:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:196:1</code
                 >
               </p>
               <p>Create the Realtime workload without runtime-specific networking assumptions.</p>
@@ -3260,7 +3272,7 @@ sequenceDiagram
               <h3>createGatewayWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:233:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:240:1</code
                 >
               </p>
               <p>Create the current Envoy gateway with portable service-DNS routes.</p>
@@ -3272,7 +3284,7 @@ sequenceDiagram
               <h3>isSupabaseProductionTier</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:280:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:287:1</code
                 >
               </p>
               <p>
@@ -3287,7 +3299,7 @@ sequenceDiagram
               <h3>resolveLocalPublishedPort</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:287:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:294:1</code
                 >
               </p>
               <p>Resolve an exact plain-HTTP listener only for the local runtime boundary.</p>
@@ -3299,7 +3311,7 @@ sequenceDiagram
               <h3>literal</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:302:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:309:1</code
                 >
               </p>
               <p>Create one literal workload value.</p>
@@ -3311,7 +3323,7 @@ sequenceDiagram
               <h3>credential</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:307:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:314:1</code
                 >
               </p>
               <p>Create one execution-only control-plane credential field reference.</p>
@@ -3323,7 +3335,7 @@ sequenceDiagram
               <h3>databaseUrl</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:312:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:319:1</code
                 >
               </p>
               <p>
@@ -3938,7 +3950,7 @@ sequenceDiagram
               data-search="createContext src/supabaseVaultBootstrap.test.ts Create one workload-only test context with optional canonical Vault selection."
             >
               <h3>createContext</h3>
-              <p class="muted"><code>src/supabaseVaultBootstrap.test.ts:32:1</code></p>
+              <p class="muted"><code>src/supabaseVaultBootstrap.test.ts:34:1</code></p>
               <p>Create one workload-only test context with optional canonical Vault selection.</p>
             </article>
             <article
@@ -3946,7 +3958,7 @@ sequenceDiagram
               data-search="success src/supabaseVaultBootstrap.test.ts Create one successful Infra result for deterministic test ports."
             >
               <h3>success</h3>
-              <p class="muted"><code>src/supabaseVaultBootstrap.test.ts:55:1</code></p>
+              <p class="muted"><code>src/supabaseVaultBootstrap.test.ts:57:1</code></p>
               <p>Create one successful Infra result for deterministic test ports.</p>
             </article>
           </section>

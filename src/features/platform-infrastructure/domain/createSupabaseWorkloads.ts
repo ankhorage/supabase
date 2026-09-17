@@ -4,7 +4,6 @@ import type {
   InfraWorkloadSpec,
   InfraWorkloadValue,
 } from '@ankhorage/contracts/infra';
-
 import { SUPABASE_VAULT_MIGRATION_SQL } from '@ankhorage/supabase-vault/migrations';
 
 import {
@@ -80,38 +79,46 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
       JWT_EXP: literal('3600'),
       ...restore.environment,
     },
-    files: [
-      {
-        path: '/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql',
-        content: literal(SUPABASE_DATABASE_WEBHOOKS_SQL),
-      },
-      {
-        path: '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql',
-        content: literal(SUPABASE_DATABASE_ROLES_SQL),
-      },
-      {
-        path: '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql',
-        content: literal(SUPABASE_DATABASE_JWT_SQL),
-      },
-      {
-        path: '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
-        content: literal(SUPABASE_DATABASE_REALTIME_SQL),
-      },
-      ...(context.desired.secretStore?.provider === 'supabase-vault'
-        ? [
-            {
-              path: '/docker-entrypoint-initdb.d/migrations/99-ankhorage-supabase-vault.sql',
-              content: literal(SUPABASE_VAULT_MIGRATION_SQL),
-            },
-          ]
-        : []),
-      ...restore.files,
-    ],
+    files: createDatabaseBootstrapFiles(context, restore.files),
     health: createDatabaseHealth(restore.files.length > 0),
     persistence: createSupabaseDatabasePersistence(prod),
     exposure: 'internal',
     replicas: 1,
   };
+}
+
+/*** Compose database bootstrap SQL, including selected provider-owned migrations. */
+function createDatabaseBootstrapFiles(
+  context: InfraExecutionContext,
+  restoreFiles: NonNullable<InfraWorkloadSpec['files']>,
+): NonNullable<InfraWorkloadSpec['files']> {
+  return [
+    {
+      path: '/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql',
+      content: literal(SUPABASE_DATABASE_WEBHOOKS_SQL),
+    },
+    {
+      path: '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql',
+      content: literal(SUPABASE_DATABASE_ROLES_SQL),
+    },
+    {
+      path: '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql',
+      content: literal(SUPABASE_DATABASE_JWT_SQL),
+    },
+    {
+      path: '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
+      content: literal(SUPABASE_DATABASE_REALTIME_SQL),
+    },
+    ...(context.desired.secretStore?.provider === 'supabase-vault'
+      ? [
+          {
+            path: '/docker-entrypoint-initdb.d/migrations/99-ankhorage-supabase-vault.sql',
+            content: literal(SUPABASE_VAULT_MIGRATION_SQL),
+          },
+        ]
+      : []),
+    ...restoreFiles,
+  ];
 }
 
 /*** Keep the database alive while a configured first-boot restore waits for off-host backup data. */
