@@ -19,11 +19,11 @@ import {
   SUPABASE_ENVOY_CONFIG_WITHOUT_STORAGE,
   SUPABASE_IMAGES,
 } from '../constants/supabase';
+import { createSupabaseAuthWorkload } from './createSupabaseAuthWorkload';
 import { createSupabaseDatabaseBackupWorkload } from './createSupabaseDatabaseBackupWorkload';
 import { createSupabaseDatabaseDataRestoreWorkload } from './createSupabaseDatabaseDataRestoreWorkload';
 import { createSupabaseDatabasePersistence } from './createSupabaseDatabasePersistence';
 import { createSupabaseDatabaseRestore } from './createSupabaseDatabaseRestore';
-import { createSupabaseAuthWorkload } from './createSupabaseAuthWorkload';
 import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';
 import { createSupabaseStorageWorkload } from './createSupabaseStorageWorkload';
 
