@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.13
+
+### Patch Changes
+
+- 1842342: Honor the canonical auth sign-up policy when configuring GoTrue email confirmation so `autoSignIn` users are confirmed immediately and `requireVerification` keeps confirmation required.
+
 ## 0.5.12
 
 ### Patch Changes
