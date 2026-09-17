@@ -507,6 +507,16 @@
                 <small>1 function</small>
               </button>
             </li>
+            <li>
+              <button
+                class="nav-button"
+                type="button"
+                data-target="src/supabaseVaultBootstrap.test.ts"
+              >
+                src/supabaseVaultBootstrap.test.ts
+                <small>2 functions</small>
+              </button>
+            </li>
           </ul>
         </nav>
       </aside>
@@ -517,7 +527,7 @@
             <div class="summary">
               <div><strong>6</strong><span class="muted">public exports</span></div>
               <div><strong>0</strong><span class="muted">components</span></div>
-              <div><strong>40</strong><span class="muted">modules</span></div>
+              <div><strong>41</strong><span class="muted">modules</span></div>
               <div><strong>1</strong><span class="muted">entrypoints</span></div>
             </div>
             <h3>Entrypoints</h3>
@@ -1040,6 +1050,12 @@
             </article>
             <article class="item" data-search="src/supabaseStudioHealth.test.ts src/index.ts">
               <h3>src/supabaseStudioHealth.test.ts</h3>
+              <p class="muted">Referenced module</p>
+              <p><strong>Dependencies:</strong> <code>src/index.ts</code></p>
+              <p><strong>Exports:</strong> <span class="empty">None</span></p>
+            </article>
+            <article class="item" data-search="src/supabaseVaultBootstrap.test.ts src/index.ts">
+              <h3>src/supabaseVaultBootstrap.test.ts</h3>
               <p class="muted">Referenced module</p>
               <p><strong>Dependencies:</strong> <code>src/index.ts</code></p>
               <p><strong>Exports:</strong> <span class="empty">None</span></p>
@@ -1611,6 +1627,9 @@
                 module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
                 package__ankhorage_supabase -.-&gt; module_src_supabaseStudioHealth_test_ts
                 module_src_supabaseStudioHealth_test_ts --&gt; module_src_index_ts
+                module_src_supabaseVaultBootstrap_test_ts[&quot;src/supabaseVaultBootstrap.test.ts&quot;]
+                package__ankhorage_supabase -.-&gt; module_src_supabaseVaultBootstrap_test_ts
+                module_src_supabaseVaultBootstrap_test_ts --&gt; module_src_index_ts
                 module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
                 package__ankhorage_supabase -.-&gt; module_src_types_supabase_ts
               </div>
@@ -1769,6 +1788,9 @@ graph TD
   module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_supabaseStudioHealth_test_ts
   module_src_supabaseStudioHealth_test_ts --&gt; module_src_index_ts
+  module_src_supabaseVaultBootstrap_test_ts[&quot;src/supabaseVaultBootstrap.test.ts&quot;]
+  package__ankhorage_supabase -.-&gt; module_src_supabaseVaultBootstrap_test_ts
+  module_src_supabaseVaultBootstrap_test_ts --&gt; module_src_index_ts
   module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
   package__ankhorage_supabase -.-&gt; module_src_types_supabase_ts
 </pre>
@@ -1821,6 +1843,7 @@ graph TD
                 module_src_supabaseRoleBackupFilter_test_ts[&quot;src/supabaseRoleBackupFilter.test.ts&quot;]
                 module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
                 module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
+                module_src_supabaseVaultBootstrap_test_ts[&quot;src/supabaseVaultBootstrap.test.ts&quot;]
                 module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
                 module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts
                 --&gt; module_src_types_supabase_ts
@@ -1970,6 +1993,7 @@ graph TD
                 module_src_supabaseRoleBackupFilter_test_ts --&gt; module_src_index_ts
                 module_src_supabaseRuntimeEndpoints_test_ts --&gt; module_src_index_ts
                 module_src_supabaseStudioHealth_test_ts --&gt; module_src_index_ts
+                module_src_supabaseVaultBootstrap_test_ts --&gt; module_src_index_ts
               </div>
               <details>
                 <summary>View Mermaid source</summary>
@@ -2014,6 +2038,7 @@ graph LR
   module_src_supabaseRoleBackupFilter_test_ts[&quot;src/supabaseRoleBackupFilter.test.ts&quot;]
   module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
   module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
+  module_src_supabaseVaultBootstrap_test_ts[&quot;src/supabaseVaultBootstrap.test.ts&quot;]
   module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
   module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts --&gt; module_src_types_supabase_ts
   module_src_features_platform_infrastructure_application_use_cases_destroySupabaseAsync_ts --&gt; module_src_features_platform_infrastructure_application_use_cases_resolveSupabaseBootstrapCredentialsAsync_ts
@@ -2086,6 +2111,7 @@ graph LR
   module_src_supabaseRoleBackupFilter_test_ts --&gt; module_src_index_ts
   module_src_supabaseRuntimeEndpoints_test_ts --&gt; module_src_index_ts
   module_src_supabaseStudioHealth_test_ts --&gt; module_src_index_ts
+  module_src_supabaseVaultBootstrap_test_ts --&gt; module_src_index_ts
 </pre>
               </details>
             </article>
@@ -2133,6 +2159,7 @@ graph LR
                 module_src_supabaseRoleBackupFilter_test_ts[&quot;src/supabaseRoleBackupFilter.test.ts&quot;]
                 module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
                 module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
+                module_src_supabaseVaultBootstrap_test_ts[&quot;src/supabaseVaultBootstrap.test.ts&quot;]
                 module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
                 export_createFetchSupabaseControlPlane[&quot;createFetchSupabaseControlPlane&quot;]
                 module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts
@@ -2196,6 +2223,7 @@ graph LR
   module_src_supabaseRoleBackupFilter_test_ts[&quot;src/supabaseRoleBackupFilter.test.ts&quot;]
   module_src_supabaseRuntimeEndpoints_test_ts[&quot;src/supabaseRuntimeEndpoints.test.ts&quot;]
   module_src_supabaseStudioHealth_test_ts[&quot;src/supabaseStudioHealth.test.ts&quot;]
+  module_src_supabaseVaultBootstrap_test_ts[&quot;src/supabaseVaultBootstrap.test.ts&quot;]
   module_src_types_supabase_ts[&quot;src/types/supabase.ts&quot;]
   export_createFetchSupabaseControlPlane[&quot;createFetchSupabaseControlPlane&quot;]
   module_src_features_platform_infrastructure_adapters_outbound_createFetchSupabaseControlPlane_ts --&gt; export_createFetchSupabaseControlPlane
@@ -3149,7 +3177,7 @@ sequenceDiagram
               <h3>createSupabaseWorkloads</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:29:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:31:1</code
                 >
               </p>
               <p>
@@ -3164,7 +3192,7 @@ sequenceDiagram
               <h3>createDatabaseWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:60:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:62:1</code
                 >
               </p>
               <p>
@@ -3179,7 +3207,7 @@ sequenceDiagram
               <h3>createDatabaseHealth</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:108:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:118:1</code
                 >
               </p>
               <p>
@@ -3194,7 +3222,7 @@ sequenceDiagram
               <h3>createAuthWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:119:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:129:1</code
                 >
               </p>
               <p>
@@ -3208,7 +3236,7 @@ sequenceDiagram
               <h3>createRestWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:152:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:162:1</code
                 >
               </p>
               <p>Create the PostgREST Data API workload.</p>
@@ -3220,7 +3248,7 @@ sequenceDiagram
               <h3>createRealtimeWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:179:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:189:1</code
                 >
               </p>
               <p>Create the Realtime workload without runtime-specific networking assumptions.</p>
@@ -3232,7 +3260,7 @@ sequenceDiagram
               <h3>createGatewayWorkload</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:223:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:233:1</code
                 >
               </p>
               <p>Create the current Envoy gateway with portable service-DNS routes.</p>
@@ -3244,7 +3272,7 @@ sequenceDiagram
               <h3>isSupabaseProductionTier</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:270:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:280:1</code
                 >
               </p>
               <p>
@@ -3259,7 +3287,7 @@ sequenceDiagram
               <h3>resolveLocalPublishedPort</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:277:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:287:1</code
                 >
               </p>
               <p>Resolve an exact plain-HTTP listener only for the local runtime boundary.</p>
@@ -3271,7 +3299,7 @@ sequenceDiagram
               <h3>literal</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:292:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:302:1</code
                 >
               </p>
               <p>Create one literal workload value.</p>
@@ -3283,7 +3311,7 @@ sequenceDiagram
               <h3>credential</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:297:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:307:1</code
                 >
               </p>
               <p>Create one execution-only control-plane credential field reference.</p>
@@ -3295,7 +3323,7 @@ sequenceDiagram
               <h3>databaseUrl</h3>
               <p class="muted">
                 <code
-                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:302:1</code
+                  >src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts:312:1</code
                 >
               </p>
               <p>
@@ -3894,6 +3922,32 @@ sequenceDiagram
               <h3>createContext</h3>
               <p class="muted"><code>src/supabaseStudioHealth.test.ts:24:1</code></p>
               <p class="empty">No description available.</p>
+            </article>
+          </section>
+        </section>
+        <section
+          id="view-src-supabasevaultbootstrap-test-ts"
+          class="view"
+          data-view="src/supabaseVaultBootstrap.test.ts"
+          hidden
+        >
+          <section class="panel">
+            <h2>src/supabaseVaultBootstrap.test.ts</h2>
+            <article
+              class="item"
+              data-search="createContext src/supabaseVaultBootstrap.test.ts Create one workload-only test context with optional canonical Vault selection."
+            >
+              <h3>createContext</h3>
+              <p class="muted"><code>src/supabaseVaultBootstrap.test.ts:32:1</code></p>
+              <p>Create one workload-only test context with optional canonical Vault selection.</p>
+            </article>
+            <article
+              class="item"
+              data-search="success src/supabaseVaultBootstrap.test.ts Create one successful Infra result for deterministic test ports."
+            >
+              <h3>success</h3>
+              <p class="muted"><code>src/supabaseVaultBootstrap.test.ts:55:1</code></p>
+              <p>Create one successful Infra result for deterministic test ports.</p>
             </article>
           </section>
         </section>

@@ -14,7 +14,7 @@
     {
       "id": "npm",
       "label": "npm",
-      "value": "v0.5.9",
+      "value": "v0.5.10",
       "color": "cb3837"
     },
     {
@@ -389,6 +389,12 @@
     },
     {
       "path": "src/supabaseStudioHealth.test.ts",
+      "isEntrypoint": false,
+      "dependencies": ["src/index.ts"],
+      "exports": []
+    },
+    {
+      "path": "src/supabaseVaultBootstrap.test.ts",
       "isEntrypoint": false,
       "dependencies": ["src/index.ts"],
       "exports": []
@@ -1087,7 +1093,7 @@
       "description": "Project the selected Supabase platform into one ordered runtime-neutral workload graph.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 29,
+        "line": 31,
         "column": 1
       }
     },
@@ -1096,7 +1102,7 @@
       "description": "Create persistent Postgres 17 data and custom configuration for safe runtime recreation.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 60,
+        "line": 62,
         "column": 1
       }
     },
@@ -1105,7 +1111,7 @@
       "description": "Keep the database alive while a configured first-boot restore waits for off-host backup data.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 108,
+        "line": 118,
         "column": 1
       }
     },
@@ -1114,7 +1120,7 @@
       "description": "Create the GoTrue authentication workload using the current external Auth URL shape.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 119,
+        "line": 129,
         "column": 1
       }
     },
@@ -1123,7 +1129,7 @@
       "description": "Create the PostgREST Data API workload.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 152,
+        "line": 162,
         "column": 1
       }
     },
@@ -1132,7 +1138,7 @@
       "description": "Create the Realtime workload without runtime-specific networking assumptions.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 179,
+        "line": 189,
         "column": 1
       }
     },
@@ -1141,7 +1147,7 @@
       "description": "Create the current Envoy gateway with portable service-DNS routes.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 223,
+        "line": 233,
         "column": 1
       }
     },
@@ -1150,7 +1156,7 @@
       "description": "Decide whether the selected Supabase database tier requires production persistence policy.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 270,
+        "line": 280,
         "column": 1
       }
     },
@@ -1159,7 +1165,7 @@
       "description": "Resolve an exact plain-HTTP listener only for the local runtime boundary.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 277,
+        "line": 287,
         "column": 1
       }
     },
@@ -1168,7 +1174,7 @@
       "description": "Create one literal workload value.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 292,
+        "line": 302,
         "column": 1
       }
     },
@@ -1177,7 +1183,7 @@
       "description": "Create one execution-only control-plane credential field reference.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 297,
+        "line": 307,
         "column": 1
       }
     },
@@ -1186,7 +1192,7 @@
       "description": "Create one password-bearing Postgres URL materialized only by the selected runtime.",
       "sourceLocation": {
         "filePath": "src/features/platform-infrastructure/domain/createSupabaseWorkloads.ts",
-        "line": 302,
+        "line": 312,
         "column": 1
       }
     },
@@ -1639,6 +1645,24 @@
         "line": 24,
         "column": 1
       }
+    },
+    {
+      "name": "createContext",
+      "description": "Create one workload-only test context with optional canonical Vault selection.",
+      "sourceLocation": {
+        "filePath": "src/supabaseVaultBootstrap.test.ts",
+        "line": 32,
+        "column": 1
+      }
+    },
+    {
+      "name": "success",
+      "description": "Create one successful Infra result for deterministic test ports.",
+      "sourceLocation": {
+        "filePath": "src/supabaseVaultBootstrap.test.ts",
+        "line": 55,
+        "column": 1
+      }
     }
   ],
   "sequenceScenarios": [
@@ -1740,6 +1764,11 @@
         "fromPath": "src/supabaseStudioHealth.test.ts",
         "toPath": "src/index.ts",
         "sourcePath": "src/supabaseStudioHealth.test.ts"
+      },
+      {
+        "fromPath": "src/supabaseVaultBootstrap.test.ts",
+        "toPath": "src/index.ts",
+        "sourcePath": "src/supabaseVaultBootstrap.test.ts"
       },
       {
         "fromPath": "src/features/platform-infrastructure/composition/createInfraAdapter.ts",
@@ -2637,6 +2666,48 @@
         "toSymbol": "expect",
         "callExpression": "expect",
         "sourcePath": "src/supabaseStudioHealth.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseVaultBootstrap.test.ts",
+        "toSymbol": "it",
+        "callExpression": "it",
+        "sourcePath": "src/supabaseVaultBootstrap.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseVaultBootstrap.test.ts",
+        "toSymbol": "createInfraAdapter",
+        "callExpression": "createInfraAdapter",
+        "sourcePath": "src/supabaseVaultBootstrap.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseVaultBootstrap.test.ts",
+        "toSymbol": "createContext",
+        "callExpression": "createContext",
+        "sourcePath": "src/supabaseVaultBootstrap.test.ts"
+      },
+      {
+        "fromSymbol": "src/supabaseVaultBootstrap.test.ts",
+        "toSymbol": "expect",
+        "callExpression": "expect",
+        "sourcePath": "src/supabaseVaultBootstrap.test.ts"
+      },
+      {
+        "fromSymbol": "findAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseVaultBootstrap.test.ts"
+      },
+      {
+        "fromSymbol": "resolveAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseVaultBootstrap.test.ts"
+      },
+      {
+        "fromSymbol": "persistAsync",
+        "toSymbol": "success",
+        "callExpression": "success",
+        "sourcePath": "src/supabaseVaultBootstrap.test.ts"
       },
       {
         "fromSymbol": "examples/basic-usage/index.ts",

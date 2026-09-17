@@ -25,7 +25,9 @@ it('does not add the Vault migration when no Supabase Vault secret store is sele
 
   const paths =
     workloads.value.find(({ id }) => id === 'supabase-db')?.files?.map(({ path }) => path) ?? [];
-  expect(paths).not.toContain('/docker-entrypoint-initdb.d/migrations/99-ankhorage-supabase-vault.sql');
+  expect(paths).not.toContain(
+    '/docker-entrypoint-initdb.d/migrations/99-ankhorage-supabase-vault.sql',
+  );
 });
 
 /*** Create one workload-only test context with optional canonical Vault selection. */

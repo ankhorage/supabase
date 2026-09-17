@@ -5,6 +5,8 @@ import type {
   InfraWorkloadValue,
 } from '@ankhorage/contracts/infra';
 
+import { SUPABASE_VAULT_MIGRATION_SQL } from '@ankhorage/supabase-vault/migrations';
+
 import {
   SUPABASE_DATABASE_JWT_SQL,
   SUPABASE_DATABASE_REALTIME_SQL,
@@ -95,6 +97,14 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
         path: '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
         content: literal(SUPABASE_DATABASE_REALTIME_SQL),
       },
+      ...(context.desired.secretStore?.provider === 'supabase-vault'
+        ? [
+            {
+              path: '/docker-entrypoint-initdb.d/migrations/99-ankhorage-supabase-vault.sql',
+              content: literal(SUPABASE_VAULT_MIGRATION_SQL),
+            },
+          ]
+        : []),
       ...restore.files,
     ],
     health: createDatabaseHealth(restore.files.length > 0),
