@@ -50,14 +50,8 @@ jobs:
 
           path.write_text(source)
           PY
-      - name: Install dependencies
-        shell: bash
-        run: |
-          if git diff --quiet package.json bun.lock; then
-            bun install --frozen-lockfile
-          else
-            bun install
-          fi
+      - name: Install dependencies and refresh lockfile
+        run: bun install
       - name: Regenerate documentation
         run: bun run docs
       - name: Format repository
