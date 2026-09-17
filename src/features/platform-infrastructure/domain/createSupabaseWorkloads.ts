@@ -37,7 +37,7 @@ export function createSupabaseWorkloads(
   const backup = createSupabaseDatabaseBackupWorkload(context);
   return [
     createDatabaseWorkload(context),
-    createAuthWorkload(baseUrl),
+    createAuthWorkload(context, baseUrl),
     createRestWorkload(),
     createRealtimeWorkload(),
     ...(ownsObjectStorage ? [imgproxy, createSupabaseStorageWorkload(context, baseUrl)] : []),
@@ -132,8 +132,8 @@ function createDatabaseHealth(restoreEnabled: boolean): NonNullable<InfraWorkloa
   };
 }
 
-/*** Create the GoTrue authentication workload using the current external Auth URL shape. */
-function createAuthWorkload(baseUrl: string): InfraWorkloadSpec {
+/*** Create the GoTrue authentication workload using the current external Auth URL and authored sign-up policy. */
+function createAuthWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
   return {
     id: 'supabase-auth',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.auth },
@@ -155,7 +155,9 @@ function createAuthWorkload(baseUrl: string): InfraWorkloadSpec {
       GOTRUE_JWT_ISSUER: literal(`${baseUrl}/auth/v1`),
       GOTRUE_EXTERNAL_EMAIL_ENABLED: literal('true'),
       GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: literal('false'),
-      GOTRUE_MAILER_AUTOCONFIRM: literal('false'),
+      GOTRUE_MAILER_AUTOCONFIRM: literal(
+        context.desired.auth?.signUp?.signUpPolicy === 'requireVerification' ? 'false' : 'true',
+      ),
       GOTRUE_EXTERNAL_PHONE_ENABLED: literal('false'),
     },
     health: { kind: 'http', port: 9999, path: '/health' },
