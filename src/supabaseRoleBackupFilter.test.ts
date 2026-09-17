@@ -48,7 +48,9 @@ function createContext(): InfraExecutionContext {
       networking: { publicBaseUrl: 'https://api.example.test' },
     },
     credentials: {
+      findAsync: () => Promise.reject(new Error('Projection must not find credentials.')),
       resolveAsync: () => Promise.reject(new Error('Projection must not resolve credentials.')),
+      persistAsync: () => Promise.reject(new Error('Projection must not persist credentials.')),
     },
     secrets: {
       resolveAsync: () => Promise.reject(new Error('Projection must not resolve secrets.')),

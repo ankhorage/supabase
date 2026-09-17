@@ -80,7 +80,12 @@ function createContext(): InfraExecutionContext {
       objectStorage: { provider: 'r2', accountId: 'account-id', buckets: ['documents'] },
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
     },
-    credentials: { resolveAsync: () => successCredentials() },
+    credentials: {
+      findAsync: () => Promise.resolve({ ok: true, value: null, diagnostics: [] }),
+      resolveAsync: () => successCredentials(),
+      persistAsync: () =>
+        Promise.reject(new Error('Ownership projection must not persist credentials.')),
+    },
     secrets: { resolveAsync: () => success('') },
   };
 }

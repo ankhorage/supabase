@@ -79,6 +79,7 @@ function createContext(environment: 'local' | 'production'): InfraExecutionConte
       },
     },
     credentials: {
+      findAsync: () => Promise.resolve({ ok: true, value: null, diagnostics: [] }),
       resolveAsync: () =>
         Promise.resolve({
           ok: true,
@@ -93,6 +94,8 @@ function createContext(environment: 'local' | 'production'): InfraExecutionConte
           },
           diagnostics: [],
         }),
+      persistAsync: () =>
+        Promise.reject(new Error('Endpoint projection must not persist credentials.')),
     },
     secrets: {
       resolveAsync: () => Promise.resolve({ ok: true, value: '', diagnostics: [] }),

@@ -36,13 +36,23 @@ it('generates one secure local bootstrap bundle and reuses it across repeated pr
   expect(generated).not.toBeNull();
   if (generated === null) return;
 
-  expect(generated.postgresPassword.length).toBeGreaterThanOrEqual(32);
-  expect(generated.jwtSecret.length).toBeGreaterThanOrEqual(32);
-  expect(generated.realtimeSecretKeyBase.length).toBeGreaterThanOrEqual(64);
-  expect(generated.realtimeDatabaseEncryptionKey).toHaveLength(16);
-  expect(generated.pgMetaCryptoKey.length).toBeGreaterThanOrEqual(32);
-  verifyJwt(generated.anonKey, generated.jwtSecret, 'anon');
-  verifyJwt(generated.serviceRoleKey, generated.jwtSecret, 'service_role');
+  const postgresPassword = requiredCredential(generated, 'postgresPassword');
+  const jwtSecret = requiredCredential(generated, 'jwtSecret');
+  const anonKey = requiredCredential(generated, 'anonKey');
+  const serviceRoleKey = requiredCredential(generated, 'serviceRoleKey');
+  const realtimeSecretKeyBase = requiredCredential(generated, 'realtimeSecretKeyBase');
+  const realtimeDatabaseEncryptionKey = requiredCredential(
+    generated,
+    'realtimeDatabaseEncryptionKey',
+  );
+  const pgMetaCryptoKey = requiredCredential(generated, 'pgMetaCryptoKey');
+  expect(postgresPassword.length).toBeGreaterThanOrEqual(32);
+  expect(jwtSecret.length).toBeGreaterThanOrEqual(32);
+  expect(realtimeSecretKeyBase.length).toBeGreaterThanOrEqual(64);
+  expect(realtimeDatabaseEncryptionKey).toHaveLength(16);
+  expect(pgMetaCryptoKey.length).toBeGreaterThanOrEqual(32);
+  verifyJwt(anonKey, jwtSecret, 'anon');
+  verifyJwt(serviceRoleKey, jwtSecret, 'service_role');
 
   const second = await adapter.prepareAsync(context);
   expect(second.ok).toBe(true);
@@ -211,6 +221,13 @@ function verifyJwt(token: string, secret: string, role: 'anon' | 'service_role')
     role,
     iss: 'supabase',
   });
+}
+
+/*** Read one required credential field without weakening strict indexed access. */
+function requiredCredential(values: Readonly<Record<string, string>>, key: string): string {
+  const value = values[key];
+  if (value === undefined) throw new Error(`Expected generated credential field ${key}.`);
+  return value;
 }
 
 /*** Provide one complete provider-valid bundle for supplied-credential policy tests. */
