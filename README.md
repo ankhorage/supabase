@@ -3,7 +3,7 @@
 
 # @ankhorage/supabase
 
-![license: MIT](././paradox/badges/license.svg) ![npm: v0.4.9](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
+![license: MIT](././paradox/badges/license.svg) ![npm: v0.5.9](././paradox/badges/npm.svg) ![runtime: bun](././paradox/badges/runtime.svg) ![typescript: strict](././paradox/badges/typescript.svg) ![eslint: checked](././paradox/badges/eslint.svg) ![prettier: checked](././paradox/badges/prettier.svg) ![build: checked](././paradox/badges/build.svg) ![tests: checked](././paradox/badges/tests.svg) ![docs: paradox](././paradox/badges/docs.svg)
 
 Supabase platform service adapter for provider-neutral Ankhorage infrastructure.
 
@@ -34,7 +34,7 @@ The provider contributes portable workloads and reconciles Supabase-owned API re
 the selected runtime is ready. Resolved bootstrap secrets never cross the execution boundary.
 
 Module: `src/features/platform-infrastructure/composition/createInfraAdapter.ts`
-Source: `src/features/platform-infrastructure/composition/createInfraAdapter.ts:22:1`
+Source: `src/features/platform-infrastructure/composition/createInfraAdapter.ts:23:1`
 Related symbols: `SupabaseAdapterOptions`
 
 </details>

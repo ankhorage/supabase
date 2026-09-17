@@ -164,7 +164,9 @@ it('fails closed for missing origin, incomplete credentials and wrong destroy co
       await adapter.validateAsync({
         ...context,
         credentials: {
+          findAsync: () => Promise.resolve({ ok: true, value: {}, diagnostics: [] }),
           resolveAsync: () => Promise.resolve({ ok: true, value: {}, diagnostics: [] }),
+          persistAsync: () => success(null),
         },
       })
     ).ok,
@@ -225,7 +227,11 @@ function createContext(tier: 'dev' | 'prod' = 'dev'): InfraExecutionContext {
       objectStorage: { provider: 'supabase', buckets: ['documents', 'avatars', 'avatars'] },
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
     },
-    credentials: { resolveAsync: () => successCredentials() },
+    credentials: {
+      findAsync: () => successCredentials(),
+      resolveAsync: () => successCredentials(),
+      persistAsync: () => success(null),
+    },
     secrets: { resolveAsync: () => success('') },
   };
 }

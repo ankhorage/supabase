@@ -236,7 +236,9 @@ function createContext(
       ...overrides,
     },
     credentials: {
+      findAsync: () => Promise.reject(new Error('Persistence projection needs no credentials.')),
       resolveAsync: () => Promise.reject(new Error('Persistence projection needs no credentials.')),
+      persistAsync: () => Promise.reject(new Error('Persistence projection needs no credentials.')),
     },
     secrets: {
       resolveAsync: () => Promise.reject(new Error('Persistence projection needs no secrets.')),

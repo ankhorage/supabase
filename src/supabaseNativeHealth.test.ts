@@ -61,7 +61,10 @@ function createContext(): InfraExecutionContext {
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
     },
     credentials: {
+      findAsync: () => Promise.reject(new Error('Health projection must not find credentials.')),
       resolveAsync: () => Promise.resolve(success({ anonKey: 'anon-client-key' })),
+      persistAsync: () =>
+        Promise.reject(new Error('Health projection must not persist credentials.')),
     },
     secrets: {
       resolveAsync: () => Promise.resolve(success('')),
