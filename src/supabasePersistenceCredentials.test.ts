@@ -55,7 +55,14 @@ function createContext(s3: Readonly<Record<string, string>>): InfraExecutionCont
       networking: { publicBaseUrl: 'https://api.example.test' },
     },
     credentials: {
+      findAsync: ({ name }) =>
+        Promise.resolve({
+          ok: true,
+          value: name === 'SUPABASE_BOOTSTRAP' ? bootstrap : null,
+          diagnostics: [],
+        }),
       resolveAsync: ({ name }) => resolveCredential(name, s3),
+      persistAsync: () => Promise.reject(new Error('Validation must not persist credentials.')),
     },
     secrets: {
       resolveAsync: () => Promise.reject(new Error('Validation needs no managed secrets.')),
