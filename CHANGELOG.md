@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.12
+
+### Patch Changes
+
+- 2594df7: Require the corrected Supabase Vault migration release so database bootstrap installs the extension in its canonical `vault` schema.
+
 ## 0.5.11
 
 ### Patch Changes
