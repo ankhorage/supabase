@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.10
+
+### Patch Changes
+
+- d8962cb: Restore standalone local Supabase bootstrap credential provisioning through the provider-neutral preparation contract while keeping validation read-only and non-local environments fail-closed.
+
 ## 0.5.9
 
 ### Patch Changes
