@@ -6,6 +6,7 @@ import { createFetchSupabaseControlPlane } from '../adapters/outbound/createFetc
 import { destroySupabaseAsync } from '../application/use-cases/destroySupabaseAsync';
 import { getSupabaseStatusAsync } from '../application/use-cases/getSupabaseStatusAsync';
 import { planSupabase } from '../application/use-cases/planSupabase';
+import { prepareSupabaseBootstrapCredentialsAsync } from '../application/use-cases/prepareSupabaseBootstrapCredentialsAsync';
 import { reconcileSupabaseAsync } from '../application/use-cases/reconcileSupabaseAsync';
 import { validateSupabaseAsync } from '../application/use-cases/validateSupabaseAsync';
 import { createSupabaseWorkloads } from '../domain/createSupabaseWorkloads';
@@ -25,6 +26,7 @@ export function createInfraAdapter(options: SupabaseAdapterOptions = {}): InfraS
     descriptor: infraAdapterDescriptor,
     validateAsync: (context) => validateSupabaseAsync(context),
     planAsync: (context) => Promise.resolve(planSupabase(context)),
+    prepareAsync: (context) => prepareSupabaseBootstrapCredentialsAsync(context),
     desiredWorkloadsAsync: (context) => {
       const desired = resolveSupabaseDesiredState(context);
       return Promise.resolve(
