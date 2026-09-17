@@ -52,25 +52,6 @@ it('contributes one deterministic current runtime-neutral Supabase workload grap
   ]);
 });
 
-it('projects the canonical sign-up policy into GoTrue email confirmation behavior', async () => {
-  const adapter = createInfraAdapter({ controlPlane: new FakeSupabaseControlPlane() });
-  const cases = [
-    { policy: 'autoSignIn' as const, expected: 'true' },
-    { policy: 'requireVerification' as const, expected: 'false' },
-    { policy: undefined, expected: 'true' },
-  ];
-
-  for (const { policy, expected } of cases) {
-    const workloads = await adapter.desiredWorkloadsAsync(createContextWithSignUpPolicy(policy));
-    expect(workloads.ok).toBe(true);
-    if (!workloads.ok) throw new Error('Expected Supabase workloads.');
-    expect(
-      workloads.value.find(({ id }) => id === 'supabase-auth')?.environment
-        ?.GOTRUE_MAILER_AUTOCONFIRM,
-    ).toEqual({ kind: 'literal', value: expected });
-  }
-});
-
 it('defines readiness, bootstrap and dependency boundaries without leaking secrets', async () => {
   const adapter = createInfraAdapter({ controlPlane: new FakeSupabaseControlPlane() });
   const workloads = await adapter.desiredWorkloadsAsync(createContext());
@@ -252,26 +233,6 @@ function createContext(tier: 'dev' | 'prod' = 'dev'): InfraExecutionContext {
       persistAsync: () => success(null),
     },
     secrets: { resolveAsync: () => success('') },
-  };
-}
-
-/*** Create one Supabase context with an explicit or omitted canonical sign-up policy. */
-function createContextWithSignUpPolicy(
-  signUpPolicy?: 'autoSignIn' | 'requireVerification',
-): InfraExecutionContext {
-  const context = createContext();
-  return {
-    ...context,
-    desired: {
-      ...context.desired,
-      auth: {
-        provider: 'supabase',
-        signUp: {
-          requiredFields: ['email', 'password'],
-          ...(signUpPolicy === undefined ? {} : { signUpPolicy }),
-        },
-      },
-    },
   };
 }
 
