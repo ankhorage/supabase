@@ -23,6 +23,7 @@ import { createSupabaseDatabaseBackupWorkload } from './createSupabaseDatabaseBa
 import { createSupabaseDatabaseDataRestoreWorkload } from './createSupabaseDatabaseDataRestoreWorkload';
 import { createSupabaseDatabasePersistence } from './createSupabaseDatabasePersistence';
 import { createSupabaseDatabaseRestore } from './createSupabaseDatabaseRestore';
+import { createSupabaseAuthWorkload } from './createSupabaseAuthWorkload';
 import { createSupabaseOperationalWorkloads } from './createSupabaseOperationalWorkloads';
 import { createSupabaseStorageWorkload } from './createSupabaseStorageWorkload';
 
@@ -37,7 +38,7 @@ export function createSupabaseWorkloads(
   const backup = createSupabaseDatabaseBackupWorkload(context);
   return [
     createDatabaseWorkload(context),
-    createAuthWorkload(context, baseUrl),
+    createSupabaseAuthWorkload(context, baseUrl),
     createRestWorkload(),
     createRealtimeWorkload(),
     ...(ownsObjectStorage ? [imgproxy, createSupabaseStorageWorkload(context, baseUrl)] : []),
@@ -129,41 +130,6 @@ function createDatabaseHealth(restoreEnabled: boolean): NonNullable<InfraWorkloa
     intervalSeconds: 10,
     timeoutSeconds: 5,
     failureThreshold: restoreEnabled ? 60 : 3,
-  };
-}
-
-/*** Create the GoTrue authentication workload using the current external Auth URL and authored sign-up policy. */
-function createAuthWorkload(context: InfraExecutionContext, baseUrl: string): InfraWorkloadSpec {
-  return {
-    id: 'supabase-auth',
-    artifact: { kind: 'image', image: SUPABASE_IMAGES.auth },
-    ports: [{ name: 'http', port: 9999 }],
-    environment: {
-      GOTRUE_API_HOST: literal('0.0.0.0'),
-      GOTRUE_API_PORT: literal('9999'),
-      API_EXTERNAL_URL: literal(`${baseUrl}/auth/v1`),
-      GOTRUE_SITE_URL: literal(baseUrl),
-      GOTRUE_URI_ALLOW_LIST: literal(''),
-      GOTRUE_DB_DRIVER: literal('postgres'),
-      GOTRUE_DB_DATABASE_URL: databaseUrl('supabase_auth_admin'),
-      DB_NAMESPACE: literal('auth'),
-      GOTRUE_JWT_ADMIN_ROLES: literal('service_role'),
-      GOTRUE_JWT_AUD: literal('authenticated'),
-      GOTRUE_JWT_DEFAULT_GROUP_NAME: literal('authenticated'),
-      GOTRUE_JWT_EXP: literal('3600'),
-      GOTRUE_JWT_SECRET: credential('jwtSecret'),
-      GOTRUE_JWT_ISSUER: literal(`${baseUrl}/auth/v1`),
-      GOTRUE_EXTERNAL_EMAIL_ENABLED: literal('true'),
-      GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: literal('false'),
-      GOTRUE_MAILER_AUTOCONFIRM: literal(
-        context.desired.auth?.signUp?.signUpPolicy === 'requireVerification' ? 'false' : 'true',
-      ),
-      GOTRUE_EXTERNAL_PHONE_ENABLED: literal('false'),
-    },
-    health: { kind: 'http', port: 9999, path: '/health' },
-    exposure: 'internal',
-    replicas: 1,
-    dependsOn: ['supabase-db'],
   };
 }
 
