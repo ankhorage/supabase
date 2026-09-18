@@ -4,19 +4,19 @@ import type { InfraWorkloadSpec } from '@ankhorage/contracts/infra';
 export function createSupabaseDatabasePersistence(
   prod: boolean,
 ): NonNullable<InfraWorkloadSpec['persistence']> {
-  return [
-    {
+  return {
+    data: {
       id: 'data',
       mountPath: '/var/lib/postgresql/data',
       sizeGiB: prod ? 20 : 5,
       retention: prod ? 'retain' : 'delete-on-destroy',
     },
-    {
+    config: {
       id: 'config',
       mountPath: '/etc/postgresql-custom',
       sizeGiB: 1,
       seed: 'image',
       retention: prod ? 'retain' : 'delete-on-destroy',
     },
-  ];
+  };
 }

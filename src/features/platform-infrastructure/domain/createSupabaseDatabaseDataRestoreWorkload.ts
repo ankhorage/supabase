@@ -109,7 +109,10 @@ export function createSupabaseDatabaseDataRestoreWorkload(
     },
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-auth', ...(ownsObjectStorage ? ['supabase-storage'] : [])],
+    dependsOn: {
+      'supabase-auth': true,
+      ...(ownsObjectStorage ? { 'supabase-storage': true } : {}),
+    },
   };
 }
 

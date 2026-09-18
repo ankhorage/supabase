@@ -47,9 +47,9 @@ it('contributes one deterministic current runtime-neutral Supabase workload grap
     'log_min_messages=fatal',
   ]);
   expect(database?.environment?.POSTGRES_USER).toBeUndefined();
-  expect(workloads.value.find(({ id }) => id === 'supabase-gateway')?.ports).toEqual([
-    { name: 'http', port: 8000, publishedPort: 54_321 },
-  ]);
+  expect(workloads.value.find(({ id }) => id === 'supabase-gateway')?.ports).toEqual({
+    http: { port: 8000, publishedPort: 54_321 },
+  });
 });
 
 it('defines readiness, bootstrap and dependency boundaries without leaking secrets', async () => {
@@ -59,21 +59,26 @@ it('defines readiness, bootstrap and dependency boundaries without leaking secre
   expect(workloads.ok).toBe(true);
   if (!workloads.ok) return;
   expect(workloads.value.every(({ health }) => health !== undefined)).toBe(true);
-  expect(workloads.value.find(({ id }) => id === 'supabase-storage')?.dependsOn).toContain(
-    'supabase-imgproxy',
-  );
-  expect(workloads.value.find(({ id }) => id === 'supabase-studio')?.dependsOn).toEqual([
-    'supabase-db',
-    'supabase-meta',
-  ]);
-  const databaseFiles = workloads.value.find(({ id }) => id === 'supabase-db')?.files ?? [];
-  expect(databaseFiles.map(({ path }) => path)).toEqual([
+  expect(
+    Object.hasOwn(
+      workloads.value.find(({ id }) => id === 'supabase-storage')?.dependsOn ?? {},
+      'supabase-imgproxy',
+    ),
+  ).toBe(true);
+  expect(workloads.value.find(({ id }) => id === 'supabase-studio')?.dependsOn).toEqual({
+    'supabase-db': true,
+    'supabase-meta': true,
+  });
+  const databaseFiles = workloads.value.find(({ id }) => id === 'supabase-db')?.files ?? {};
+  expect(Object.keys(databaseFiles)).toEqual([
     '/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql',
     '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql',
     '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql',
     '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
   ]);
-  expect(JSON.stringify(databaseFiles[0])).toContain('CREATE USER supabase_functions_admin');
+  expect(JSON.stringify(Object.values(databaseFiles)[0])).toContain(
+    'CREATE USER supabase_functions_admin',
+  );
   const serialized = JSON.stringify(workloads.value);
   expect(serialized).toContain('http://127.0.0.1:54321/auth/v1');
   expect(serialized).not.toContain('postgres-password');
@@ -224,7 +229,7 @@ function createContext(tier: 'dev' | 'prod' = 'dev'): InfraExecutionContext {
       },
       database: { provider: 'supabase', tier },
       auth: { provider: 'supabase' },
-      objectStorage: { provider: 'supabase', buckets: ['documents', 'avatars', 'avatars'] },
+      objectStorage: { provider: 'supabase', buckets: { documents: true, avatars: true } },
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
     },
     credentials: {

@@ -19,13 +19,13 @@ export function createSupabaseStorageWorkload(
   return {
     id: 'supabase-storage',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.storage },
-    ports: [{ name: 'http', port: 5000 }],
+    ports: { http: { port: 5000 } },
     environment: createStorageEnvironment(context, baseUrl, backend),
     health: { kind: 'http', port: 5000, path: '/status' },
     ...(backend === undefined ? { persistence: createFileStoragePersistence(prod) } : {}),
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-db', 'supabase-rest', 'supabase-imgproxy'],
+    dependsOn: { 'supabase-db': true, 'supabase-rest': true, 'supabase-imgproxy': true },
   };
 }
 
@@ -114,12 +114,12 @@ function createStorageBackendEnvironment(
 function createFileStoragePersistence(
   prod: boolean,
 ): NonNullable<InfraWorkloadSpec['persistence']> {
-  return [
-    {
+  return {
+    data: {
       id: 'data',
       mountPath: '/var/lib/storage',
       sizeGiB: prod ? 20 : 5,
       retention: prod ? 'retain' : 'delete-on-destroy',
     },
-  ];
+  };
 }

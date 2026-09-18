@@ -208,7 +208,7 @@ export function createSupabaseDatabaseBackupWorkload(
     },
     exposure: 'internal',
     replicas: 1,
-    dependsOn: [SUPABASE_DATA_RESTORE_WORKLOAD_ID],
+    dependsOn: { [SUPABASE_DATA_RESTORE_WORKLOAD_ID]: true },
   };
 }
 

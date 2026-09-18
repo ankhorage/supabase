@@ -67,7 +67,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
     artifact: { kind: 'image', image: SUPABASE_IMAGES.database },
     ...(restore.entrypoint === undefined ? {} : { command: restore.entrypoint.command }),
     args: [...(restore.entrypoint?.args ?? []), ...SUPABASE_DATABASE_ARGUMENTS],
-    ports: [{ name: 'postgres', port: 5432 }],
+    ports: { postgres: { port: 5432 } },
     environment: {
       POSTGRES_DB: literal('postgres'),
       POSTGRES_HOST: literal('/var/run/postgresql'),
@@ -81,7 +81,7 @@ function createDatabaseWorkload(context: InfraExecutionContext): InfraWorkloadSp
       ...restore.environment,
     },
     files: createDatabaseBootstrapFiles(context, restore.files),
-    health: createDatabaseHealth(restore.files.length > 0),
+    health: createDatabaseHealth(Object.keys(restore.files).length > 0),
     persistence: createSupabaseDatabasePersistence(prod),
     exposure: 'internal',
     replicas: 1,
@@ -93,33 +93,24 @@ function createDatabaseBootstrapFiles(
   context: InfraExecutionContext,
   restoreFiles: NonNullable<InfraWorkloadSpec['files']>,
 ): NonNullable<InfraWorkloadSpec['files']> {
-  return [
-    {
-      path: '/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql',
-      content: literal(SUPABASE_DATABASE_WEBHOOKS_SQL),
-    },
-    {
-      path: '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql',
-      content: literal(SUPABASE_DATABASE_ROLES_SQL),
-    },
-    {
-      path: '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql',
-      content: literal(SUPABASE_DATABASE_JWT_SQL),
-    },
-    {
-      path: '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
-      content: literal(SUPABASE_DATABASE_REALTIME_SQL),
-    },
+  return {
+    '/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql': literal(
+      SUPABASE_DATABASE_WEBHOOKS_SQL,
+    ),
+    '/docker-entrypoint-initdb.d/init-scripts/99-roles.sql': literal(SUPABASE_DATABASE_ROLES_SQL),
+    '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql': literal(SUPABASE_DATABASE_JWT_SQL),
+    '/docker-entrypoint-initdb.d/migrations/99-realtime.sql': literal(
+      SUPABASE_DATABASE_REALTIME_SQL,
+    ),
     ...(context.desired.secretStore?.provider === 'supabase-vault'
-      ? [
-          {
-            path: '/docker-entrypoint-initdb.d/migrations/99-ankhorage-supabase-vault.sql',
-            content: literal(SUPABASE_VAULT_MIGRATION_SQL),
-          },
-        ]
-      : []),
+      ? {
+          '/docker-entrypoint-initdb.d/migrations/99-ankhorage-supabase-vault.sql': literal(
+            SUPABASE_VAULT_MIGRATION_SQL,
+          ),
+        }
+      : {}),
     ...restoreFiles,
-  ];
+  };
 }
 
 /*** Keep the database alive while a configured first-boot restore waits for off-host backup data. */
@@ -139,7 +130,7 @@ function createRestWorkload(): InfraWorkloadSpec {
     id: 'supabase-rest',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.rest },
     command: ['postgrest'],
-    ports: [{ name: 'http', port: 3000 }],
+    ports: { http: { port: 3000 } },
     environment: {
       PGRST_DB_URI: databaseUrl('authenticator'),
       PGRST_DB_SCHEMAS: literal('public,storage,graphql_public'),
@@ -156,7 +147,7 @@ function createRestWorkload(): InfraWorkloadSpec {
     health: { kind: 'command', command: ['postgrest', '--ready'] },
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-db'],
+    dependsOn: { 'supabase-db': true },
   };
 }
 
@@ -165,7 +156,7 @@ function createRealtimeWorkload(): InfraWorkloadSpec {
   return {
     id: 'supabase-realtime',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.realtime },
-    ports: [{ name: 'http', port: 4000 }],
+    ports: { http: { port: 4000 } },
     environment: {
       PORT: literal('4000'),
       DB_HOST: literal('supabase-db'),
@@ -200,7 +191,7 @@ function createRealtimeWorkload(): InfraWorkloadSpec {
     },
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-db'],
+    dependsOn: { 'supabase-db': true },
   };
 }
 
@@ -217,21 +208,17 @@ function createGatewayWorkload(
     artifact: { kind: 'image', image: SUPABASE_IMAGES.gateway },
     command: ['envoy'],
     args: ['-c', '/etc/envoy/envoy.yaml'],
-    ports: [
-      {
-        name: 'http',
+    ports: {
+      http: {
         port: 8000,
         ...(publishedPort === undefined ? {} : { publishedPort }),
       },
-    ],
-    files: [
-      {
-        path: '/etc/envoy/envoy.yaml',
-        content: literal(
-          ownsObjectStorage ? SUPABASE_ENVOY_CONFIG : SUPABASE_ENVOY_CONFIG_WITHOUT_STORAGE,
-        ),
-      },
-    ],
+    },
+    files: {
+      '/etc/envoy/envoy.yaml': literal(
+        ownsObjectStorage ? SUPABASE_ENVOY_CONFIG : SUPABASE_ENVOY_CONFIG_WITHOUT_STORAGE,
+      ),
+    },
     health: {
       kind: 'command',
       command: ['timeout', '1', 'bash', '-c', '</dev/tcp/127.0.0.1/8000'],
@@ -241,13 +228,13 @@ function createGatewayWorkload(
     },
     exposure: 'public',
     replicas: 1,
-    dependsOn: [
-      'supabase-auth',
-      'supabase-rest',
-      'supabase-realtime',
-      ...(ownsObjectStorage ? ['supabase-storage'] : []),
-      ...(recoveryEnabled ? [SUPABASE_DATA_RESTORE_WORKLOAD_ID] : []),
-    ],
+    dependsOn: {
+      'supabase-auth': true,
+      'supabase-rest': true,
+      'supabase-realtime': true,
+      ...(ownsObjectStorage ? { 'supabase-storage': true } : {}),
+      ...(recoveryEnabled ? { [SUPABASE_DATA_RESTORE_WORKLOAD_ID]: true } : {}),
+    },
   };
 }
 

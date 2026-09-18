@@ -27,7 +27,7 @@ function createContext(): InfraExecutionContext {
       },
       database: { provider: 'supabase', tier: 'dev' },
       auth: { provider: 'supabase' },
-      objectStorage: { provider: 'supabase', buckets: [] },
+      objectStorage: { provider: 'supabase', buckets: {} },
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
     },
     credentials: {

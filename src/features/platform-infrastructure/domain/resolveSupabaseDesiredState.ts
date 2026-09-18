@@ -13,13 +13,10 @@ export function resolveSupabaseDesiredState(
   if (!isSelected(context)) return invalidSelection();
   const baseUrl = context.desired.networking?.publicBaseUrl;
   if (baseUrl === undefined) return missingPublicBaseUrl();
-  const bucketNames = [
-    ...new Set(
-      context.desired.objectStorage?.provider === 'supabase'
-        ? (context.desired.objectStorage.buckets ?? [])
-        : [],
-    ),
-  ].sort();
+  const bucketNames =
+    context.desired.objectStorage?.provider === 'supabase'
+      ? Object.keys(context.desired.objectStorage.buckets ?? {}).sort()
+      : [];
   const invalidBucket = bucketNames.find((bucket) => !isBucketName(bucket));
   if (invalidBucket !== undefined) return invalidBucketName(invalidBucket);
   const platform = createPlatformOwner(context);

@@ -30,26 +30,30 @@ it('keeps dev persistence destroyable while retaining production data and pgsodi
   expect(prod.ok).toBe(true);
   if (!dev.ok || !prod.ok) return;
   expect(
-    dev.value.flatMap(({ persistence }) => persistence?.map(({ retention }) => retention) ?? []),
+    dev.value.flatMap(({ persistence }) =>
+      Object.values(persistence ?? {}).map(({ retention }) => retention),
+    ),
   ).toEqual(['delete-on-destroy', 'delete-on-destroy']);
   expect(
-    prod.value.flatMap(({ persistence }) => persistence?.map(({ retention }) => retention) ?? []),
+    prod.value.flatMap(({ persistence }) =>
+      Object.values(persistence ?? {}).map(({ retention }) => retention),
+    ),
   ).toEqual(['retain', 'retain']);
-  expect(prod.value.find(({ id }) => id === 'supabase-db')?.persistence).toEqual([
-    {
+  expect(prod.value.find(({ id }) => id === 'supabase-db')?.persistence).toEqual({
+    data: {
       id: 'data',
       mountPath: '/var/lib/postgresql/data',
       sizeGiB: 20,
       retention: 'retain',
     },
-    {
+    config: {
       id: 'config',
       mountPath: '/etc/postgresql-custom',
       sizeGiB: 1,
       seed: 'image',
       retention: 'retain',
     },
-  ]);
+  });
 });
 
 it('uses the Auth namespace contract without a connection-string search path', async () => {
@@ -75,9 +79,12 @@ it('keeps the normal database entrypoint when backup recovery is disabled', asyn
     'log_min_messages=fatal',
   ]);
   expect(result.value.some(({ id }) => id === 'supabase-db-data-restore')).toBe(false);
-  expect(requireWorkload(result.value, 'supabase-gateway').dependsOn).not.toContain(
-    'supabase-db-data-restore',
-  );
+  expect(
+    Object.hasOwn(
+      requireWorkload(result.value, 'supabase-gateway').dependsOn ?? {},
+      'supabase-db-data-restore',
+    ),
+  ).toBe(false);
 });
 
 it('projects Supabase-safe backup plus post-migration atomic data recovery', async () => {
@@ -96,9 +103,12 @@ it('projects Supabase-safe backup plus post-migration atomic data recovery', asy
   assertBackupProjection(requireWorkload(result.value, 'supabase-db-backup'));
   assertRestoreProjection(requireWorkload(result.value, 'supabase-db'));
   assertDataRestoreProjection(requireWorkload(result.value, 'supabase-db-data-restore'));
-  expect(requireWorkload(result.value, 'supabase-gateway').dependsOn).toContain(
-    'supabase-db-data-restore',
-  );
+  expect(
+    Object.hasOwn(
+      requireWorkload(result.value, 'supabase-gateway').dependsOn ?? {},
+      'supabase-db-data-restore',
+    ),
+  ).toBe(true);
   expect(JSON.stringify(result.value)).not.toContain('s3-access-secret');
 });
 
@@ -110,21 +120,21 @@ it('waits for Storage migrations before data recovery when Supabase owns object 
         tier: 'prod',
         backup: { mode: 'scheduled', target: backupTarget },
       },
-      objectStorage: { provider: 'supabase', buckets: ['media'], backend: storageTarget },
+      objectStorage: { provider: 'supabase', buckets: { media: true }, backend: storageTarget },
     }),
   );
   expect(result.ok).toBe(true);
   if (!result.ok) return;
-  expect(requireWorkload(result.value, 'supabase-db-data-restore').dependsOn).toEqual([
-    'supabase-auth',
-    'supabase-storage',
-  ]);
+  expect(requireWorkload(result.value, 'supabase-db-data-restore').dependsOn).toEqual({
+    'supabase-auth': true,
+    'supabase-storage': true,
+  });
 });
 
 it('uses the pinned Storage S3 environment contract and removes file persistence', async () => {
   const result = await createInfraAdapter().desiredWorkloadsAsync(
     createContext('prod', {
-      objectStorage: { provider: 'supabase', buckets: ['media'], backend: storageTarget },
+      objectStorage: { provider: 'supabase', buckets: { media: true }, backend: storageTarget },
     }),
   );
   expect(result.ok).toBe(true);
@@ -149,7 +159,7 @@ it('uses the pinned Storage S3 environment contract and removes file persistence
 
 function assertBackupProjection(backup: InfraWorkloadSpec): void {
   const backupScript = backup.args?.join('\n') ?? '';
-  expect(backup.dependsOn).toEqual(['supabase-db-data-restore']);
+  expect(backup.dependsOn).toEqual({ 'supabase-db-data-restore': true });
   expect(backup.environment?.BACKUP_INTERVAL_SECONDS).toEqual({ kind: 'literal', value: '43200' });
   expect(backup.environment?.PGUSER).toEqual({ kind: 'literal', value: 'postgres' });
   expect(backup.environment?.AWS_ACCESS_KEY_ID).toEqual({
@@ -192,7 +202,7 @@ function assertRestoreProjection(database: InfraWorkloadSpec): void {
 
 function assertDataRestoreProjection(dataRestore: InfraWorkloadSpec): void {
   const restoreScript = dataRestore.args?.join('\n') ?? '';
-  expect(dataRestore.dependsOn).toEqual(['supabase-auth']);
+  expect(dataRestore.dependsOn).toEqual({ 'supabase-auth': true });
   expect(dataRestore.health).toEqual({
     kind: 'command',
     command: ['test', '-f', '/tmp/ankhorage-data-restore-ready'],
@@ -213,10 +223,13 @@ function requireWorkload(workloads: readonly InfraWorkloadSpec[], id: string): I
 }
 
 function requireLiteralFileContent(workload: InfraWorkloadSpec, suffix: string): string {
-  const file = workload.files?.find(({ path }) => path.endsWith(suffix));
-  if (file === undefined) throw new Error(`Expected workload file ending with ${suffix}.`);
-  if (file.content.kind !== 'literal') throw new Error(`Expected ${suffix} to contain a literal.`);
-  return file.content.value;
+  const entry = Object.entries(workload.files ?? {}).find(([filePath]) =>
+    filePath.endsWith(suffix),
+  );
+  if (entry === undefined) throw new Error(`Expected workload file ending with ${suffix}.`);
+  const [, file] = entry;
+  if (file.kind !== 'literal') throw new Error(`Expected ${suffix} to contain a literal.`);
+  return file.value;
 }
 
 function createContext(

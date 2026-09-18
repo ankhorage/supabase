@@ -10,11 +10,12 @@ it('adds the canonical Vault migration to the Supabase database bootstrap when s
   expect(workloads.ok).toBe(true);
   if (!workloads.ok) return;
 
-  const migration = workloads.value
-    .find(({ id }) => id === 'supabase-db')
-    ?.files?.find(({ path }) => path.endsWith('/99-ankhorage-supabase-vault.sql'));
+  const files = workloads.value.find(({ id }) => id === 'supabase-db')?.files ?? {};
+  const migration = Object.entries(files).find(([filePath]) =>
+    filePath.endsWith('/99-ankhorage-supabase-vault.sql'),
+  )?.[1];
 
-  expect(migration?.content).toEqual({ kind: 'literal', value: SUPABASE_VAULT_MIGRATION_SQL });
+  expect(migration).toEqual({ kind: 'literal', value: SUPABASE_VAULT_MIGRATION_SQL });
 });
 
 it('does not add the Vault migration when no Supabase Vault secret store is selected', async () => {
@@ -23,8 +24,7 @@ it('does not add the Vault migration when no Supabase Vault secret store is sele
   expect(workloads.ok).toBe(true);
   if (!workloads.ok) return;
 
-  const paths =
-    workloads.value.find(({ id }) => id === 'supabase-db')?.files?.map(({ path }) => path) ?? [];
+  const paths = Object.keys(workloads.value.find(({ id }) => id === 'supabase-db')?.files ?? {});
   expect(paths).not.toContain(
     '/docker-entrypoint-initdb.d/migrations/99-ankhorage-supabase-vault.sql',
   );
