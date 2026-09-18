@@ -1,5 +1,11 @@
 # @ankhorage/supabase
 
+## 0.5.14
+
+### Patch Changes
+
+- df9ae2b: Consume Contracts 22 object-storage bucket membership sets and preserve deterministic Supabase bucket ordering.
+
 ## 0.5.13
 
 ### Patch Changes
