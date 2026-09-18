@@ -76,7 +76,9 @@ it('defines readiness, bootstrap and dependency boundaries without leaking secre
     '/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql',
     '/docker-entrypoint-initdb.d/migrations/99-realtime.sql',
   ]);
-  expect(JSON.stringify(Object.values(databaseFiles)[0])).toContain('CREATE USER supabase_functions_admin');
+  expect(JSON.stringify(Object.values(databaseFiles)[0])).toContain(
+    'CREATE USER supabase_functions_admin',
+  );
   const serialized = JSON.stringify(workloads.value);
   expect(serialized).toContain('http://127.0.0.1:54321/auth/v1');
   expect(serialized).not.toContain('postgres-password');
