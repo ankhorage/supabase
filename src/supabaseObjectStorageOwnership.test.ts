@@ -21,11 +21,11 @@ it('omits Supabase Storage when another provider owns object storage', async () 
     'supabase-studio',
     'supabase-gateway',
   ]);
-  expect(workloads.value.find(({ id }) => id === 'supabase-gateway')?.dependsOn).toEqual([
-    'supabase-auth',
-    'supabase-rest',
-    'supabase-realtime',
-  ]);
+  expect(workloads.value.find(({ id }) => id === 'supabase-gateway')?.dependsOn).toEqual({
+    'supabase-auth': true,
+    'supabase-rest': true,
+    'supabase-realtime': true,
+  });
   const serializedWorkloads = JSON.stringify(workloads.value);
   expect(serializedWorkloads).not.toContain('supabase-storage');
   expect(serializedWorkloads).not.toContain('supabase-imgproxy');
@@ -77,7 +77,7 @@ function createContext(): InfraExecutionContext {
       },
       database: { provider: 'supabase', tier: 'dev' },
       auth: { provider: 'supabase' },
-      objectStorage: { provider: 'r2', accountId: 'account-id', buckets: ['documents'] },
+      objectStorage: { provider: 'r2', accountId: 'account-id', buckets: { documents: true } },
       networking: { publicBaseUrl: 'http://127.0.0.1:54321' },
     },
     credentials: {
