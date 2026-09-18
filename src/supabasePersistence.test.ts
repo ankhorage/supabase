@@ -223,7 +223,9 @@ function requireWorkload(workloads: readonly InfraWorkloadSpec[], id: string): I
 }
 
 function requireLiteralFileContent(workload: InfraWorkloadSpec, suffix: string): string {
-  const entry = Object.entries(workload.files ?? {}).find(([filePath]) => filePath.endsWith(suffix));
+  const entry = Object.entries(workload.files ?? {}).find(([filePath]) =>
+    filePath.endsWith(suffix),
+  );
   if (entry === undefined) throw new Error(`Expected workload file ending with ${suffix}.`);
   const [, file] = entry;
   if (file.kind !== 'literal') throw new Error(`Expected ${suffix} to contain a literal.`);
