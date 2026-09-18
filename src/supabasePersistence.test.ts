@@ -125,10 +125,10 @@ it('waits for Storage migrations before data recovery when Supabase owns object 
   );
   expect(result.ok).toBe(true);
   if (!result.ok) return;
-  expect(requireWorkload(result.value, 'supabase-db-data-restore').dependsOn).toEqual([
-    'supabase-auth',
-    'supabase-storage',
-  ]);
+  expect(requireWorkload(result.value, 'supabase-db-data-restore').dependsOn).toEqual({
+    'supabase-auth': true,
+    'supabase-storage': true,
+  });
 });
 
 it('uses the pinned Storage S3 environment contract and removes file persistence', async () => {
