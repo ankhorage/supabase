@@ -15,7 +15,7 @@ export function createSupabaseAuthWorkload(
   return {
     id: 'supabase-auth',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.auth },
-    ports: [{ name: 'http', port: 9999 }],
+    ports: { http: { port: 9999 } },
     environment: {
       GOTRUE_API_HOST: literal('0.0.0.0'),
       GOTRUE_API_PORT: literal('9999'),
@@ -41,7 +41,7 @@ export function createSupabaseAuthWorkload(
     health: { kind: 'http', port: 9999, path: '/health' },
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-db'],
+    dependsOn: { 'supabase-db': true },
   };
 }
 
