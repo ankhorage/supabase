@@ -19,7 +19,7 @@ function createImgproxyWorkload(): InfraWorkloadSpec {
   return {
     id: 'supabase-imgproxy',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.imgproxy },
-    ports: [{ name: 'http', port: 5001 }],
+    ports: { http: { port: 5001 } },
     environment: {
       IMGPROXY_BIND: literal(':5001'),
       IMGPROXY_LOCAL_FILESYSTEM_ROOT: literal('/'),
@@ -38,7 +38,7 @@ function createMetaWorkload(): InfraWorkloadSpec {
   return {
     id: 'supabase-meta',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.meta },
-    ports: [{ name: 'http', port: 8080 }],
+    ports: { http: { port: 8080 } },
     environment: {
       PG_META_PORT: literal('8080'),
       PG_META_DB_HOST: literal('supabase-db'),
@@ -58,7 +58,7 @@ function createMetaWorkload(): InfraWorkloadSpec {
     },
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-db'],
+    dependsOn: { 'supabase-db': true },
   };
 }
 
@@ -67,7 +67,7 @@ function createStudioWorkload(context: InfraExecutionContext, baseUrl: string): 
   return {
     id: 'supabase-studio',
     artifact: { kind: 'image', image: SUPABASE_IMAGES.studio },
-    ports: [{ name: 'http', port: 3000 }],
+    ports: { http: { port: 3000 } },
     environment: {
       HOSTNAME: literal('0.0.0.0'),
       STUDIO_PG_META_URL: literal('http://supabase-meta:8080'),
@@ -102,7 +102,7 @@ function createStudioWorkload(context: InfraExecutionContext, baseUrl: string): 
     },
     exposure: 'internal',
     replicas: 1,
-    dependsOn: ['supabase-db', 'supabase-meta'],
+    dependsOn: { 'supabase-db': true, 'supabase-meta': true },
   };
 }
 
