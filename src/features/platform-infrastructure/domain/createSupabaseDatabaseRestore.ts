@@ -1,6 +1,5 @@
 import type {
   InfraExecutionContext,
-  InfraWorkloadFileSpec,
   InfraWorkloadValue,
 } from '@ankhorage/contracts/infra';
 
@@ -133,7 +132,7 @@ export function createSupabaseDatabaseRestore(
 ): SupabaseDatabaseRestoreProjection {
   const backup =
     context.desired.database?.provider === 'supabase' ? context.desired.database.backup : undefined;
-  if (backup === undefined) return { environment: {}, files: [] };
+  if (backup === undefined) return { environment: {}, files: {} };
   const s3 = createSupabaseS3Values(backup.target);
   return {
     environment: {
@@ -142,12 +141,12 @@ export function createSupabaseDatabaseRestore(
       AWS_ACCESS_KEY_ID: s3.accessKeyId,
       AWS_SECRET_ACCESS_KEY: s3.secretAccessKey,
     },
-    files: [
-      {
-        path: '/docker-entrypoint-initdb.d/zzzz-ankhorage-restore.sh',
-        content: { kind: 'literal', value: RESTORE_SCRIPT },
+    files: {
+      '/docker-entrypoint-initdb.d/zzzz-ankhorage-restore.sh': {
+        kind: 'literal',
+        value: RESTORE_SCRIPT,
       },
-    ],
+    },
     entrypoint: {
       command: ['/bin/sh', '-c'],
       args: [RESTORE_ENTRYPOINT_SCRIPT, 'ankhorage-restore-entrypoint'],
@@ -157,7 +156,7 @@ export function createSupabaseDatabaseRestore(
 
 interface SupabaseDatabaseRestoreProjection {
   readonly environment: Readonly<Record<string, InfraWorkloadValue>>;
-  readonly files: readonly InfraWorkloadFileSpec[];
+  readonly files: NonNullable<import('@ankhorage/contracts/infra').InfraWorkloadSpec['files']>;
   readonly entrypoint?: {
     readonly command: readonly string[];
     readonly args: readonly string[];
