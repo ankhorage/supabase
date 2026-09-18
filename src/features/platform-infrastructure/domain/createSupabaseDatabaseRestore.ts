@@ -1,5 +1,6 @@
 import type {
   InfraExecutionContext,
+  InfraWorkloadSpec,
   InfraWorkloadValue,
 } from '@ankhorage/contracts/infra';
 
@@ -156,7 +157,7 @@ export function createSupabaseDatabaseRestore(
 
 interface SupabaseDatabaseRestoreProjection {
   readonly environment: Readonly<Record<string, InfraWorkloadValue>>;
-  readonly files: NonNullable<import('@ankhorage/contracts/infra').InfraWorkloadSpec['files']>;
+  readonly files: NonNullable<InfraWorkloadSpec['files']>;
   readonly entrypoint?: {
     readonly command: readonly string[];
     readonly args: readonly string[];
