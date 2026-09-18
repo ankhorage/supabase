@@ -24,7 +24,7 @@ it('keeps the production gateway behind ingress and uses the declared public ori
   expect(workloads.ok).toBe(true);
   expect(
     workloads.ok && workloads.value.find(({ id }) => id === 'supabase-gateway')?.ports,
-  ).toEqual([{ name: 'http', port: 8000 }]);
+  ).toEqual({ http: { port: 8000 } });
   expect(result.ok).toBe(true);
   expect(new Set(controlPlane.baseUrls)).toEqual(new Set(['https://supabase.example.test']));
 });
